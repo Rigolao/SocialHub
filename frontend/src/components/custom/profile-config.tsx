@@ -9,14 +9,14 @@ import {
 import {LockIcon, SettingsIcon} from "lucide-react";
 import {PersonIcon} from "@radix-ui/react-icons";
 import {Link} from "react-router-dom";
-import TooltipButton from "@/components/custom/tooltip-button.tsx";
+import CustomButton from "@/components/custom/custom-button.tsx";
 
 export function ProfileConfig() {
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <TooltipButton tooltip={"Configurações"} icon={SettingsIcon} />
+                <CustomButton tooltip={"Configurações"} icon={SettingsIcon} />
             </DropdownMenuTrigger>
             <DropdownMenuContent
                 onCloseAutoFocus={(e) => e.preventDefault()}

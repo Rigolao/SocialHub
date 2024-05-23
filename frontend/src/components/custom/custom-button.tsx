@@ -8,7 +8,7 @@ interface TooltipButtonProps {
     tooltip: string
 }
 
-const TooltipButton = forwardRef<HTMLButtonElement,
+const CustomButton = forwardRef<HTMLButtonElement,
                                                                 TooltipButtonProps>(function TooltipButton({
                                                    label,
                                                    icon: Icon,
@@ -37,4 +37,4 @@ const TooltipButton = forwardRef<HTMLButtonElement,
     )
 });
 
-export default TooltipButton;
+export default CustomButton;

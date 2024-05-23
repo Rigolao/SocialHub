@@ -5,7 +5,7 @@ import {ProfileConfig} from "@/components/custom/profile-config.tsx";
 import {CalendarIcon, ExitIcon, HomeIcon, PersonIcon, PlusIcon} from "@radix-ui/react-icons";
 import {AppBarItem} from "@/components/custom/app-bar-item.tsx";
 import {Separator} from "@/components/ui/separator.tsx";
-import TooltipButton from "@/components/custom/tooltip-button.tsx";
+import CustomButton from "@/components/custom/custom-button.tsx";
 import ModeToggle from "@/components/ui/mode-toggle.tsx";
 
 export function AppBar() {
@@ -44,14 +44,14 @@ export function AppBar() {
                     <AppBarItem label={"Portfólio"} icon={PersonIcon} route={'/portifolio'}/>
                     <SheetFooter className="md:hidden flex flex-row justify-between mt-auto">
                         <ModeToggle/>
-                        <TooltipButton tooltip={"Sair"} label={"Sair"} icon={ExitIcon}/>
+                        <CustomButton tooltip={"Sair"} label={"Sair"} icon={ExitIcon}/>
                     </SheetFooter>
                 </SheetContent>
 
             </Sheet>
             <div className="hidden md:flex gap-3">
                 <ModeToggle/>
-                <TooltipButton tooltip={"Sair"} icon={ExitIcon}/>
+                <CustomButton tooltip={"Sair"} icon={ExitIcon}/>
             </div>
         </div>
     )
