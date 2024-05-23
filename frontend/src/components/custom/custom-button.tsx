@@ -9,10 +9,11 @@ interface TooltipButtonProps {
 }
 
 const CustomButton = forwardRef<HTMLButtonElement,
-                                                                TooltipButtonProps>(function TooltipButton({
+                                                                TooltipButtonProps>(function CustomButton({
                                                    label,
                                                    icon: Icon,
                                                    tooltip,
+                                                    onClick,
                                                    ...props
                                                }: TooltipButtonProps, ref) {
     return (
@@ -24,6 +25,7 @@ const CustomButton = forwardRef<HTMLButtonElement,
                         size="icon"
                         variant="outline"
                         className="w-auto p-2 flex gap-2 font-semibold"
+                        onClick={onClick}
                         {...props}>
                         {Icon && <Icon className="h-[1.2rem] w-[1.2rem] md:size-5"/>}
                         {label}
