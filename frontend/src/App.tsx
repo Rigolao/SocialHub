@@ -7,10 +7,21 @@ import SchedulePostPage from "@/pages/schedule-post-page.tsx";
 import PortifolioPage from "@/pages/portifolio-page.tsx";
 import ChangePasswordPage from "@/pages/change-password-page.tsx";
 import ProfilePage from "@/pages/profile-page.tsx";
+import LoginPage from "@/pages/login-page.tsx";
 
 const router = createBrowserRouter([
     {
         path: '/',
+        element: <LoginPage />,
+        errorElement: <NotFoundPage />,
+    },
+    {
+        path: '/login',
+        element: <LoginPage />,
+        errorElement: <NotFoundPage />,
+    },
+    {
+        path: '/#',
         element: <Root />,
         errorElement: <NotFoundPage />,
         children: [
