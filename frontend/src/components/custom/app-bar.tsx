@@ -16,7 +16,7 @@ export function AppBar() {
 
     const navigate = useNavigate();
 
-    const teste = () => {
+    const sair = () => {
         showDialog({
             title: 'Sair',
             description: 'Tem certeza que deseja sair?',
@@ -59,14 +59,14 @@ export function AppBar() {
                     <AppBarItem label={"Portfólio"} icon={PersonIcon} route={'/portifolio'}/>
                     <SheetFooter className="md:hidden flex flex-row justify-between mt-auto">
                         <ModeToggle/>
-                        <CustomButton onClick={teste} tooltip={"Sair"} label={"Sair"} icon={ExitIcon}/>
+                        <CustomButton onClick={sair} tooltip={"Sair"} label={"Sair"} icon={ExitIcon}/>
                     </SheetFooter>
                 </SheetContent>
 
             </Sheet>
             <div className="hidden md:flex gap-3">
                 <ModeToggle/>
-                <CustomButton onClick={teste} tooltip={"Sair"} icon={ExitIcon}/>
+                <CustomButton type={'button'} onClick={sair} tooltip={"Sair"} icon={ExitIcon}/>
             </div>
         </div>
     )
