@@ -7,8 +7,23 @@ import {AppBarItem} from "@/components/custom/app-bar-item.tsx";
 import {Separator} from "@/components/ui/separator.tsx";
 import CustomButton from "@/components/custom/custom-button.tsx";
 import ModeToggle from "@/components/ui/mode-toggle.tsx";
+import {useAlertDialog} from "@/providers/alert-dialog-provider.tsx";
+import {useNavigate} from "react-router-dom";
 
 export function AppBar() {
+
+    const { showDialog } = useAlertDialog();
+
+    const navigate = useNavigate();
+
+    const teste = () => {
+        showDialog({
+            title: 'Sair',
+            description: 'Tem certeza que deseja sair?',
+            onConfirm: () => navigate('/login'),
+        });
+    };
+
     return (
         <div className="sticky top-0 left-0 bg-background flex w-screen h-[60px] md:h-[80px] py-4 px-4 md:px-6 border-b-2 items-center justify-between">
             <Sheet>
@@ -44,14 +59,14 @@ export function AppBar() {
                     <AppBarItem label={"Portfólio"} icon={PersonIcon} route={'/portifolio'}/>
                     <SheetFooter className="md:hidden flex flex-row justify-between mt-auto">
                         <ModeToggle/>
-                        <CustomButton tooltip={"Sair"} label={"Sair"} icon={ExitIcon}/>
+                        <CustomButton onClick={teste} tooltip={"Sair"} label={"Sair"} icon={ExitIcon}/>
                     </SheetFooter>
                 </SheetContent>
 
             </Sheet>
             <div className="hidden md:flex gap-3">
                 <ModeToggle/>
-                <CustomButton tooltip={"Sair"} icon={ExitIcon}/>
+                <CustomButton onClick={teste} tooltip={"Sair"} icon={ExitIcon}/>
             </div>
         </div>
     )
