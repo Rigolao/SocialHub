@@ -26,7 +26,7 @@ export default function LoginPage() {
     const onSubmit = (values: z.infer<typeof loginFormSchema>) => {
         console.log(values);
 
-        navigate('/home');
+        navigate('/');
     }
 
     return (

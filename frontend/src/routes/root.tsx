@@ -4,7 +4,6 @@ import Footer from "@/components/custom/footer.tsx";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
 import {Toaster} from "sonner";
 
-
 export default function Root() {
 
     const navigation = useNavigation();
