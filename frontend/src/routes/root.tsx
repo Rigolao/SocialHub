@@ -2,7 +2,6 @@ import {AppBar} from "@/components/custom/app-bar.tsx";
 import {Outlet, useNavigation} from "react-router-dom";
 import Footer from "@/components/custom/footer.tsx";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
-import {Toaster} from "sonner";
 
 export default function Root() {
 
@@ -10,8 +9,6 @@ export default function Root() {
 
     return (
         <div className="flex w-screen min-h-screen h-1 flex-col ">
-            <Toaster richColors closeButton />
-
             <AppBar/>
 
             {navigation.state === 'loading' ? (

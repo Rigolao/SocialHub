@@ -9,6 +9,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             <AlertDialogProvider>
+                <Toaster richColors closeButton />
                 <App/>
             </AlertDialogProvider>
         </ThemeProvider>
