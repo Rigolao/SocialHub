@@ -1,20 +1,20 @@
-import axios from "axios";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {toast} from "sonner";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import axios from "axios";
 
-interface usePostProps<T> {
+interface usePatchProps<T> {
     url: string;
-    queryKey?: [unknown];
-    onSuccess?(data?: T): void
-    onFailure?(data?: object): void;
+    queryKey: [unknown];
+    onSuccess?(data?: T): boolean | void;
+    onFailure?(data?: object): boolean | void;
 }
 
-export function usePost<T>({url, queryKey, onSuccess, onFailure}: usePostProps<T>) {
+export function usePatch<T>({url, queryKey, onFailure, onSuccess}: usePatchProps<T>) {
     const queryClient = useQueryClient();
 
     const mutationFn = (data: T) => {
         /*const promise = axios
-            .post(url, data)
+            .patch(url, data)
             .then(res => res.data);*/
         const promise = axios
             .get("https://dogapi.dog/api/v2/breeds")
@@ -28,10 +28,10 @@ export function usePost<T>({url, queryKey, onSuccess, onFailure}: usePostProps<T
         {
             loading: "Carregando...",
             success: () => {
-                return "Sucesso ao criar dados!"
+                return "Sucesso ao editar dados!"
             },
             error: (err) => {
-                return err.detalhe || 'Erro ao criar dados!';
+                return err.detalhe || 'Erro ao editar dados!';
             }
         }
     );
