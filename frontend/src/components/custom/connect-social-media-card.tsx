@@ -1,61 +1,22 @@
-import {ElementType, useState} from 'react';
+import {ElementType} from 'react';
 import {Card, CardContent, CardTitle} from "@/components/ui/card.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {InfoIcon} from "lucide-react";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip.tsx";
 import {cn} from "@/lib/utils.ts";
-import {usePost} from "@/hooks/use-post.ts";
-import {useGet} from "@/hooks/use-get.ts";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
-import {useDelete} from "@/hooks/use-delete.ts";
 
 interface ConnectSocialMediaCardProps {
-    id: number;
     label: string;
+    data: unknown;
+    isLoading: boolean;
     icon: ElementType;
     ribbonColor?: string;
+    connectSocialMedia: () => void;
+    disconnectSocialMedia: () => void;
 }
 
-export function ConnectSocialMediaCard({ id, label, icon: Icon, ribbonColor }: ConnectSocialMediaCardProps) {
-    const [data, setData] = useState(null);
-
-    const { data: getData, isLoading: getLoading } = useGet({
-        queryKey: [`card-${id}`],
-        url: `url`,
-        onSuccess: (data) => {
-            console.log(data);
-            setData(getData);
-        },
-        onFailure: (err) => console.log(err)
-    });
-
-    const { mutate: postMutate, isPending: postPending } = usePost({
-        url: `url`,
-        onSuccess: (data) => {
-            console.log(data);
-            setData(data);
-        },
-        onFailure: (err) => console.log(err)
-    });
-
-    const { mutate: deleteMutate, isPending: deletePending } = useDelete({
-        url: `url`,
-        onSuccess: (data) => {
-            console.log(data);
-            setData(null);
-        },
-        onFailure: (err) => console.log(err)
-    });
-
-    const isLoading = getLoading || postPending || deletePending;
-
-    const connectSocialMedia = () => {
-        postMutate(null);
-    }
-
-    const disconnectSocialMedia = () => {
-        deleteMutate();
-    }
+export function ConnectSocialMediaCard({ label, data, isLoading, icon: Icon, ribbonColor, connectSocialMedia, disconnectSocialMedia }: ConnectSocialMediaCardProps) {
 
     const randomNumber = () => {
         return (Math.random() * 500).toFixed();
