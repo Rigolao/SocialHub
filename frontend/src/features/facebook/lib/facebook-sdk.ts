@@ -1,3 +1,5 @@
+import {FacebookConnectResponse} from "@/types/facebook-connect-response.ts";
+
 export const initFacebookSdk = () => {
     return new Promise<void>(resolve => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -40,12 +42,12 @@ export const initFacebookSdk = () => {
 };
 
 export const getFacebookLoginStatus = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise<FacebookConnectResponse>((resolve, reject) => {
         try {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error
-            window.FB.getLoginStatus((response: unknown) => {
-                resolve(response);
+            window.FB.getLoginStatus((response) => {
+                resolve(response as FacebookConnectResponse);
             });
         } catch (error) {
             reject(error);
@@ -54,12 +56,12 @@ export const getFacebookLoginStatus = () => {
 };
 
 export const facebookLogin = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise<FacebookConnectResponse>((resolve, reject) => {
         try {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error
-            window.FB.login((response: unknown) => {
-                resolve(response)
+            window.FB.login((response) => {
+                resolve(response as FacebookConnectResponse)
             })
         } catch (error) {
             reject(error)
@@ -68,12 +70,12 @@ export const facebookLogin = () => {
 }
 
 export const facebookLogout = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise<FacebookConnectResponse>((resolve, reject) => {
         try {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error
-            window.FB.logout((response: unknown) => {
-                resolve(response)
+            window.FB.logout((response) => {
+                resolve(response as FacebookConnectResponse)
             })
         } catch (error) {
             reject(error)

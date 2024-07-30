@@ -2,6 +2,7 @@ import {LucideFacebook} from "lucide-react";
 import {facebookLogin, facebookLogout, getFacebookLoginStatus} from "@/features/facebook/lib/facebook-sdk.ts";
 import {useEffect, useState} from "react";
 import {ConnectSocialMediaCard} from "@/components/custom/connect-social-media-card.tsx";
+import {FacebookConnectResponse} from "@/types/facebook-connect-response.ts";
 
 export function FacebookCard() {
 
@@ -28,10 +29,14 @@ export function FacebookCard() {
 
     useEffect(() => {
         setIsLoading(true);
-        getFacebookLoginStatus().then((response) => {
-            setIsLoading(false)
+        getFacebookLoginStatus().then((response: FacebookConnectResponse) => {
+            setIsLoading(false);
+
             console.log(response);
-            setData(response);
+
+            if(response.status === 'connected') {
+                setData(response);
+            }
         });
     }, []);
 
