@@ -8,19 +8,18 @@ import {Separator} from "@/components/ui/separator.tsx";
 import CustomButton from "@/components/custom/custom-button.tsx";
 import ModeToggle from "@/components/ui/mode-toggle.tsx";
 import {useAlertDialog} from "@/providers/alert-dialog-provider.tsx";
-import {useNavigate} from "react-router-dom";
+import {useAuth} from "@/providers/auth-provider.tsx";
 
 export function AppBar() {
 
     const { showDialog } = useAlertDialog();
-
-    const navigate = useNavigate();
+    const { logout } = useAuth();
 
     const sair = () => {
         showDialog({
             title: 'Sair',
             description: 'Tem certeza que deseja sair?',
-            onConfirm: () => navigate('/login'),
+            onConfirm: logout,
         });
     };
 

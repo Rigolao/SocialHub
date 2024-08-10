@@ -1,49 +1,38 @@
 import {LucideFacebook} from "lucide-react";
-import {facebookLogin, facebookLogout, getFacebookLoginStatus} from "@/features/facebook/lib/facebook-sdk.ts";
 import {useEffect, useState} from "react";
 import {ConnectSocialMediaCard} from "@/components/custom/connect-social-media-card.tsx";
-import {FacebookConnectResponse} from "@/types/facebook-connect-response.ts";
+import {useFacebook} from "@/providers/facebook-provider.tsx";
 
 export function FacebookCard() {
 
-    const [data, setData] = useState<unknown>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const {facebookLogout, getFacebookLoginStatus, facebookLogin, facebookResponse} = useFacebook();
 
     const connectFacebook = () => {
         setIsLoading(true);
-        facebookLogin().then((response) => {
-            setIsLoading(false)
-            setData(response)
-            console.log(response);
+        facebookLogin().then(() => {
+            setIsLoading(false);
         });
     }
 
     const disconnectFacebook = () => {
         setIsLoading(true);
-        facebookLogout().then((response) => {
+        facebookLogout().then(() => {
             setIsLoading(false)
-            setData(null)
-            console.log(response);
         });
     }
 
     useEffect(() => {
         setIsLoading(true);
-        getFacebookLoginStatus().then((response: FacebookConnectResponse) => {
+        getFacebookLoginStatus().then(() => {
             setIsLoading(false);
-
-            console.log(response);
-
-            if(response.status === 'connected') {
-                setData(response);
-            }
         });
     }, []);
 
     return (
         <ConnectSocialMediaCard
             label={"Facebook"}
-            data={data}
+            data={facebookResponse?.status === 'connected' ? facebookResponse : undefined}
             isLoading={isLoading}
             icon={LucideFacebook}
             ribbonColor={'facebook'}

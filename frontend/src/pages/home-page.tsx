@@ -3,8 +3,6 @@ import {FacebookCard} from "@/features/facebook/components/facebook-card.tsx";
 
 export function HomePage() {
 
-
-
     return (
         <div className="grow mt-8 mx-6">
             <PageTitle title={'Início'}/>
