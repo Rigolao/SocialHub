@@ -11,6 +11,7 @@ import {useAlertDialog} from "@/providers/alert-dialog-provider.tsx";
 import {useAuth} from "@/providers/auth-provider.tsx";
 import {useGet} from "@/hooks/use-get.ts";
 import {UserAppBarInfo} from "@/types/user";
+import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
 
 export function AppBar() {
 
@@ -18,7 +19,9 @@ export function AppBar() {
     const { data, isLoading } = useGet<UserAppBarInfo>({
         url: `/api/user/photo/${id}`,
         queryKey: ['user-photo'],
-        hideSuccessToast: true
+        hideSuccessToast: true,
+        retry: true,
+        enabled: id !== null,
     });
     const { showDialog } = useAlertDialog();
 
@@ -52,7 +55,9 @@ export function AppBar() {
                         <div className="flex items-center gap-2">
                             <Avatar>
                                 {!data || isLoading ? (
-                                    <AvatarFallback>X</AvatarFallback>
+                                    <AvatarFallback>
+                                        <LoadingSpinner />
+                                    </AvatarFallback>
                                 ) : (
                                     <AvatarImage src={data.photo}/>
                                 )}

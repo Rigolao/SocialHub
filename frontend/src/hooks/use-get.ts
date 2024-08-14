@@ -8,9 +8,11 @@ interface useGetProps<T> {
     onSuccess?(data: T): void;
     onFailure?(data: object): void;
     hideSuccessToast?: boolean;
+    retry?: boolean | number;
+    enabled?: boolean;
 }
 
-export function useGet<T>({ url, queryKey, onSuccess, onFailure, hideSuccessToast }: useGetProps<T>) {
+export function useGet<T>({ url, queryKey, onSuccess, onFailure, hideSuccessToast, retry = false, enabled = true }: useGetProps<T>) {
 
     const queryFn = async () => {
         const [ _, ...params] = queryKey;
@@ -24,9 +26,9 @@ export function useGet<T>({ url, queryKey, onSuccess, onFailure, hideSuccessToas
 
                 return res.data;
             }).catch(error => {
-                onFailure && onFailure(error.response.data);
+                onFailure && onFailure(error);
 
-                return error.response.data;
+                throw error;
             });
 
         processToast(promise);
@@ -67,6 +69,7 @@ export function useGet<T>({ url, queryKey, onSuccess, onFailure, hideSuccessToas
     return useQuery({
         queryKey,
         queryFn,
-        retry: false,
+        retry: retry,
+        enabled: enabled,
     });
 }

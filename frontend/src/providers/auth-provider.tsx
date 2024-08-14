@@ -48,6 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 await facebookLogout();
             }
 
+            setId(null);
             setCredential(null);
             navigate('/login');
         } catch (error) {

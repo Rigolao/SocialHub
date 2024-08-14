@@ -17,7 +17,10 @@ export function usePost<T, Y = undefined>({url, queryKey, onSuccess, onFailure, 
     const mutationFn = (data: T): Promise<Y> => {
         const promise = axios
             .post<Y>(url, data)
-            .then(res => res.data);
+            .then(res => res.data)
+            .catch(error => {
+                throw error;
+            });
         processToast(promise);
         return promise;
     };

@@ -46,8 +46,6 @@ const handlers = [
         const url = new URL(request.url);
         const userId = url.pathname.split('/').pop();
 
-        console.log(userId);
-
         if (userId === '1') {
             return HttpResponse.json({
                 name: 'Matheus Rigolão',
@@ -55,7 +53,7 @@ const handlers = [
             });
         } else if (userId !== null && userId !== '1') {
             return HttpResponse.json({
-                    mensagem: 'Usuário não encontrado'
+                    message: 'Usuário não encontrado'
                 },
                 {
                     status: 404
@@ -63,7 +61,7 @@ const handlers = [
             );
         } else {
             return HttpResponse.json({
-                    mensagem: 'É preciso passar o identificador do usuário'
+                    message: 'É preciso passar o identificador do usuário'
                 },
                 {
                     status: 400
