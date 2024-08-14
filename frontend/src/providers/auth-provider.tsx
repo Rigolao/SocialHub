@@ -1,6 +1,8 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useFacebook} from "@/providers/facebook-provider.tsx";
+import {usePost} from "@/hooks/use-post.ts";
+import {LoginRequest, LoginResponse} from "@/types/login";
 
 type AuthProviderState = {
     credential: string | null;
@@ -18,15 +20,22 @@ const AuthProviderContext = createContext<AuthProviderState>(initialState);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
+    const { mutate: loginMutate } = usePost<LoginRequest, LoginResponse>({
+        url: '/api/login',
+        queryKey: ['login'],
+        onSuccess: (data) => {
+            setCredential(data.token);
+            navigate('/');
+        },
+        hideSuccessToast: true
+    });
     const navigate = useNavigate();
     const location = useLocation();
     const [credential, setCredential] = useState<string | null>(null);
     const { facebookResponse, facebookLogout } = useFacebook();
 
     const login = (email: string, password: string) => {
-        console.log(email, password);
-        setCredential(email);
-        navigate('/');
+        loginMutate({ email, password });
     }
 
     const logout = async () => {

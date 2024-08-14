@@ -1,50 +1,53 @@
 import {toast} from "sonner";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
+import {ResponseError} from "@/types";
 
-interface usePatchProps<T> {
+interface usePatchProps<Y> {
     url: string;
     queryKey: [unknown];
-    onSuccess?(data?: T): boolean | void;
-    onFailure?(data?: object): boolean | void;
+    onSuccess?(data: Y): void;
+    onFailure?(data: ResponseError): void;
+    hideSuccessToast?: boolean;
 }
 
-export function usePatch<T>({url, queryKey, onFailure, onSuccess}: usePatchProps<T>) {
+export function usePatch<T, Y = undefined>({url, queryKey, onFailure, onSuccess, hideSuccessToast = false}: usePatchProps<Y>) {
     const queryClient = useQueryClient();
 
-    const mutationFn = (data: T) => {
-        /*const promise = axios
-            .patch(url, data)
-            .then(res => res.data);*/
+    const mutationFn = (data: T): Promise<Y> => {
         const promise = axios
-            .get("https://dogapi.dog/api/v2/breeds")
+            .patch<Y>(url, data)
             .then(res => res.data);
         processToast(promise);
         return promise;
     }
 
-    const processToast = (promise: Promise<T>) => toast.promise(
-        promise,
-        {
-            loading: "Carregando...",
-            success: () => {
-                return "Sucesso ao editar dados!"
-            },
-            error: (err) => {
-                return err.detalhe || 'Erro ao editar dados!';
-            }
+    const processToast = (promise: Promise<Y>) => {
+        const toastOptions: { loading: string; success?: () => string; } = {
+            loading: "Carregando..."
+        };
+
+        if (!hideSuccessToast) {
+            toastOptions.success = () => "Sucesso ao editar dados!";
         }
-    );
+
+        return toast.promise(
+            promise,
+            toastOptions
+        );
+    }
 
     return useMutation({
         mutationFn,
-        onSuccess: (data) => {
+        onSuccess: (data: Y) => {
             onSuccess && onSuccess(data);
 
             queryKey && queryClient.invalidateQueries({
                 queryKey
             });
         },
-        onError: (err) => onFailure && onFailure(err)
+        onError: (error: ResponseError) => {
+            onFailure && onFailure(error as ResponseError);
+        }
     });
 }

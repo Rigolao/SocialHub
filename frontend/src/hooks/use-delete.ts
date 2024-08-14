@@ -1,50 +1,53 @@
 import {toast} from "sonner";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
+import {ResponseError} from "@/types";
 
 interface useDeleteProps<T> {
     url: string;
     queryKey?: [unknown];
-    onSuccess?(data?: T): boolean | void;
-    onFailure?(data?: object): boolean | void;
+    onSuccess?(data: T): void;
+    onFailure?(data: ResponseError): void;
+    hideSuccessToast?: boolean;
 }
 
-export function useDelete<T>({url, queryKey, onFailure, onSuccess}: useDeleteProps<T>) {
+export function useDelete<T>({url, queryKey, onFailure, onSuccess, hideSuccessToast = false}: useDeleteProps<T>) {
     const queryClient = useQueryClient();
 
-    const mutationFn = () => {
-        /*const promise = axios
-            .delete(url)
-            .then(res => res.data);*/
+    const mutationFn = (): Promise<T> => {
         const promise = axios
-            .get("https://dogapi.dog/api/v2/breeds")
+            .delete(url)
             .then(res => res.data);
         processToast(promise);
         return promise;
     }
 
-    const processToast = (promise: Promise<T>) => toast.promise(
-        promise,
-        {
-            loading: "Carregando...",
-            success: () => {
-                return "Sucesso ao deletar dados!"
-            },
-            error: (err) => {
-                return err.detalhe || 'Erro ao deltar dados!';
-            }
+    const processToast = (promise: Promise<T>) => {
+        const toastOptions: { loading: string; success?: () => string; } = {
+            loading: "Carregando..."
+        };
+
+        if (!hideSuccessToast) {
+            toastOptions.success = () => "Sucesso ao deletar dados!";
         }
-    );
+
+        return toast.promise(
+            promise,
+            toastOptions
+        );
+    }
 
     return useMutation({
         mutationFn,
-        onSuccess: (data) => {
+        onSuccess: (data: T) => {
             onSuccess && onSuccess(data);
 
             queryKey && queryClient.invalidateQueries({
                 queryKey
             });
         },
-        onError: (err) => onFailure && onFailure(err)
+        onError: (error: ResponseError) => {
+            onFailure && onFailure(error as ResponseError);
+        }
     });
 }
