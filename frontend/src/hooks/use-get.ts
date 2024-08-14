@@ -1,36 +1,57 @@
-import {toast} from "sonner";
-import {useQuery} from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 interface useGetProps<T> {
     url: string;
-    queryKey: [unknown];
-    onSuccess?(data: T): void
+    queryKey: [string, ...unknown[]];
+    onSuccess?(data: T): void;
     onFailure?(data: object): void;
     hideSuccessToast?: boolean;
 }
 
-export function useGet<T>({url, queryKey, onSuccess, onFailure, hideSuccessToast}: useGetProps<T>) {
+export function useGet<T>({ url, queryKey, onSuccess, onFailure, hideSuccessToast }: useGetProps<T>) {
 
-    const queryFn = () => {
+    const queryFn = async () => {
+        const [ _, ...params] = queryKey;
+
+        const urlWithParams = buildUrlWithParams(url, params);
+
         const promise = axios
-            .get<T>(url)
+            .get<T>(urlWithParams)
             .then(res => {
                 onSuccess && onSuccess(res.data);
 
-                return res.data
+                return res.data;
             }).catch(error => {
                 onFailure && onFailure(error.response.data);
 
-                throw error;
+                return error.response.data;
             });
+
         processToast(promise);
         return promise;
-    }
+    };
+
+    const buildUrlWithParams = (url: string, params: unknown[]) => {
+        if(params.length === 0) return url;
+
+        const searchParams = new URLSearchParams();
+
+        params.forEach((param) => {
+            if (typeof param === 'object' && param !== null) {
+                Object.entries(param).forEach(([key, value]) => {
+                    searchParams.append(key, String(value));
+                });
+            }
+        });
+
+        return `${url}?${searchParams.toString()}`;
+    };
 
     const processToast = (promise: Promise<T>) => {
         const toastOptions: { loading: string; success?: () => string; } = {
-            loading: "Carregando..."
+            loading: "Carregando...",
         };
 
         if (!hideSuccessToast) {
@@ -41,12 +62,11 @@ export function useGet<T>({url, queryKey, onSuccess, onFailure, hideSuccessToast
             promise,
             toastOptions
         );
-    }
+    };
 
     return useQuery({
-            queryKey,
-            queryFn,
-            retry: false,
-        }
-    );
+        queryKey,
+        queryFn,
+        retry: false,
+    });
 }

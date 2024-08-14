@@ -5,12 +5,14 @@ import {usePost} from "@/hooks/use-post.ts";
 import {LoginRequest, LoginResponse} from "@/types/login";
 
 type AuthProviderState = {
+    id: number | null;
     credential: string | null;
     login: (email: string, password: string) => void;
     logout: () => void;
 }
 
 const initialState: AuthProviderState = {
+    id: null,
     credential: null,
     login: () => {},
     logout: () => {}
@@ -24,6 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         url: '/api/login',
         queryKey: ['login'],
         onSuccess: (data) => {
+            setId(data.id)
             setCredential(data.token);
             navigate('/');
         },
@@ -31,6 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     const navigate = useNavigate();
     const location = useLocation();
+    const [id, setId] = useState<number | null>(null);
     const [credential, setCredential] = useState<string | null>(null);
     const { facebookResponse, facebookLogout } = useFacebook();
 
@@ -58,6 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [credential, location.pathname, navigate]);
 
     const value = {
+        id: id,
         credential: credential,
         login: (email: string, password: string) => login(email, password),
         logout: logout

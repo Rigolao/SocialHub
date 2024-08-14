@@ -9,11 +9,18 @@ import CustomButton from "@/components/custom/custom-button.tsx";
 import ModeToggle from "@/components/ui/mode-toggle.tsx";
 import {useAlertDialog} from "@/providers/alert-dialog-provider.tsx";
 import {useAuth} from "@/providers/auth-provider.tsx";
+import {useGet} from "@/hooks/use-get.ts";
+import {UserAppBarInfo} from "@/types/user";
 
 export function AppBar() {
 
+    const { logout, id } = useAuth();
+    const { data, isLoading } = useGet<UserAppBarInfo>({
+        url: `/api/user/photo/${id}`,
+        queryKey: ['user-photo'],
+        hideSuccessToast: true
+    });
     const { showDialog } = useAlertDialog();
-    const { logout } = useAuth();
 
     const sair = () => {
         showDialog({
@@ -44,10 +51,13 @@ export function AppBar() {
                     <div className="flex justify-between">
                         <div className="flex items-center gap-2">
                             <Avatar>
-                                <AvatarImage src="https://github.com/Rigolao.png" alt="@Rigolao"/>
-                                <AvatarFallback>MR</AvatarFallback>
+                                {!data || isLoading ? (
+                                    <AvatarFallback>X</AvatarFallback>
+                                ) : (
+                                    <AvatarImage src={data.photo}/>
+                                )}
                             </Avatar>
-                            <div className="font-semibold tetx-lg">Matheus Rigolão</div>
+                            <div className="font-semibold tetx-lg">{!data || isLoading ? 'Carregando...' : data.name}</div>
                         </div>
                         <ProfileConfig />
                     </div>
