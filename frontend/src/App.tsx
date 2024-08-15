@@ -9,6 +9,7 @@ import ChangePasswordPage from "@/pages/change-password-page.tsx";
 import ProfilePage from "@/pages/profile-page.tsx";
 import LoginPage from "@/pages/login-page.tsx";
 import {AuthProvider} from "@/providers/auth-provider.tsx";
+import RegisterPage from "@/pages/register-page.tsx";
 
 const AuthWrapper = () => {
     return (
@@ -22,6 +23,7 @@ const router = createBrowserRouter(
     createRoutesFromElements([
         <Route element={<AuthWrapper/>}>
             <Route index path='/login' element={<LoginPage/>} errorElement={<NotFoundPage/>}/>,
+            <Route path='/registrar' element={<RegisterPage/>} errorElement={<NotFoundPage/>}/>,
             <Route path='/' element={<Root/>} errorElement={<NotFoundPage/>}>
                 <Route index element={<HomePage/>}/>
                 <Route path='postagens/' element={<PostsCalendarPage/>}/>
