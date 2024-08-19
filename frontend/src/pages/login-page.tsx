@@ -6,8 +6,8 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form} from "@/components/ui/form.tsx";
 import GenericFormField from "@/components/custom/generic-form-field.tsx";
-import {loginObject} from "../../types.ts";
 import {useAuth} from "@/providers/auth-provider.tsx";
+import {useNavigate} from "react-router-dom";
 
 const loginFormSchema = z.object({
     email: z.string().email(),
@@ -17,10 +17,14 @@ const loginFormSchema = z.object({
 export default function LoginPage() {
 
     const { login } = useAuth();
+    const navigate = useNavigate();
 
     const form = useForm<z.infer<typeof loginFormSchema>>({
         resolver: zodResolver(loginFormSchema),
-        defaultValues: loginObject
+        defaultValues: {
+            email: '',
+            password: ''
+        }
     });
 
     const onSubmit = (values: z.infer<typeof loginFormSchema>) => login(values.email, values.password);
@@ -66,6 +70,10 @@ export default function LoginPage() {
                                     e.preventDefault();
                                     console.log('olaaa')
                                 }} variant='secondary' className="w-full">Esqueci a senha</Button>
+                                <Button onClick={(e) => {
+                                    e.preventDefault();
+                                    navigate('/registrar')
+                                }} variant='secondary' className="w-full">Crie uma conta</Button>
                             </CardFooter>
                         </Card>
                     </form>

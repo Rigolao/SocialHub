@@ -57,7 +57,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     useEffect(() => {
-        if (credential === null && location.pathname !== '/login') {
+        if (credential === null
+            && location.pathname !== '/login'
+            && location.pathname !== '/registrar') {
             navigate('/login');
         }
     }, [credential, location.pathname, navigate]);

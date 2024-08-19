@@ -2,6 +2,7 @@ import * as React from "react"
 
 import {cn} from "@/lib/utils"
 import {useFormField} from "@/components/ui/form.tsx";
+import {useEffect} from "react";
 
 export interface InputProps
     extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -11,6 +12,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ({className, type, ...props}, ref) => {
 
         const { error} = useFormField();
+
+        useEffect(() => {
+            console.log(error)
+        }, [error]);
 
         return (
             <input
