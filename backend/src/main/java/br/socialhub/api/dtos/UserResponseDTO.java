@@ -5,6 +5,8 @@ import br.socialhub.api.models.Usuario;
 
 import java.time.LocalDate;
 
+import static br.socialhub.api.utils.Constantes.LINK_URL_PHOTO;
+
 public record UserResponseDTO(
         Long id,
         String name,
@@ -23,7 +25,7 @@ public record UserResponseDTO(
                 usuario.getBirthDate(),
                 usuario.getDocumentNumber(),
                 usuario.getDocumentType(),
-                String.format("http://localhost:8080/users/%s/foto", usuario.getId())
+                String.format(LINK_URL_PHOTO, usuario.getId())
         );
     }
 }

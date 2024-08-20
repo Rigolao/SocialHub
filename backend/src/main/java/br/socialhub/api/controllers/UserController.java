@@ -37,7 +37,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(novoUsuario);
     }
 
-    @GetMapping("{id}/foto")
+    @GetMapping("{id}/photo")
     public ResponseEntity<byte[]> getFoto (@PathVariable Long id){
         FotoResponseDTO fotoResponse = userService.getPhoto(id);
 
@@ -46,7 +46,7 @@ public class UserController {
                 .body(fotoResponse.imagem());
     }
 
-    @PostMapping("{id}/foto")
+    @PostMapping("{id}/photo")
     public ResponseEntity<String> uploadFoto (@PathVariable Long id, @RequestParam("foto") MultipartFile foto) throws IOException {
         return ResponseEntity.ok(userService.uploadPhoto(id, foto));
 

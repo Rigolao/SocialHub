@@ -3,9 +3,13 @@ package br.socialhub.api.controllers;
 import br.socialhub.api.services.AuthenticationService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static br.socialhub.api.utils.Constantes.ENDPOINT_AUTHENTICATE;
+
 @RestController
+@RequestMapping(ENDPOINT_AUTHENTICATE)
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
@@ -13,7 +17,7 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("authenticate")
+    @PostMapping
     public String authenticate(Authentication authentication){
         return authenticationService.authenticate(authentication);
     }

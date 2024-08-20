@@ -25,6 +25,7 @@ public interface Constantes {
      */
 
     String LINK_RESET = "http://localhost:5173/esqueci-minha-senha?token=%s";
+    String LINK_URL_PHOTO = "http://localhost:8080/"+ENDPOINT_USERS+"/%s/photo";
 
     /**
      * Mensagem jakarta validation
@@ -44,6 +45,17 @@ public interface Constantes {
     String VALIDATION_SIZE_NAME = "O nome não pode ter mais de 50 caracteres.";
     String VALIDATION_SIZE_DOCUMENT_NUMBER = "O número do documento não pode ter mais de 18 caracteres.";
     String VALIDATION_SIZE_PASSWORD = "A senha deve ter pelo menos 6 caracteres.";
+
+
+    /**
+     *  Mensagem retorno endpoint
+     */
+
+    String MESSAGE_SUCESS_FORGOT = "Link para resetar senha enviado com sucesso.";
+    String MESSAGE_SUCESS_RESET = "Senha atualizado com sucesso.";
+
+
+    String MESSAGE_BAD_REQUEST_RESET = "Token inválido. Por favor, solicite um novo link para resetar a senha.";
 
 
 }

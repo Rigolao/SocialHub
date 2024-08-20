@@ -26,20 +26,20 @@ public class PasswordController {
         var token = userService.generateResetLink(email);
         emailService.sendPasswordResetEmail(email, token);
 
-        return ResponseEntity.ok("Enviado com sucesso!");
+        return ResponseEntity.ok(MESSAGE_SUCESS_FORGOT);
     }
 
     @PostMapping(ENDPOINT_RESET)
     public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
 
         if (!tokenService.isTokenValid(token)) {
-            return ResponseEntity.badRequest().body("O token nao é valido");
+            return ResponseEntity.badRequest().body(MESSAGE_BAD_REQUEST_RESET);
         }
 
         var user = tokenService.getUserByToken(token);
         userService.resetPassword(user, newPassword);
         tokenService.invalidateToken(token);
 
-        return ResponseEntity.ok("Password reset successfully.");
+        return ResponseEntity.ok(MESSAGE_SUCESS_RESET);
     }
 }
