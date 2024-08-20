@@ -52,4 +52,15 @@ public class Usuario {
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
     private FotoUsuario fotoUsuario;
+
+
+    public Usuario(Long id, String nome, String numeroDocumento, TipoDeDocumento tipoDeDocumento, String email, String senha, LocalDate dataNascimento){
+        this.id = id;
+        this.nome = nome;
+        this.numeroDocumento = numeroDocumento;
+        this.tipoDocumento = tipoDeDocumento;
+        this.email = email;
+        this.senha = senha;
+        this.dataNascimento = dataNascimento;
+    }
 }
