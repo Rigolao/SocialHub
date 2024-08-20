@@ -54,6 +54,7 @@ public interface Constantes {
     String MESSAGE_SUCESS_FORGOT = "Link para resetar senha enviado com sucesso.";
     String MESSAGE_SUCESS_RESET = "Senha atualizado com sucesso.";
 
+    String MESSAGE_SUCESS_UPLOAD_PHOTO = "Foto enviada com sucesso.";
 
     String MESSAGE_BAD_REQUEST_RESET = "Token inválido. Por favor, solicite um novo link para resetar a senha.";
 

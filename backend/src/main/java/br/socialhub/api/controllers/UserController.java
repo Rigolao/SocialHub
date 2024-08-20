@@ -44,7 +44,7 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.parseMediaType(fotoResponse.mimeType()))
-                .body(fotoResponse.imagem());
+                .body(fotoResponse.photo());
     }
 
     @PostMapping("{id}/photo")
