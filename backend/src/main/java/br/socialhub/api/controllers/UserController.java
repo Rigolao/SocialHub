@@ -27,11 +27,11 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("{id}")
-    public ResponseEntity<UserResponseDTO> getUser(@PathVariable Long id){
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable final Long id){
         return ResponseEntity.ok(userService.getUser(id));
     }
     @PostMapping
-    public ResponseEntity<Usuario> createUser(@RequestBody @Valid UserCreateDTO userCreateDTO){
+    public ResponseEntity<Usuario> createUser(@RequestBody @Valid final UserCreateDTO userCreateDTO){
 
         var novoUsuario = userService.createUser(userCreateDTO);
         var uri = URI.create("/users/" + novoUsuario.getId());
@@ -39,7 +39,7 @@ public class UserController {
     }
 
     @GetMapping("{id}/photo")
-    public ResponseEntity<byte[]> getFoto (@PathVariable Long id){
+    public ResponseEntity<byte[]> getFoto (@PathVariable final Long id){
         PhotoResponseDTO fotoResponse = userService.getPhoto(id);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -48,7 +48,7 @@ public class UserController {
     }
 
     @PostMapping("{id}/photo")
-    public ResponseEntity<String> uploadFoto (@PathVariable Long id, @RequestParam("foto") MultipartFile foto) throws IOException {
+    public ResponseEntity<String> uploadFoto (@PathVariable final Long id, @RequestParam("photo") final MultipartFile foto) throws IOException {
         userService.uploadPhoto(id, foto);
         return ResponseEntity.ok(MESSAGE_SUCESS_UPLOAD_PHOTO);
 
