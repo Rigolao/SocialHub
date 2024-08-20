@@ -5,7 +5,7 @@ import br.socialhub.api.dtos.UserCreateDTO;
 import br.socialhub.api.dtos.UserResponseDTO;
 import br.socialhub.api.enums.DocumentType;
 import br.socialhub.api.enums.TokenStatus;
-import br.socialhub.api.exceptions.DocumentoInvalidoException;
+import br.socialhub.api.exceptions.InvalidDocumentException;
 import br.socialhub.api.exceptions.MinimumAgeException;
 import br.socialhub.api.exceptions.ResourceNotFoundException;
 import br.socialhub.api.models.FotoUsuario;
@@ -99,12 +99,12 @@ public class UserService {
         switch (documentType) {
             case CNPJ:
                 if (!CpfCnpjValidator.isCnpj(documentNumber)) {
-                    throw new DocumentoInvalidoException(documentType.getDescricao());
+                    throw new InvalidDocumentException(documentType.getDescricao());
                 }
                 break;
             case CPF:
                 if (!CpfCnpjValidator.isCpf(documentNumber)) {
-                    throw new DocumentoInvalidoException(documentType.getDescricao());
+                    throw new InvalidDocumentException(documentType.getDescricao());
                 }
                 break;
             default:

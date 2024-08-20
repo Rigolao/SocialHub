@@ -1,4 +1,4 @@
-package br.socialhub.api.infra.seguranca;
+package br.socialhub.api.infra.security;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
