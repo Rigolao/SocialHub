@@ -4,7 +4,6 @@ import br.socialhub.api.dtos.FotoResponseDTO;
 import br.socialhub.api.dtos.UserCreateDTO;
 import br.socialhub.api.dtos.UserResponseDTO;
 import br.socialhub.api.models.Usuario;
-import br.socialhub.api.services.EmailService;
 import br.socialhub.api.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URI;
 
+import static br.socialhub.api.utils.Constantes.ENDPOINT_USERS;
+
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("users")
+@RequestMapping(ENDPOINT_USERS)
 public class UserController {
 
     private final UserService userService;
-    private final EmailService emailService;
 
     @GetMapping("{id}")
     public ResponseEntity<UserResponseDTO> getUser(@PathVariable Long id){
@@ -39,7 +39,7 @@ public class UserController {
 
     @GetMapping("{id}/foto")
     public ResponseEntity<byte[]> getFoto (@PathVariable Long id){
-        FotoResponseDTO fotoResponse = userService.getFoto(id);
+        FotoResponseDTO fotoResponse = userService.getPhoto(id);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.parseMediaType(fotoResponse.mimeType()))
@@ -48,7 +48,7 @@ public class UserController {
 
     @PostMapping("{id}/foto")
     public ResponseEntity<String> uploadFoto (@PathVariable Long id, @RequestParam("foto") MultipartFile foto) throws IOException {
-        return ResponseEntity.ok(userService.uploadFoto(id, foto));
+        return ResponseEntity.ok(userService.uploadPhoto(id, foto));
 
     }
 }

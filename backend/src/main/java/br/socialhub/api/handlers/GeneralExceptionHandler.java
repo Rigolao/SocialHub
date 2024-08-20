@@ -2,8 +2,8 @@ package br.socialhub.api.handlers;
 
 import br.socialhub.api.dtos.ErroDTO;
 import br.socialhub.api.exceptions.DocumentoInvalidoException;
-import br.socialhub.api.exceptions.IdadeMinimaException;
-import br.socialhub.api.exceptions.RecursoNaoEncontradoException;
+import br.socialhub.api.exceptions.MinimumAgeException;
+import br.socialhub.api.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -22,13 +22,13 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErroDTO> handleRecursoNaoEncontrado (RecursoNaoEncontradoException e){
+    public ResponseEntity<ErroDTO> handleRecursoNaoEncontrado (ResourceNotFoundException e){
         ErroDTO erro = new ErroDTO(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErroDTO> handleIdadeMinima (IdadeMinimaException e){
+    public ResponseEntity<ErroDTO> handleIdadeMinima (MinimumAgeException e){
         ErroDTO erro = new ErroDTO(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }

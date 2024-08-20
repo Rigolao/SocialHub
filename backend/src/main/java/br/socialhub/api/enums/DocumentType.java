@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @ToString(of = "descricao")
-public enum TipoDeDocumento {
+public enum DocumentType {
     CPF("CPF"),
     CNPJ("CNPJ");
 

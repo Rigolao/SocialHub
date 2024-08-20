@@ -1,6 +1,6 @@
 package br.socialhub.api.dtos;
 
-import br.socialhub.api.enums.TipoDeDocumento;
+import br.socialhub.api.enums.DocumentType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,26 +8,28 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
+import static br.socialhub.api.utils.Constantes.*;
+
 public record UserCreateDTO(
-        @NotBlank(message = "O campo nome é obrigatório")
-        @Size(min = 2, max = 50, message = "O nome não pode ter mais de 50 caracteres.")
-        String nome,
+        @NotBlank(message = VALIDATION_REQUIRED_NAME)
+        @Size(min = 2, max = 50, message = VALIDATION_SIZE_NAME)
+        String name,
 
-        @NotNull(message = "O campo data nascimento é obrigatório.")
-        LocalDate dataNascimento,
+        @NotNull(message = VALIDATION_REQUIRED_BIRTH_DATE)
+        LocalDate birthDate,
 
-        @NotBlank(message = "O campo numero documento é obrigatório.")
-        @Size(max = 18, message = "O número do documento não pode ter mais de 12 caracteres.")
-        String numeroDocumento,
+        @NotBlank(message = VALIDATION_REQUIRED_DOCUMENT_NUMBER)
+        @Size(max = 18, message = VALIDATION_SIZE_DOCUMENT_NUMBER)
+        String documentNumber,
 
-        @NotNull(message = "O campo tipo de documento é obrigatório.")
-        TipoDeDocumento tipoDeDocumento,
+        @NotNull(message = VALIDATION_REQUIRED_DOCUMENT_TYPE)
+        DocumentType documentType,
 
-        @Email(message = "O campo email precisa ser válido.")
-        @NotBlank(message = "O campo email é obrigatório.")
+        @Email(message = VALIDATION_EMAIL)
+        @NotBlank(message = VALIDATION_REQUIRED_EMAIL)
         String email,
 
-        @NotBlank(message = "O campo senha é obrigatório.")
-        @Size(min = 6, message = "A senha deve ter pelo menos 6 caracteres.")
-        String senha) {
+        @NotBlank(message = VALIDATION_REQUIRED_PASSWORD)
+        @Size(min = 6, message = VALIDATION_SIZE_PASSWORD)
+        String password) {
 }

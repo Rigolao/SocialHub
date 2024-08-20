@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 @Service
 public class JwtService {
     private final JwtEncoder encoder;
-    private static final String ESPACO_EM_BRANCO = " ";
-    private static final String EMISSOR = "socialhub";
+    private static final String WHITESPACE = " ";
+    private static final String ISSUER = "socialhub";
 
     public JwtService(JwtEncoder encoder) {
         this.encoder = encoder;
@@ -27,10 +27,10 @@ public class JwtService {
 
         String scopes = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(ESPACO_EM_BRANCO));
+                .collect(Collectors.joining(WHITESPACE));
 
         var claims = JwtClaimsSet.builder()
-                .issuer(EMISSOR)
+                .issuer(ISSUER)
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiry))
                 .subject(authentication.getName())

@@ -10,24 +10,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static br.socialhub.api.utils.Constantes.*;
+
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("password")
+@RequestMapping(ENDPOINT_PASSWORD)
 public class PasswordController {
 
     private final UserService userService;
     private final EmailService emailService;
     private final TokenService tokenService;
 
-    @PostMapping("/forgot")
+    @PostMapping(ENDPOINT_FORGOT)
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
-        var token = userService.gerarResetLink(email);
+        var token = userService.generateResetLink(email);
         emailService.sendPasswordResetEmail(email, token);
 
         return ResponseEntity.ok("Enviado com sucesso!");
     }
 
-    @PostMapping("/reset")
+    @PostMapping(ENDPOINT_RESET)
     public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
 
         if (!tokenService.isTokenValid(token)) {
@@ -36,7 +38,7 @@ public class PasswordController {
 
         var user = tokenService.getUserByToken(token);
         userService.resetPassword(user, newPassword);
-        tokenService.invalidarToken(token);
+        tokenService.invalidateToken(token);
 
         return ResponseEntity.ok("Password reset successfully.");
     }

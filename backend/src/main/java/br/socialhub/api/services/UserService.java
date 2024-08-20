@@ -3,11 +3,11 @@ package br.socialhub.api.services;
 import br.socialhub.api.dtos.FotoResponseDTO;
 import br.socialhub.api.dtos.UserCreateDTO;
 import br.socialhub.api.dtos.UserResponseDTO;
-import br.socialhub.api.enums.TipoDeDocumento;
+import br.socialhub.api.enums.DocumentType;
 import br.socialhub.api.enums.TokenStatus;
 import br.socialhub.api.exceptions.DocumentoInvalidoException;
-import br.socialhub.api.exceptions.IdadeMinimaException;
-import br.socialhub.api.exceptions.RecursoNaoEncontradoException;
+import br.socialhub.api.exceptions.MinimumAgeException;
+import br.socialhub.api.exceptions.ResourceNotFoundException;
 import br.socialhub.api.models.FotoUsuario;
 import br.socialhub.api.models.TokenAuditoria;
 import br.socialhub.api.models.Usuario;
@@ -24,8 +24,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.util.List;
 import java.util.Optional;
+
+import static br.socialhub.api.utils.Constantes.LINK_RESET;
+import static br.socialhub.api.utils.Constantes.RESOURCE_USER;
 
 @Service
 @RequiredArgsConstructor
@@ -37,19 +39,19 @@ public class UserService {
     private final FotoUtil fotoUtil;
 
     private static final String MIDIA_TYPE_SVG = "image/svg+xml";
-    private static final int IDADE_MINIMA = 12;
-    private static final long DIA_DURACAO_TOKEN = 1;
+    private static final int MINIMUM_AGE = 12;
+    private static final long TOKEN_DURATION_IN_DAY = 1;
 
     public Usuario createUser(UserCreateDTO userDTO) {
-        _validarCreateUser(userDTO);
+        _validationCreateUser(userDTO);
 
         Usuario newUser = Usuario.builder()
-                .nome(userDTO.nome())
+                .name(userDTO.name())
                 .email(userDTO.email())
-                .senha(passwordEncoder.encode(userDTO.senha()))
-                .dataNascimento(userDTO.dataNascimento())
-                .tipoDocumento(userDTO.tipoDeDocumento())
-                .numeroDocumento(userDTO.numeroDocumento())
+                .password(passwordEncoder.encode(userDTO.password()))
+                .birthDate(userDTO.birthDate())
+                .documentType(userDTO.documentType())
+                .documentNumber(userDTO.documentNumber())
                 .build();
 
         return usuarioRepository.save(newUser);
@@ -58,22 +60,22 @@ public class UserService {
     public UserResponseDTO getUser(Long id) {
         return findById(id)
                 .map(UserResponseDTO::new)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
     }
 
     private Optional<Usuario> findById(Long id) {
         return usuarioRepository.findById(id);
     }
 
-    public FotoResponseDTO getFoto(Long id) {
+    public FotoResponseDTO getPhoto(Long id) {
         return findById(id)
-                .map(Usuario::getFotoUsuario)
+                .map(Usuario::getUserPhoto)
                 .map(FotoResponseDTO::new)
                 .orElse(new FotoResponseDTO(fotoUtil.carregarFotoDefault(), MIDIA_TYPE_SVG));
     }
 
-    public String uploadFoto(Long id, MultipartFile file) throws IOException {
-        var user = findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+    public String uploadPhoto(Long id, MultipartFile file) throws IOException {
+        var user = findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
 
         var foto = FotoUsuario.builder()
                 .nomeArquivo(file.getOriginalFilename())
@@ -82,63 +84,62 @@ public class UserService {
                 .usuario(user)
                 .build();
 
-        user.setFotoUsuario(foto);
+        user.setUserPhoto(foto);
         usuarioRepository.save(user);
 
         return "Upload realizado com sucesso.";
     }
 
-    private void _validarCreateUser(UserCreateDTO userDTO) {
-        _validarIdadeMinima(userDTO.dataNascimento());
-        _validarDocumento(userDTO.numeroDocumento(), userDTO.tipoDeDocumento());
+    private void _validationCreateUser(UserCreateDTO userDTO) {
+        _validateMinimumAge(userDTO.birthDate());
+        _validateDocument(userDTO.documentNumber(), userDTO.documentType());
     }
-    private void _validarDocumento(String documento, TipoDeDocumento tipoDeDocumento) {
-        String mensagem = String.format("O %s é inválido", tipoDeDocumento.getDescricao());
+    private void _validateDocument(String documentNumber, DocumentType documentType) {
 
-        switch (tipoDeDocumento) {
+        switch (documentType) {
             case CNPJ:
-                if (!CpfCnpjValidator.isCnpj(documento)) {
-                    throw new DocumentoInvalidoException(mensagem);
+                if (!CpfCnpjValidator.isCnpj(documentNumber)) {
+                    throw new DocumentoInvalidoException(documentType.getDescricao());
                 }
                 break;
             case CPF:
-                if (!CpfCnpjValidator.isCpf(documento)) {
-                    throw new DocumentoInvalidoException(mensagem);
+                if (!CpfCnpjValidator.isCpf(documentNumber)) {
+                    throw new DocumentoInvalidoException(documentType.getDescricao());
                 }
                 break;
             default:
-                throw new IllegalArgumentException("Tipo de documento desconhecido: " + tipoDeDocumento);
+                throw new IllegalArgumentException("Tipo de documento desconhecido: " + documentType);
         }
     }
 
-    private void _validarIdadeMinima(LocalDate dataNascimento){
-        var idade = Period.between(dataNascimento, LocalDate.now()).getYears();
+    private void _validateMinimumAge(LocalDate birthDate){
+        var age = Period.between(birthDate, LocalDate.now()).getYears();
 
-        if(idade < IDADE_MINIMA){
-            throw new IdadeMinimaException("Idade mínima inválida: a idade permitida é a partir de 12 anos.");
+        if(age < MINIMUM_AGE){
+            throw new MinimumAgeException();
         }
     }
 
-    public String gerarResetLink (String email) {
+    public String generateResetLink(String email) {
         var user = usuarioRepository
                 .findByEmail(email)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Email"));
+                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
 
         var tokenAuditoria = TokenAuditoria.builder()
                 .usuario(user)
                 .dataInicio(LocalDateTime.now())
-                .dataFim(LocalDateTime.now().plusDays(DIA_DURACAO_TOKEN))
+                .dataFim(LocalDateTime.now().plusDays(TOKEN_DURATION_IN_DAY))
                 .status(TokenStatus.UNUSED)
                 .build();
 
         var uuid =  tokenAuditoriaRepository.save(tokenAuditoria).getToken();
 
-        return String.format("localhost:8080/password/reset?token=%s",uuid);
+        return String.format(LINK_RESET,uuid);
     }
 
 
     public void resetPassword(final Usuario user, final String newPassword) {
-        user.setSenha(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(newPassword));
         usuarioRepository.save(user);
         System.out.println("Trocou a senha");
     }
