@@ -31,7 +31,6 @@ public class PasswordController {
 
     @PostMapping(ENDPOINT_RESET)
     public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
-
         if (!tokenService.isTokenValid(token)) {
             return ResponseEntity.badRequest().body(MESSAGE_BAD_REQUEST_RESET);
         }

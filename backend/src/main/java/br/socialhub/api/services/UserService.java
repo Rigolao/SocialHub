@@ -1,6 +1,6 @@
 package br.socialhub.api.services;
 
-import br.socialhub.api.dtos.FotoResponseDTO;
+import br.socialhub.api.dtos.PhotoResponseDTO;
 import br.socialhub.api.dtos.UserCreateDTO;
 import br.socialhub.api.dtos.UserResponseDTO;
 import br.socialhub.api.enums.DocumentType;
@@ -14,7 +14,7 @@ import br.socialhub.api.models.Usuario;
 import br.socialhub.api.repositories.TokenAuditoriaRepository;
 import br.socialhub.api.repositories.UsuarioRepository;
 import br.socialhub.api.utils.CpfCnpjValidator;
-import br.socialhub.api.utils.FotoUtil;
+import br.socialhub.api.utils.PhotoUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,13 +36,13 @@ public class UserService {
     private final UsuarioRepository usuarioRepository;
     private final TokenAuditoriaRepository tokenAuditoriaRepository;
     private final PasswordEncoder passwordEncoder;
-    private final FotoUtil fotoUtil;
+    private final PhotoUtil photoUtil;
 
     private static final String MIDIA_TYPE_SVG = "image/svg+xml";
     private static final int MINIMUM_AGE = 12;
     private static final long TOKEN_DURATION_IN_DAY = 1;
 
-    public Usuario createUser(UserCreateDTO userDTO) {
+    public Usuario createUser(final UserCreateDTO userDTO) {
         _validationCreateUser(userDTO);
 
         Usuario newUser = Usuario.builder()
@@ -57,24 +57,24 @@ public class UserService {
         return usuarioRepository.save(newUser);
     }
 
-    public UserResponseDTO getUser(Long id) {
+    public UserResponseDTO getUser(final Long id) {
         return findById(id)
                 .map(UserResponseDTO::new)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
     }
 
-    private Optional<Usuario> findById(Long id) {
+    private Optional<Usuario> findById(final Long id) {
         return usuarioRepository.findById(id);
     }
 
-    public FotoResponseDTO getPhoto(Long id) {
+    public PhotoResponseDTO getPhoto(final Long id) {
         return findById(id)
                 .map(Usuario::getUserPhoto)
-                .map(FotoResponseDTO::new)
-                .orElse(new FotoResponseDTO(fotoUtil.carregarFotoDefault(), MIDIA_TYPE_SVG));
+                .map(PhotoResponseDTO::new)
+                .orElse(new PhotoResponseDTO(photoUtil.carregarFotoDefault(), MIDIA_TYPE_SVG));
     }
 
-    public String uploadPhoto(Long id, MultipartFile file) throws IOException {
+    public void uploadPhoto(final Long id, final MultipartFile file) throws IOException {
         var user = findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
 
         var foto = FotoUsuario.builder()
@@ -86,15 +86,13 @@ public class UserService {
 
         user.setUserPhoto(foto);
         usuarioRepository.save(user);
-
-        return "Upload realizado com sucesso.";
     }
 
-    private void _validationCreateUser(UserCreateDTO userDTO) {
+    private void _validationCreateUser(final UserCreateDTO userDTO) {
         _validateMinimumAge(userDTO.birthDate());
         _validateDocument(userDTO.documentNumber(), userDTO.documentType());
     }
-    private void _validateDocument(String documentNumber, DocumentType documentType) {
+    private void _validateDocument(final String documentNumber, final DocumentType documentType) {
 
         switch (documentType) {
             case CNPJ:
@@ -112,7 +110,7 @@ public class UserService {
         }
     }
 
-    private void _validateMinimumAge(LocalDate birthDate){
+    private void _validateMinimumAge(final LocalDate birthDate){
         var age = Period.between(birthDate, LocalDate.now()).getYears();
 
         if(age < MINIMUM_AGE){
@@ -120,7 +118,7 @@ public class UserService {
         }
     }
 
-    public String generateResetLink(String email) {
+    public String generateResetLink(final String email) {
         var user = usuarioRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));

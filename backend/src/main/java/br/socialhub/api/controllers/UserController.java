@@ -1,6 +1,6 @@
 package br.socialhub.api.controllers;
 
-import br.socialhub.api.dtos.FotoResponseDTO;
+import br.socialhub.api.dtos.PhotoResponseDTO;
 import br.socialhub.api.dtos.UserCreateDTO;
 import br.socialhub.api.dtos.UserResponseDTO;
 import br.socialhub.api.models.Usuario;
@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import static br.socialhub.api.utils.Constantes.ENDPOINT_USERS;
+import static br.socialhub.api.utils.Constantes.MESSAGE_SUCESS_UPLOAD_PHOTO;
 
 @RequiredArgsConstructor
 @RestController
@@ -39,7 +40,7 @@ public class UserController {
 
     @GetMapping("{id}/photo")
     public ResponseEntity<byte[]> getFoto (@PathVariable Long id){
-        FotoResponseDTO fotoResponse = userService.getPhoto(id);
+        PhotoResponseDTO fotoResponse = userService.getPhoto(id);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.parseMediaType(fotoResponse.mimeType()))
@@ -48,7 +49,8 @@ public class UserController {
 
     @PostMapping("{id}/photo")
     public ResponseEntity<String> uploadFoto (@PathVariable Long id, @RequestParam("foto") MultipartFile foto) throws IOException {
-        return ResponseEntity.ok(userService.uploadPhoto(id, foto));
+        userService.uploadPhoto(id, foto);
+        return ResponseEntity.ok(MESSAGE_SUCESS_UPLOAD_PHOTO);
 
     }
 }

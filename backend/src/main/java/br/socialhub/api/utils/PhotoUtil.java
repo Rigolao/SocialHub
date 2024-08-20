@@ -13,7 +13,7 @@ import java.util.zip.Inflater;
 
 @RequiredArgsConstructor
 @Component
-public class FotoUtil {
+public class PhotoUtil {
     private final ResourceLoader resourceLoader;
     public byte[] carregarFotoDefault(){
         try {
