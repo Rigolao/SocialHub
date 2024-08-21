@@ -57,12 +57,13 @@ public class UserController {
         return ResponseEntity.ok(userService.updatePasswordUser(email, userUpdatePasswordDTO));
     }
 
-    @GetMapping("photo")
-    public ResponseEntity<byte[]> getPhoto(@RequestHeader(AUTHORIZATION) final String token,
-                                           @RequestParam @NotNull final Long id) {
+    @GetMapping("{id}/photo")
+    public ResponseEntity<?> getPhoto(@PathVariable final Long id,
+                                      @RequestParam @NotNull final String token) {
 
-        String email = jwtService.extractSubject(token.replace(BEARER, WHITESPACE));
-        userService.validateUser(email, id);
+        if (!jwtService.validateToken(token.replace(BEARER, WHITESPACE))) {
+            return ResponseEntity.badRequest().build();
+        }
 
         PhotoResponseDTO fotoResponse = userService.getPhoto(id);
 

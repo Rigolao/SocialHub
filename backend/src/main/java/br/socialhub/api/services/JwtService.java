@@ -51,4 +51,18 @@ public class JwtService {
             throw new RuntimeException("Invalid JWT token", e);
         }
     }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwt jwt = decoder.decode(token);
+            Instant now = Instant.now();
+
+            // Verifica se o token está expirado
+            return jwt.getExpiresAt() == null || !jwt.getExpiresAt().isBefore(now);
+
+        } catch (JwtException e) {
+
+            return false;
+        }
+    }
 }

@@ -40,7 +40,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(
                     auth -> auth.requestMatchers(HttpMethod.POST, "users").permitAll()
                             .requestMatchers(ENDPOINT_AUTHENTICATE, ENDPOINT_PASSWORD+"/**").permitAll()
-                            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/users/{id}/photo").permitAll()
+                            .requestMatchers("/swagger-ui/*", "/v3/api-docs/**").permitAll()
                             .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(
