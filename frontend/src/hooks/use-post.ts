@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import {MessageResponse, ResponseError} from "@/types";
+import { MessageResponse, ResponseError } from "@/types";
+import axiosClient from "@/lib/axios";
 
 interface usePostProps<Y> {
     url: string;
@@ -9,6 +9,7 @@ interface usePostProps<Y> {
     onSuccess?(data: Y): void;
     onFailure?(data: ResponseError): void;
     hideSuccessToast?: boolean;
+    getHeaders?: (data: any) => object;
 }
 
 const hasMessage = (data: any): data is MessageResponse => {
@@ -20,13 +21,16 @@ export function usePost<T, Y = undefined>({
                                               queryKey,
                                               onSuccess,
                                               onFailure,
-                                              hideSuccessToast = false
+                                              hideSuccessToast = false,
+                                              getHeaders,
                                           }: usePostProps<Y>) {
     const queryClient = useQueryClient();
 
     const mutationFn = (data: T): Promise<Y> => {
-        const promise = axios
-            .post<Y>(url, data)
+        const headers = getHeaders ? getHeaders(data) : {};
+
+        const promise = axiosClient
+            .post<Y>(url, data, { headers })
             .then(res => res.data)
             .catch(error => {
                 throw error;

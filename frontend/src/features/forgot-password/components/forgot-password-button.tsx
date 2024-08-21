@@ -26,12 +26,11 @@ export default function ForgotPasswordButton() {
     const [open, setOpen] = useState(false);
 
     const {mutate: forgotPasswordMutate, isPending} = usePost<ForgotPasswordRequest, ForgotPasswordResponse>({
-        url: '/api/esqueci-senha',
+        url: '/passwords/forgot',
         queryKey: ['esqueci-senha'],
         onSuccess: (_) => {
             setOpen(false);
         }
-
     });
 
     const form = useForm<z.infer<typeof forgotPasswordFormSchema>>({

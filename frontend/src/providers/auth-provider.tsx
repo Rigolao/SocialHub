@@ -1,19 +1,25 @@
-import React, {createContext, useContext, useEffect, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
-import {useFacebook} from "@/providers/facebook-provider.tsx";
-import {usePost} from "@/hooks/use-post.ts";
-import {LoginRequest, LoginResponse} from "@/types/login";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useFacebook } from "@/providers/facebook-provider";
+import { usePost } from "@/hooks/use-post";
+import { LoginRequest, LoginResponse } from "@/types/login";
+import {User} from "@/types/user";
+import {useGet} from "@/hooks/use-get.ts";
 
 type AuthProviderState = {
     id: number | null;
-    credential: string | null;
+    token: string | null;
+    user: User | null;
+    isLoading?: boolean;
     login: (email: string, password: string) => void;
     logout: () => void;
 }
 
 const initialState: AuthProviderState = {
     id: null,
-    credential: null,
+    token: null,
+    user: null,
+    isLoading: false,
     login: () => {},
     logout: () => {}
 }
@@ -21,22 +27,52 @@ const initialState: AuthProviderState = {
 const AuthProviderContext = createContext<AuthProviderState>(initialState);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-
-    const { mutate: loginMutate } = usePost<LoginRequest, LoginResponse>({
-        url: '/api/login',
-        queryKey: ['login'],
-        onSuccess: (data) => {
-            setId(data.id)
-            setCredential(data.token);
-            navigate('/');
-        },
-        hideSuccessToast: true
-    });
     const navigate = useNavigate();
     const location = useLocation();
-    const [id, setId] = useState<number | null>(null);
-    const [credential, setCredential] = useState<string | null>(null);
+    const [id, setId] = useState<number | null>(initialState.id);
+    const [token, setToken] = useState<string | null>(initialState.token);
+    const [user, setUser] = useState<User | null>(initialState.user);
     const { facebookResponse, facebookLogout } = useFacebook();
+
+    const getHeaders = (data: LoginRequest) => {
+        const { email, password } = data;
+        const encodedCredentials = btoa(`${email}:${password}`);
+        return {
+            Authorization: `Basic ${encodedCredentials}`,
+            "Content-Type": "application/json",
+        };
+    };
+
+    const { mutate: loginMutate, isPending } = usePost<LoginRequest, LoginResponse>({
+        url: '/authenticate',
+        queryKey: ['login'],
+        onSuccess: (data) => {
+            setId(data.id);
+            setToken(data.token);
+            navigate('/');
+        },
+        hideSuccessToast: true,
+        getHeaders,
+    });
+
+    const { isLoading } = useGet<User>({
+        url: `/users/${id}`,
+        queryKey: ['user'],
+        retry: 3,
+        enabled: token !== null,
+        hideSuccessToast: true,
+        getHeaders: () => ({
+            Authorization: `Bearer ${token}`
+        }),
+        onSuccess: (data) => {
+            setUser(data);
+        },
+        onFailure: () => {
+            setId(null);
+            setToken(null);
+            navigate('/login');
+        }
+    });
 
     const login = (email: string, password: string) => {
         loginMutate({ email, password });
@@ -48,8 +84,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 await facebookLogout();
             }
 
-            setId(null);
-            setCredential(null);
+            setToken(null);
+
             navigate('/login');
         } catch (error) {
             console.error('Erro ao tentar sair:', error);
@@ -57,22 +93,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     useEffect(() => {
-        if (credential === null
+        if (token === null
             && location.pathname !== '/login'
             && location.pathname !== '/registrar') {
             navigate('/login');
         }
-    }, [credential, location.pathname, navigate]);
+    }, [token, location.pathname, navigate]);
 
     const value = {
-        id: id,
-        credential: credential,
+        id: user?.id || id || null,
+        token: token,
+        user: user,
+        isLoading: isLoading || isPending,
         login: (email: string, password: string) => login(email, password),
         logout: logout
     }
 
     return (
-        <AuthProviderContext.Provider value={ value }>
+        <AuthProviderContext.Provider value={value}>
             {children}
         </AuthProviderContext.Provider>
     )
