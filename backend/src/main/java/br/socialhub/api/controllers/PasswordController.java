@@ -1,5 +1,6 @@
 package br.socialhub.api.controllers;
 
+import br.socialhub.api.dtos.EmailDTO;
 import br.socialhub.api.dtos.ResetPasswordDTO;
 import br.socialhub.api.services.EmailService;
 import br.socialhub.api.services.TokenService;
@@ -21,9 +22,9 @@ public class PasswordController {
     private final TokenService tokenService;
 
     @PostMapping(ENDPOINT_FORGOT)
-    public ResponseEntity<String> forgotPassword(@RequestBody String email) {
-        var token = userService.generateResetLink(email);
-        emailService.sendPasswordResetEmail(email, token);
+    public ResponseEntity<String> forgotPassword(@RequestBody EmailDTO email) {
+        var token = userService.generateResetLink(email.email());
+        emailService.sendPasswordResetEmail(email.email(), token);
 
         return ResponseEntity.ok(MESSAGE_SUCESS_FORGOT);
     }
