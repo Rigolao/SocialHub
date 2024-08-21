@@ -1,4 +1,4 @@
-export type FacebookConnectResponse = {
+export type FacebookUserResponse = {
     status: string;
     authResponse: {
         accessToken: string;

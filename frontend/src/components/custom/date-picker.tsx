@@ -1,4 +1,4 @@
-import {FormControl, FormField, FormItem, FormLabel, FormMessage, useFormField} from "@/components/ui/form.tsx";
+import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {cn} from "@/lib/utils.ts";
@@ -7,7 +7,6 @@ import {CalendarIcon} from "@radix-ui/react-icons";
 import {Calendar} from "@/components/ui/calendar.tsx";
 import {FieldValues, UseControllerProps} from "react-hook-form";
 import {ptBR} from "date-fns/locale";
-import {useEffect} from "react";
 
 interface DatePickerProps<T extends FieldValues> extends UseControllerProps<T> {
     label: string,
@@ -18,17 +17,11 @@ interface DatePickerProps<T extends FieldValues> extends UseControllerProps<T> {
 
 export default function DatePicker<T extends FieldValues>({control, name, label, disabled = false, placeholder, className}: DatePickerProps<T>) {
 
-    const { error } = useFormField();
-
-    useEffect(() => {
-        console.log(error)
-    }, [error]);
-
     return (
         <FormField
             control={control}
             name={name}
-            render={({ field }) => (
+            render={({ field, fieldState: {error} }) => (
                 <FormItem className={className}>
                     <FormLabel>{label}</FormLabel>
                     <Popover>

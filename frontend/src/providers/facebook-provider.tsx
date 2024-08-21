@@ -1,34 +1,34 @@
-import {FacebookConnectResponse} from "@/types/facebook-connect-response.ts";
 import {createContext, useContext, useState} from "react";
+import {FacebookUserResponse} from "@/types/facebook";
 
 type FacebookProviderState = {
-    facebookResponse: FacebookConnectResponse | undefined;
-    getFacebookLoginStatus: () => Promise<FacebookConnectResponse>;
-    facebookLogin: () => Promise<FacebookConnectResponse>;
-    facebookLogout: () => Promise<FacebookConnectResponse>;
+    facebookResponse: FacebookUserResponse | undefined;
+    getFacebookLoginStatus: () => Promise<FacebookUserResponse>;
+    facebookLogin: () => Promise<FacebookUserResponse>;
+    facebookLogout: () => Promise<FacebookUserResponse>;
 }
 
 const initialState: FacebookProviderState = {
     facebookResponse: undefined,
-    getFacebookLoginStatus: () => new Promise<FacebookConnectResponse>(() => {}),
-    facebookLogin: () => new Promise<FacebookConnectResponse>(() => {}),
-    facebookLogout: () => new Promise<FacebookConnectResponse>(() => {})
+    getFacebookLoginStatus: () => new Promise<FacebookUserResponse>(() => {}),
+    facebookLogin: () => new Promise<FacebookUserResponse>(() => {}),
+    facebookLogout: () => new Promise<FacebookUserResponse>(() => {})
 }
 
 const FacebookProviderContext = createContext<FacebookProviderState>(initialState);
 
 export const FacebookProvider = ({ children }: { children: React.ReactNode }) => {
 
-    const [response, setResponse] = useState<FacebookConnectResponse | undefined>(undefined);
+    const [response, setResponse] = useState<FacebookUserResponse | undefined>(undefined);
 
     const getFacebookLoginStatus = () => {
-        return new Promise<FacebookConnectResponse>((resolve, reject) => {
+        return new Promise<FacebookUserResponse>((resolve, reject) => {
             try {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error
                 window.FB.getLoginStatus((response) => {
-                    setResponse(response as FacebookConnectResponse);
-                    resolve(response as FacebookConnectResponse);
+                    setResponse(response as FacebookUserResponse);
+                    resolve(response as FacebookUserResponse);
                 });
             } catch (error) {
                 reject(error);
@@ -37,13 +37,13 @@ export const FacebookProvider = ({ children }: { children: React.ReactNode }) =>
     };
 
     const facebookLogin = () => {
-        return new Promise<FacebookConnectResponse>((resolve, reject) => {
+        return new Promise<FacebookUserResponse>((resolve, reject) => {
             try {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error
                 window.FB.login((response) => {
-                    setResponse(response as FacebookConnectResponse);
-                    resolve(response as FacebookConnectResponse);
+                    setResponse(response as FacebookUserResponse);
+                    resolve(response as FacebookUserResponse);
                 });
                 // {scope: 'public_profile,email,pages_manage_engagement,pages_manage_posts,pages_read_engagement,pages_read_user_engagement,publish_video'}
                 // TODO - Verificar como adiconar os escopos no app da meta
@@ -54,13 +54,13 @@ export const FacebookProvider = ({ children }: { children: React.ReactNode }) =>
     }
 
     const facebookLogout = () => {
-        return new Promise<FacebookConnectResponse>((resolve, reject) => {
+        return new Promise<FacebookUserResponse>((resolve, reject) => {
             try {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error
                 window.FB.logout((response) => {
-                    setResponse(response as FacebookConnectResponse);
-                    resolve(response as FacebookConnectResponse);
+                    setResponse(response as FacebookUserResponse);
+                    resolve(response as FacebookUserResponse);
                 })
             } catch (error) {
                 reject(error)

@@ -7,6 +7,8 @@ import {QueryClientProvider} from "@tanstack/react-query";
 import {Toaster} from "sonner";
 import {FacebookProvider, initFacebookSdk} from "@/providers/facebook-provider.tsx";
 import queryClient from "@/lib/query-client";
+import {BrowserRouter} from "react-router-dom";
+import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
 
 const setupMockWorker = async () => {
     const {worker} = await import("@/lib/msw/browser.ts");
@@ -22,8 +24,12 @@ initFacebookSdk().then(() => {
                 <QueryClientProvider client={queryClient}>
                     <AlertDialogProvider>
                         <FacebookProvider>
-                            <Toaster richColors closeButton />
-                            <App/>
+                            <Toaster richColors closeButton icons={{
+                                loading: <LoadingSpinner/>
+                            }}/>
+                            <BrowserRouter>
+                                <App/>
+                            </BrowserRouter>
                         </FacebookProvider>
                     </AlertDialogProvider>
                 </QueryClientProvider>
