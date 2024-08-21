@@ -5,6 +5,7 @@ import br.socialhub.api.services.EmailService;
 import br.socialhub.api.services.JwtService;
 import br.socialhub.api.services.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,8 +57,9 @@ public class UserController {
         return ResponseEntity.ok(userService.updatePasswordUser(email, userUpdatePasswordDTO));
     }
 
-    @GetMapping("{id}/photo")
-    public ResponseEntity<byte[]> getPhoto(@RequestHeader(AUTHORIZATION) final String token, @PathVariable final Long id) {
+    @GetMapping("photo")
+    public ResponseEntity<byte[]> getPhoto(@RequestHeader(AUTHORIZATION) final String token,
+                                           @RequestParam @NotNull final Long id) {
 
         String email = jwtService.extractSubject(token.replace(BEARER, WHITESPACE));
         userService.validateUser(email, id);
