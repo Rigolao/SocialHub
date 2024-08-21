@@ -1,5 +1,6 @@
 package br.socialhub.api.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -14,7 +15,7 @@ public record UserUpdateDTO (
         @Size(min = 2, max = 50, message = VALIDATION_SIZE_NAME)
         String name,
         @NotNull(message = VALIDATION_REQUIRED_BIRTH_DATE)
-        @DateTimeFormat(pattern = DATE_FORMAT_DD_MM_YYYY)
+        @JsonFormat(pattern = DATE_FORMAT_DD_MM_YYYY)
         LocalDate birthDate
 ){
 }

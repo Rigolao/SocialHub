@@ -1,6 +1,7 @@
 package br.socialhub.api.dtos;
 
 import br.socialhub.api.enums.DocumentType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,7 +18,7 @@ public record UserCreateDTO(
         String name,
 
         @NotNull(message = VALIDATION_REQUIRED_BIRTH_DATE)
-        @DateTimeFormat(pattern = DATE_FORMAT_DD_MM_YYYY)
+        @JsonFormat(pattern = DATE_FORMAT_DD_MM_YYYY)
         LocalDate birthDate,
 
         @NotBlank(message = VALIDATION_REQUIRED_DOCUMENT_NUMBER)
