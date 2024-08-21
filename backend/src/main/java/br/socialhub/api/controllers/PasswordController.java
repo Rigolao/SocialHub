@@ -35,7 +35,7 @@ public class PasswordController {
         }
 
         var user = tokenService.getUserByToken(resetPasswordDTO.token());
-        userService.resetPassword(user, resetPasswordDTO.newPassword());
+        userService.resetPassword(user, resetPasswordDTO);
         tokenService.invalidateToken(resetPasswordDTO.token());
 
         return ResponseEntity.ok(MESSAGE_SUCESS_RESET);

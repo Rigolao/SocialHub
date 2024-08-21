@@ -131,10 +131,10 @@ public class UserService {
         return String.format(LINK_RESET, uuid);
     }
 
-    public void resetPassword(final Usuario user, final String newPassword) {
-        user.setPassword(passwordEncoder.encode(newPassword));
+    public void resetPassword(final Usuario user, final ResetPasswordDTO resetPasswordDTO) {
+        _validateConfirmPassword(resetPasswordDTO.newPassword(), resetPasswordDTO.confirmPassword());
+        user.setPassword(passwordEncoder.encode(resetPasswordDTO.newPassword()));
         usuarioRepository.save(user);
-        System.out.println("Trocou a senha");
     }
 
     public UserResponseDTO updateUser(final String email, UserUpdateDTO userUpdateDTO) {

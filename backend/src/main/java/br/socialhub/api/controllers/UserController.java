@@ -37,7 +37,7 @@ public class UserController {
 
         var newUser = userService.createUser(userCreateDTO);
         var uri = URI.create("/users/" + newUser.id());
-       // emailService.sendWelcomeEmail(newUser.email(), newUser.name());
+        emailService.sendWelcomeEmail(newUser.email(), newUser.name());
         return ResponseEntity.created(uri).body(newUser);
     }
 
