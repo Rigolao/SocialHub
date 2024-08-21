@@ -1,7 +1,7 @@
 export type RegisterRequest = {
     name: string,
     documentType: string,
-    document: string,
+    documentNumber: string,
     email: string,
     birthDate: string,
     password: string,

@@ -34,7 +34,7 @@ const birthDateSchema = z.string().refine((value) => {
 export const registerFormSchema = z.object({
     name: z.string().min(6, 'Nome deve ter no mínimo 6 caracteres'),
     documentType: z.string().min(1, 'Tipo de documento é obrigatório'),
-    document: z.string().min(1, 'Documento deve ser preenchido'),
+    documentNumber: z.string().min(1, 'Documento deve ser preenchido'),
     email: z.string().email('Email inválido'),
     birthDate: birthDateSchema,
     password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
@@ -108,7 +108,7 @@ export default function RegisterForm() {
         defaultValues: {
             name: '',
             documentType: 'CPF',
-            document: '',
+            documentNumber: '',
             email: '',
             birthDate: '',
             password: '',
@@ -122,7 +122,7 @@ export default function RegisterForm() {
     });
 
     const { mutate: registerMutate, isPending } = usePost<RegisterRequest, MessageResponse>({
-        url: '/api/registrar',
+        url: '/users',
         queryKey: ['registrar'],
         onSuccess: (_) => navigate('/login'),
     })
@@ -140,7 +140,7 @@ export default function RegisterForm() {
             expirationDate: values.expirationDate,
             cvv: values.cvv,
             documentType: values.documentType,
-            document: values.document
+            documentNumber: values.documentNumber
         })
     };
 
@@ -150,7 +150,7 @@ export default function RegisterForm() {
             return;
         }
 
-        if (form.formState.errors.cvv || form.formState.errors.documentType || form.formState.errors.document || form.formState.errors.cardNumber || form.formState.errors.expirationDate || form.formState.errors.cardName) {
+        if (form.formState.errors.cvv || form.formState.errors.documentType || form.formState.errors.documentNumber || form.formState.errors.cardNumber || form.formState.errors.expirationDate || form.formState.errors.cardName) {
             setActiveTab('pagamento');
             return;
         }
