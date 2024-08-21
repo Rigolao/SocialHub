@@ -1,14 +1,13 @@
 package br.socialhub.api.controllers;
 
+import br.socialhub.api.dtos.ResetPasswordDTO;
 import br.socialhub.api.services.EmailService;
 import br.socialhub.api.services.TokenService;
 import br.socialhub.api.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static br.socialhub.api.utils.Constantes.*;
 
@@ -22,7 +21,7 @@ public class PasswordController {
     private final TokenService tokenService;
 
     @PostMapping(ENDPOINT_FORGOT)
-    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+    public ResponseEntity<String> forgotPassword(@RequestBody String email) {
         var token = userService.generateResetLink(email);
         emailService.sendPasswordResetEmail(email, token);
 
@@ -30,14 +29,14 @@ public class PasswordController {
     }
 
     @PostMapping(ENDPOINT_RESET)
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
-        if (!tokenService.isTokenValid(token)) {
+    public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordDTO resetPasswordDTO) {
+        if (!tokenService.isTokenValid(resetPasswordDTO.token())) {
             return ResponseEntity.badRequest().body(MESSAGE_BAD_REQUEST_RESET);
         }
 
-        var user = tokenService.getUserByToken(token);
-        userService.resetPassword(user, newPassword);
-        tokenService.invalidateToken(token);
+        var user = tokenService.getUserByToken(resetPasswordDTO.token());
+        userService.resetPassword(user, resetPasswordDTO.newPassword());
+        tokenService.invalidateToken(resetPasswordDTO.token());
 
         return ResponseEntity.ok(MESSAGE_SUCESS_RESET);
     }
