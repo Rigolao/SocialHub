@@ -19,5 +19,5 @@ public class TipoParticipante {
     private Long id;
 
     @Column(name = "NOME", length = 45, nullable = false)
-    private String nome;
+    private String name;
 }

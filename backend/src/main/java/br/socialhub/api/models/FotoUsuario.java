@@ -1,6 +1,6 @@
 package br.socialhub.api.models;
 
-import br.socialhub.api.utils.FotoUtil;
+import br.socialhub.api.utils.PhotoUtil;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,10 +32,10 @@ public class FotoUsuario {
     private byte[] arquivo;
 
     public void setArquivo(byte[] arquivo) {
-        this.arquivo = FotoUtil.compressImage(arquivo);
+        this.arquivo = PhotoUtil.compressImage(arquivo);
     }
 
     public byte[] getArquivo() {
-        return FotoUtil.decompressImage(arquivo);
+        return PhotoUtil.decompressImage(arquivo);
     }
 }

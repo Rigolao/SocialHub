@@ -1,6 +1,7 @@
 package br.socialhub.api.services;
 
-import br.socialhub.api.exceptions.IdadeMinimaException;
+import br.socialhub.api.dtos.UserResponseDTO;
+import br.socialhub.api.exceptions.MinimumAgeException;
 import br.socialhub.api.models.Usuario;
 import br.socialhub.api.repositories.UsuarioRepository;
 import org.junit.jupiter.api.Test;
@@ -11,9 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static br.socialhub.api.common.UserConstant.*;
-import static org.assertj.core.api.Assertions.*;
-
-import static org.mockito.Mockito.doThrow;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,7 +33,7 @@ public class UserServiceTest {
         when(usuarioRepository.save(USUARIO)).thenReturn(USUARIO);
         when(passwordEncoder.encode(SENHA_DEFAULT)).thenReturn(SENHA_DEFAULT);
 
-        Usuario sut = userService.createUser(USUARIO_CREATED);
+        UserResponseDTO sut = userService.createUser(USUARIO_CREATED);
 
         assertThat(sut).isEqualTo(USUARIO);
     }
@@ -41,7 +41,7 @@ public class UserServiceTest {
     @Test
     public void createUser_WithInvalidData_ThrowsException(){
         assertThatThrownBy(() -> userService.createUser(INVALID_USUARIO_CREATED))
-                .isInstanceOf(IdadeMinimaException.class) // Ou a exceção específica esperada
+                .isInstanceOf(MinimumAgeException.class) // Ou a exceção específica esperada
                 .hasMessageContaining("Idade mínima inválida: a idade permitida é a partir de 12 anos.");
     }
 }

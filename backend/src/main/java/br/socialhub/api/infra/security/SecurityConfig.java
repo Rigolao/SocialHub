@@ -1,4 +1,4 @@
-package br.socialhub.api.infra.seguranca;
+package br.socialhub.api.infra.security;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -22,6 +22,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
+import static br.socialhub.api.utils.Constantes.*;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -34,10 +36,10 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-            .cors(AbstractHttpConfigurer::disable)
+            .cors(Customizer.withDefaults())
             .authorizeHttpRequests(
                     auth -> auth.requestMatchers(HttpMethod.POST, "users").permitAll()
-                            .requestMatchers("authenticate", "password/**").permitAll()
+                            .requestMatchers(ENDPOINT_AUTHENTICATE, ENDPOINT_PASSWORD+"/**", ENDPOINT_SWAGGER).permitAll()
                             .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(
@@ -46,6 +48,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     JwtDecoder jwtDecoder() {

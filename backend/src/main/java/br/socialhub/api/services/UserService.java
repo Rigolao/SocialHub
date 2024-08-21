@@ -1,20 +1,16 @@
 package br.socialhub.api.services;
 
-import br.socialhub.api.dtos.FotoResponseDTO;
-import br.socialhub.api.dtos.UserCreateDTO;
-import br.socialhub.api.dtos.UserResponseDTO;
-import br.socialhub.api.enums.TipoDeDocumento;
+import br.socialhub.api.dtos.*;
+import br.socialhub.api.enums.DocumentType;
 import br.socialhub.api.enums.TokenStatus;
-import br.socialhub.api.exceptions.DocumentoInvalidoException;
-import br.socialhub.api.exceptions.IdadeMinimaException;
-import br.socialhub.api.exceptions.RecursoNaoEncontradoException;
+import br.socialhub.api.exceptions.*;
 import br.socialhub.api.models.FotoUsuario;
 import br.socialhub.api.models.TokenAuditoria;
 import br.socialhub.api.models.Usuario;
 import br.socialhub.api.repositories.TokenAuditoriaRepository;
 import br.socialhub.api.repositories.UsuarioRepository;
 import br.socialhub.api.utils.CpfCnpjValidator;
-import br.socialhub.api.utils.FotoUtil;
+import br.socialhub.api.utils.PhotoUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,8 +20,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+
+import static br.socialhub.api.utils.Constantes.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,46 +32,52 @@ public class UserService {
     private final UsuarioRepository usuarioRepository;
     private final TokenAuditoriaRepository tokenAuditoriaRepository;
     private final PasswordEncoder passwordEncoder;
-    private final FotoUtil fotoUtil;
+    private final PhotoUtil photoUtil;
 
     private static final String MIDIA_TYPE_SVG = "image/svg+xml";
-    private static final int IDADE_MINIMA = 12;
-    private static final long DIA_DURACAO_TOKEN = 1;
+    private static final int MINIMUM_AGE = 12;
+    private static final long TOKEN_DURATION_IN_DAY = 1;
 
-    public Usuario createUser(UserCreateDTO userDTO) {
-        _validarCreateUser(userDTO);
+    public UserResponseDTO createUser(final UserCreateDTO userDTO) {
+        _validationCreateUser(userDTO);
 
         Usuario newUser = Usuario.builder()
-                .nome(userDTO.nome())
+                .name(userDTO.name())
                 .email(userDTO.email())
-                .senha(passwordEncoder.encode(userDTO.senha()))
-                .dataNascimento(userDTO.dataNascimento())
-                .tipoDocumento(userDTO.tipoDeDocumento())
-                .numeroDocumento(userDTO.numeroDocumento())
+                .password(passwordEncoder.encode(userDTO.password()))
+                .birthDate(userDTO.birthDate())
+                .documentType(userDTO.documentType())
+                .documentNumber(userDTO.documentNumber())
                 .build();
 
-        return usuarioRepository.save(newUser);
+        return new UserResponseDTO(usuarioRepository.save(newUser));
     }
 
-    public UserResponseDTO getUser(Long id) {
+    public UserResponseDTO getUser(final Long id) {
         return findById(id)
                 .map(UserResponseDTO::new)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
     }
 
-    private Optional<Usuario> findById(Long id) {
+    private Optional<Usuario> findById(final Long id) {
         return usuarioRepository.findById(id);
     }
 
-    public FotoResponseDTO getFoto(Long id) {
-        return findById(id)
-                .map(Usuario::getFotoUsuario)
-                .map(FotoResponseDTO::new)
-                .orElse(new FotoResponseDTO(fotoUtil.carregarFotoDefault(), MIDIA_TYPE_SVG));
+    public Usuario findByEmail(final String email) {
+        return usuarioRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
     }
 
-    public String uploadFoto(Long id, MultipartFile file) throws IOException {
-        var user = findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+    public PhotoResponseDTO getPhoto(final Long id) {
+        return findById(id)
+                .map(Usuario::getUserPhoto)
+                .map(PhotoResponseDTO::new)
+                .orElse(new PhotoResponseDTO(photoUtil.carregarFotoDefault(), MIDIA_TYPE_SVG));
+    }
+
+    public void uploadPhoto(final Long id, final MultipartFile file) throws IOException {
+        var user = findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
 
         var foto = FotoUsuario.builder()
                 .nomeArquivo(file.getOriginalFilename())
@@ -82,64 +86,107 @@ public class UserService {
                 .usuario(user)
                 .build();
 
-        user.setFotoUsuario(foto);
+        user.setUserPhoto(foto);
         usuarioRepository.save(user);
-
-        return "Upload realizado com sucesso.";
     }
 
-    private void _validarCreateUser(UserCreateDTO userDTO) {
-        _validarIdadeMinima(userDTO.dataNascimento());
-        _validarDocumento(userDTO.numeroDocumento(), userDTO.tipoDeDocumento());
-    }
-    private void _validarDocumento(String documento, TipoDeDocumento tipoDeDocumento) {
-        String mensagem = String.format("O %s é inválido", tipoDeDocumento.getDescricao());
-
-        switch (tipoDeDocumento) {
-            case CNPJ:
-                if (!CpfCnpjValidator.isCnpj(documento)) {
-                    throw new DocumentoInvalidoException(mensagem);
-                }
-                break;
-            case CPF:
-                if (!CpfCnpjValidator.isCpf(documento)) {
-                    throw new DocumentoInvalidoException(mensagem);
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Tipo de documento desconhecido: " + tipoDeDocumento);
-        }
+    private void _validationCreateUser(final UserCreateDTO userDTO) {
+        _validateMinimumAge(userDTO.birthDate());
+        _validateDocument(userDTO.documentNumber(), userDTO.documentType());
     }
 
-    private void _validarIdadeMinima(LocalDate dataNascimento){
-        var idade = Period.between(dataNascimento, LocalDate.now()).getYears();
 
-        if(idade < IDADE_MINIMA){
-            throw new IdadeMinimaException("Idade mínima inválida: a idade permitida é a partir de 12 anos.");
-        }
-    }
-
-    public String gerarResetLink (String email) {
-        var user = usuarioRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Email"));
+    public String generateResetLink(final String email) {
+        var user = findByEmail(email);
 
         var tokenAuditoria = TokenAuditoria.builder()
                 .usuario(user)
                 .dataInicio(LocalDateTime.now())
-                .dataFim(LocalDateTime.now().plusDays(DIA_DURACAO_TOKEN))
+                .dataFim(LocalDateTime.now().plusDays(TOKEN_DURATION_IN_DAY))
                 .status(TokenStatus.UNUSED)
                 .build();
 
-        var uuid =  tokenAuditoriaRepository.save(tokenAuditoria).getToken();
+        var uuid = tokenAuditoriaRepository.save(tokenAuditoria).getToken();
 
-        return String.format("localhost:8080/password/reset?token=%s",uuid);
+        return String.format(LINK_RESET, uuid);
     }
 
-
     public void resetPassword(final Usuario user, final String newPassword) {
-        user.setSenha(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(newPassword));
         usuarioRepository.save(user);
         System.out.println("Trocou a senha");
+    }
+
+    public UserResponseDTO updateUser(final String email, UserUpdateDTO userUpdateDTO) {
+        _validateMinimumAge(userUpdateDTO.birthDate());
+
+        var user = findByEmail(email);
+
+        user.setName(userUpdateDTO.name());
+        user.setBirthDate(userUpdateDTO.birthDate());
+
+        return new UserResponseDTO(usuarioRepository.save(user));
+    }
+
+    public String updatePasswordUser(String email, UserUpdatePasswordDTO userUpdatePasswordDTO) {
+        _validateConfirmPassword(userUpdatePasswordDTO.newPassword(), userUpdatePasswordDTO.confirmPassword());
+
+        var user = findByEmail(email);
+
+        _validateOldPassword(userUpdatePasswordDTO.oldPassword(), user.getPassword());
+
+        String newPasswordEncode = passwordEncoder.encode(userUpdatePasswordDTO.newPassword());
+        user.setPassword(newPasswordEncode);
+
+        usuarioRepository.save(user);
+
+        return "Sucesso";
+    }
+
+    private void _validateConfirmPassword(final String password, final String confirmPassword) {
+        if (!Objects.equals(password, confirmPassword)) {
+            throw new PasswordMismatchException();
+        }
+    }
+
+    private void _validateOldPassword(final String oldPassword, final String storedPassword) {
+        if (!passwordEncoder.matches(oldPassword, storedPassword)) {
+            throw new PasswordMismatchException();
+        }
+    }
+
+    private void _validateDocument(final String documentNumber, final DocumentType documentType) {
+
+        switch (documentType) {
+            case CNPJ:
+                if (!CpfCnpjValidator.isCnpj(documentNumber)) {
+                    throw new InvalidDocumentException(documentType.getDescricao());
+                }
+                break;
+            case CPF:
+                if (!CpfCnpjValidator.isCpf(documentNumber)) {
+                    throw new InvalidDocumentException(documentType.getDescricao());
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Tipo de documento desconhecido: " + documentType);
+        }
+    }
+
+    private void _validateMinimumAge(final LocalDate birthDate) {
+        var age = Period.between(birthDate, LocalDate.now()).getYears();
+
+        if (age < MINIMUM_AGE) {
+            throw new MinimumAgeException();
+        }
+    }
+
+    public void validateUser(final String email, final Long id) {
+        var user = findByEmail(email);
+
+        if (!Objects.equals(user.getId(), id)) {
+            throw new UnauthorizedAccessException(EXCEPTION_UNAUTHORIZED_ACESS_PASSWORD);
+        }
+
     }
 }

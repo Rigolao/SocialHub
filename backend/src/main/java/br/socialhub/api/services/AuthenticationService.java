@@ -12,8 +12,6 @@ public class AuthenticationService {
     }
 
     public String authenticate(Authentication authentication){
-        var token =  jwtService.generateToken(authentication);
-        System.out.println(token);
-        return token;
+        return jwtService.generateToken(authentication);
     }
 }

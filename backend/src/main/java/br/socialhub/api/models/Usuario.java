@@ -1,6 +1,6 @@
 package br.socialhub.api.models;
 
-import br.socialhub.api.enums.TipoDeDocumento;
+import br.socialhub.api.enums.DocumentType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -22,27 +22,27 @@ public class Usuario {
     private Long id;
 
     @Column(name = "NOME", length = 50)
-    private String nome;
+    private String name;
 
 //    @Column(name = "SEXO")
 //    private String sexo;
 
     @Column(name = "NUMDOC", length = 50, nullable = false, unique = true)
-    private String numeroDocumento;
+    private String documentNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TPDOC", length = 4, nullable = false)
-    private TipoDeDocumento tipoDocumento;
+    private DocumentType documentType;
 
     @Column(name = "EMAIL", length = 100, nullable = false, unique = true)
     @Email
     private String email;
 
     @Column(name = "SENHA", length = 200, nullable = false)
-    private String senha;
+    private String password;
 
     @Column(name = "DATA_NASCIMENTO")
-    private LocalDate dataNascimento;
+    private LocalDate birthDate;
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<PlanoUsuario> planosUsuarios;
@@ -51,16 +51,16 @@ public class Usuario {
     private List<Participante> participantes;
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private FotoUsuario fotoUsuario;
+    private FotoUsuario userPhoto;
 
 
-    public Usuario(Long id, String nome, String numeroDocumento, TipoDeDocumento tipoDeDocumento, String email, String senha, LocalDate dataNascimento){
+    public Usuario(Long id, String name, String documentNumber, DocumentType documentType, String email, String password, LocalDate dataNascimento){
         this.id = id;
-        this.nome = nome;
-        this.numeroDocumento = numeroDocumento;
-        this.tipoDocumento = tipoDeDocumento;
+        this.name = name;
+        this.documentNumber = documentNumber;
+        this.documentType = documentType;
         this.email = email;
-        this.senha = senha;
-        this.dataNascimento = dataNascimento;
+        this.password = password;
+        this.birthDate = dataNascimento;
     }
 }

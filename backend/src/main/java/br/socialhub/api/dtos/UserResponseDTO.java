@@ -1,29 +1,31 @@
 package br.socialhub.api.dtos;
 
-import br.socialhub.api.enums.TipoDeDocumento;
+import br.socialhub.api.enums.DocumentType;
 import br.socialhub.api.models.Usuario;
 
 import java.time.LocalDate;
 
+import static br.socialhub.api.utils.Constantes.LINK_URL_PHOTO;
+
 public record UserResponseDTO(
         Long id,
-        String nome,
+        String name,
         String email,
-        LocalDate dataNascimento,
-        String numeroDocumento,
-        TipoDeDocumento tipoDocumento,
-        String url_foto
+        LocalDate birthDate,
+        String documentNumber,
+        DocumentType documentType,
+        String url_photo
 ) {
 
     public UserResponseDTO(Usuario usuario) {
         this(
                 usuario.getId(),
-                usuario.getNome(),
+                usuario.getName(),
                 usuario.getEmail(),
-                usuario.getDataNascimento(),
-                usuario.getNumeroDocumento(),
-                usuario.getTipoDocumento(),
-                String.format("http://localhost:8080/users/%s/foto", usuario.getId())
+                usuario.getBirthDate(),
+                usuario.getDocumentNumber(),
+                usuario.getDocumentType(),
+                String.format(LINK_URL_PHOTO, usuario.getId())
         );
     }
 }

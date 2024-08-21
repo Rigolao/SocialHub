@@ -1,9 +1,7 @@
 package br.socialhub.api.handlers;
 
 import br.socialhub.api.dtos.ErroDTO;
-import br.socialhub.api.exceptions.DocumentoInvalidoException;
-import br.socialhub.api.exceptions.IdadeMinimaException;
-import br.socialhub.api.exceptions.RecursoNaoEncontradoException;
+import br.socialhub.api.exceptions.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -21,22 +19,35 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleMethodArgumentNotValid(ex, headers, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<ErroDTO> handleRecursoNaoEncontrado (RecursoNaoEncontradoException e){
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErroDTO> handleResourceNotFoundException (ResourceNotFoundException e){
         ErroDTO erro = new ErroDTO(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<ErroDTO> handleIdadeMinima (IdadeMinimaException e){
+    @ExceptionHandler(MinimumAgeException.class)
+    public ResponseEntity<ErroDTO> handleMinimumAge (MinimumAgeException e){
         ErroDTO erro = new ErroDTO(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
 
-    @ExceptionHandler(DocumentoInvalidoException.class)
-    public ResponseEntity<ErroDTO> handleDoncumentoInvalido (DocumentoInvalidoException e){
+    @ExceptionHandler(InvalidDocumentException.class)
+    public ResponseEntity<ErroDTO> handleDoncumentoInvalido (InvalidDocumentException e){
         ErroDTO erro = new ErroDTO(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
+
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ErroDTO> handlePasswordMismatchException(PasswordMismatchException e){
+        ErroDTO erro = new ErroDTO(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<ErroDTO> handleUnauthorizedAccessException(UnauthorizedAccessException e){
+        ErroDTO erro = new ErroDTO(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
+    }
+
 
 }
