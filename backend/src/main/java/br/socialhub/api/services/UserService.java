@@ -1,13 +1,9 @@
 package br.socialhub.api.services;
 
-import br.socialhub.api.dtos.PhotoResponseDTO;
-import br.socialhub.api.dtos.UserCreateDTO;
-import br.socialhub.api.dtos.UserResponseDTO;
+import br.socialhub.api.dtos.*;
 import br.socialhub.api.enums.DocumentType;
 import br.socialhub.api.enums.TokenStatus;
-import br.socialhub.api.exceptions.InvalidDocumentException;
-import br.socialhub.api.exceptions.MinimumAgeException;
-import br.socialhub.api.exceptions.ResourceNotFoundException;
+import br.socialhub.api.exceptions.*;
 import br.socialhub.api.models.FotoUsuario;
 import br.socialhub.api.models.TokenAuditoria;
 import br.socialhub.api.models.Usuario;
@@ -24,10 +20,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.Objects;
 import java.util.Optional;
 
-import static br.socialhub.api.utils.Constantes.LINK_RESET;
-import static br.socialhub.api.utils.Constantes.RESOURCE_USER;
+import static br.socialhub.api.utils.Constantes.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +38,7 @@ public class UserService {
     private static final int MINIMUM_AGE = 12;
     private static final long TOKEN_DURATION_IN_DAY = 1;
 
-    public Usuario createUser(final UserCreateDTO userDTO) {
+    public UserResponseDTO createUser(final UserCreateDTO userDTO) {
         _validationCreateUser(userDTO);
 
         Usuario newUser = Usuario.builder()
@@ -54,7 +50,7 @@ public class UserService {
                 .documentNumber(userDTO.documentNumber())
                 .build();
 
-        return usuarioRepository.save(newUser);
+        return new UserResponseDTO(usuarioRepository.save(newUser));
     }
 
     public UserResponseDTO getUser(final Long id) {
@@ -65,6 +61,12 @@ public class UserService {
 
     private Optional<Usuario> findById(final Long id) {
         return usuarioRepository.findById(id);
+    }
+
+    public Usuario findByEmail(final String email) {
+        return usuarioRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
     }
 
     public PhotoResponseDTO getPhoto(final Long id) {
@@ -92,6 +94,67 @@ public class UserService {
         _validateMinimumAge(userDTO.birthDate());
         _validateDocument(userDTO.documentNumber(), userDTO.documentType());
     }
+
+
+    public String generateResetLink(final String email) {
+        var user = findByEmail(email);
+
+        var tokenAuditoria = TokenAuditoria.builder()
+                .usuario(user)
+                .dataInicio(LocalDateTime.now())
+                .dataFim(LocalDateTime.now().plusDays(TOKEN_DURATION_IN_DAY))
+                .status(TokenStatus.UNUSED)
+                .build();
+
+        var uuid = tokenAuditoriaRepository.save(tokenAuditoria).getToken();
+
+        return String.format(LINK_RESET, uuid);
+    }
+
+    public void resetPassword(final Usuario user, final String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        usuarioRepository.save(user);
+        System.out.println("Trocou a senha");
+    }
+
+    public UserResponseDTO updateUser(final String email, UserUpdateDTO userUpdateDTO) {
+        _validateMinimumAge(userUpdateDTO.birthDate());
+
+        var user = findByEmail(email);
+
+        user.setName(userUpdateDTO.name());
+        user.setBirthDate(userUpdateDTO.birthDate());
+
+        return new UserResponseDTO(usuarioRepository.save(user));
+    }
+
+    public String updatePasswordUser(String email, UserUpdatePasswordDTO userUpdatePasswordDTO) {
+        _validateConfirmPassword(userUpdatePasswordDTO.newPassword(), userUpdatePasswordDTO.confirmPassword());
+
+        var user = findByEmail(email);
+
+        _validateOldPassword(userUpdatePasswordDTO.oldPassword(), user.getPassword());
+
+        String newPasswordEncode = passwordEncoder.encode(userUpdatePasswordDTO.newPassword());
+        user.setPassword(newPasswordEncode);
+
+        usuarioRepository.save(user);
+
+        return "Sucesso";
+    }
+
+    private void _validateConfirmPassword(final String password, final String confirmPassword) {
+        if (!Objects.equals(password, confirmPassword)) {
+            throw new PasswordMismatchException();
+        }
+    }
+
+    private void _validateOldPassword(final String oldPassword, final String storedPassword) {
+        if (!passwordEncoder.matches(oldPassword, storedPassword)) {
+            throw new PasswordMismatchException();
+        }
+    }
+
     private void _validateDocument(final String documentNumber, final DocumentType documentType) {
 
         switch (documentType) {
@@ -110,35 +173,20 @@ public class UserService {
         }
     }
 
-    private void _validateMinimumAge(final LocalDate birthDate){
+    private void _validateMinimumAge(final LocalDate birthDate) {
         var age = Period.between(birthDate, LocalDate.now()).getYears();
 
-        if(age < MINIMUM_AGE){
+        if (age < MINIMUM_AGE) {
             throw new MinimumAgeException();
         }
     }
 
-    public String generateResetLink(final String email) {
-        var user = usuarioRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
+    public void validateUser(final String email, final Long id) {
+        var user = findByEmail(email);
 
-        var tokenAuditoria = TokenAuditoria.builder()
-                .usuario(user)
-                .dataInicio(LocalDateTime.now())
-                .dataFim(LocalDateTime.now().plusDays(TOKEN_DURATION_IN_DAY))
-                .status(TokenStatus.UNUSED)
-                .build();
+        if (!Objects.equals(user.getId(), id)) {
+            throw new UnauthorizedAccessException(EXCEPTION_UNAUTHORIZED_ACESS_PASSWORD);
+        }
 
-        var uuid =  tokenAuditoriaRepository.save(tokenAuditoria).getToken();
-
-        return String.format(LINK_RESET,uuid);
-    }
-
-
-    public void resetPassword(final Usuario user, final String newPassword) {
-        user.setPassword(passwordEncoder.encode(newPassword));
-        usuarioRepository.save(user);
-        System.out.println("Trocou a senha");
     }
 }

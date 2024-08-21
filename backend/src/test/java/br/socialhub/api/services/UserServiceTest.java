@@ -1,5 +1,6 @@
 package br.socialhub.api.services;
 
+import br.socialhub.api.dtos.UserResponseDTO;
 import br.socialhub.api.exceptions.MinimumAgeException;
 import br.socialhub.api.models.Usuario;
 import br.socialhub.api.repositories.UsuarioRepository;
@@ -32,7 +33,7 @@ public class UserServiceTest {
         when(usuarioRepository.save(USUARIO)).thenReturn(USUARIO);
         when(passwordEncoder.encode(SENHA_DEFAULT)).thenReturn(SENHA_DEFAULT);
 
-        Usuario sut = userService.createUser(USUARIO_CREATED);
+        UserResponseDTO sut = userService.createUser(USUARIO_CREATED);
 
         assertThat(sut).isEqualTo(USUARIO);
     }

@@ -2,23 +2,24 @@ package br.socialhub.api.services;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
 
+import static br.socialhub.api.utils.Constantes.WHITESPACE;
+
 
 @Service
 public class JwtService {
     private final JwtEncoder encoder;
-    private static final String WHITESPACE = " ";
+    private final JwtDecoder decoder;
     private static final String ISSUER = "socialhub";
 
-    public JwtService(JwtEncoder encoder) {
+    public JwtService(JwtEncoder encoder, JwtDecoder decoder) {
         this.encoder = encoder;
+        this.decoder = decoder;
     }
 
     public String generateToken(Authentication authentication){
@@ -39,5 +40,15 @@ public class JwtService {
 
         return encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
+    }
+
+    public String extractSubject(String token) {
+        try {
+            Jwt jwt = decoder.decode(token);
+            return jwt.getSubject();
+        } catch (JwtException e) {
+            // Trate a exceção conforme necessário
+            throw new RuntimeException("Invalid JWT token", e);
+        }
     }
 }
