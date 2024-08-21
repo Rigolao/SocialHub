@@ -56,12 +56,12 @@ export default function BasicDataTab({form}: BasicDataTabProps) {
                         <DoubleButton
                             leftLabel="CPF"
                             leftOnClick={() => {
-                                form.setValue('documentNumber', '');
+                                form.setValue('document', '');
                                 form.setValue('documentType', 'CPF')
                             }}
                             rightLabel="CNPJ"
                             rightOnClick={() => {
-                                form.setValue('documentNumber', '');
+                                form.setValue('document', '');
                                 form.setValue('documentType', 'CNPJ')
                             }}
                             startClicked={form.watch('documentType') === 'CPF' ? 'left' : 'right'}
@@ -69,19 +69,19 @@ export default function BasicDataTab({form}: BasicDataTabProps) {
 
                         {form.watch('documentType') === 'CPF' ? (
                             <CPFFormField
-                                name={'documentNumber'}
+                                name={'document'}
                                 control={form.control}
                                 className="w-full"/>
                         ) : (
                             <CNPJFormField
-                                name={'documentNumber'}
+                                name={'document'}
                                 control={form.control}
                                 className="w-full"/>
                         )}
                     </div>
                     <FormErrorMessage
-                        visible={!!form.formState.errors.documentNumber?.message}
-                        body={form.formState.errors.documentNumber?.message} />
+                        visible={!!form.formState.errors.document?.message}
+                        body={form.formState.errors.document?.message} />
                 </div>
 
                 <div className="flex gap-2">

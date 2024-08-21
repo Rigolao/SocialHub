@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
-import axiosClient from "@/lib/axios";
+import axios from "axios";
 
 interface useGetProps<T> {
     url: string;
@@ -10,20 +10,17 @@ interface useGetProps<T> {
     hideSuccessToast?: boolean;
     retry?: boolean | number;
     enabled?: boolean;
-    getHeaders?: () => object;
 }
 
-export function useGet<T>({ url, queryKey, onSuccess, onFailure, hideSuccessToast, retry = false, enabled = true, getHeaders }: useGetProps<T>) {
+export function useGet<T>({ url, queryKey, onSuccess, onFailure, hideSuccessToast, retry = false, enabled = true }: useGetProps<T>) {
 
     const queryFn = async () => {
-        const headers = getHeaders ? getHeaders() : {};
-
         const [ _, ...params] = queryKey;
 
         const urlWithParams = buildUrlWithParams(url, params);
 
-        const promise = axiosClient
-            .get<T>(urlWithParams, { headers })
+        const promise = axios
+            .get<T>(urlWithParams)
             .then(res => {
                 onSuccess && onSuccess(res.data);
 

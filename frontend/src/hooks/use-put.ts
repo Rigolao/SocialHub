@@ -1,7 +1,7 @@
 import {toast} from "sonner";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
+import axios from "axios";
 import {ResponseError} from "@/types";
-import axiosClient from "@/lib/axios";
 
 interface usePutProps<Y> {
     url: string;
@@ -15,7 +15,7 @@ export function usePut<T, Y = undefined>({url, queryKey, onSuccess, onFailure, h
     const queryClient = useQueryClient();
 
     const mutationFn = (data: T): Promise<Y> => {
-        const promise = axiosClient
+        const promise = axios
             .put<Y>(url, data)
             .then(res => res.data);
         processToast(promise);

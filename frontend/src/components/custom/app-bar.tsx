@@ -9,11 +9,20 @@ import CustomButton from "@/components/custom/custom-button.tsx";
 import ModeToggle from "@/components/ui/mode-toggle.tsx";
 import {useAlertDialog} from "@/providers/alert-dialog-provider.tsx";
 import {useAuth} from "@/providers/auth-provider.tsx";
+import {useGet} from "@/hooks/use-get.ts";
+import {UserAppBarInfo} from "@/types/user";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
 
 export function AppBar() {
 
-    const { logout, token, user, isLoading} = useAuth();
+    const { logout, id } = useAuth();
+    const { data, isLoading } = useGet<UserAppBarInfo>({
+        url: `/api/user/photo/${id}`,
+        queryKey: ['user-photo'],
+        hideSuccessToast: true,
+        retry: true,
+        enabled: id !== null,
+    });
     const { showDialog } = useAlertDialog();
 
     const sair = () => {
@@ -45,15 +54,15 @@ export function AppBar() {
                     <div className="flex justify-between">
                         <div className="flex items-center gap-2">
                             <Avatar>
-                                {!user?.url_photo || isLoading ? (
+                                {!data || isLoading ? (
                                     <AvatarFallback>
                                         <LoadingSpinner />
                                     </AvatarFallback>
                                 ) : (
-                                    <AvatarImage src={`${user.url_photo}?token=${token}&id=${user.id}`}/>
+                                    <AvatarImage src={data.photo}/>
                                 )}
                             </Avatar>
-                            <div className="font-semibold tetx-lg">{!user || isLoading ? 'Carregando...' : user.name}</div>
+                            <div className="font-semibold tetx-lg">{!data || isLoading ? 'Carregando...' : data.name}</div>
                         </div>
                         <ProfileConfig />
                     </div>

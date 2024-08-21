@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import CustomAlertDialog from "@/components/custom/custom-alert-dialog.tsx";
 
 interface AlertDialogContextProps {
-    showDialog: (props: { onConfirm: () => void; description: string; title: string; }) => void;
+    showDialog: (props: { onConfirm: () => void; description: string; title: string; body: JSX.Element }) => void;
 }
 
 const AlertDialogContext = createContext<AlertDialogContextProps | undefined>(undefined);

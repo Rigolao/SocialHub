@@ -1,7 +1,7 @@
 import {toast} from "sonner";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
+import axios from "axios";
 import {ResponseError} from "@/types";
-import axiosClient from "@/lib/axios";
 
 interface useDeleteProps<T> {
     url: string;
@@ -15,7 +15,7 @@ export function useDelete<T>({url, queryKey, onFailure, onSuccess, hideSuccessTo
     const queryClient = useQueryClient();
 
     const mutationFn = (): Promise<T> => {
-        const promise = axiosClient
+        const promise = axios
             .delete(url)
             .then(res => res.data);
         processToast(promise);
