@@ -1,6 +1,8 @@
 package br.socialhub.api.controllers;
 
+import br.socialhub.api.dtos.AuthenticateResponseDTO;
 import br.socialhub.api.services.AuthenticationService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +20,7 @@ public class AuthenticationController {
     }
 
     @PostMapping
-    public String authenticate(Authentication authentication){
-        return authenticationService.authenticate(authentication);
+    public ResponseEntity<AuthenticateResponseDTO> authenticate(Authentication authentication){
+        return ResponseEntity.ok(authenticationService.authenticate(authentication));
     }
 }

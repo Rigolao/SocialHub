@@ -59,6 +59,7 @@ public interface Constantes {
     String VALIDATION_REQUIRED_PASSWORD = "O campo senha é obrigatório.";
     String VALIDATION_REQUIRED_NEW_PASSWORD = "O campo nova senha é obrigatório.";
     String VALIDATION_REQUIRED_CONFIRM_PASSWORD = "O campo confirma senha é obrigatório.";
+    String VALIDATION_REQUIRED_TOKEN = "O campo token é obrigatório.";
 
 
     String VALIDATION_EMAIL = "O campo email precisa ser válido.";

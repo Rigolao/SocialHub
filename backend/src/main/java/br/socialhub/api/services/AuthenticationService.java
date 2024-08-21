@@ -1,17 +1,22 @@
 package br.socialhub.api.services;
 
+import br.socialhub.api.dtos.AuthenticateResponseDTO;
+import br.socialhub.api.repositories.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class AuthenticationService {
     private final JwtService jwtService;
+    private final UsuarioRepository usuarioRepository;
 
-    public AuthenticationService(JwtService jwtService) {
-        this.jwtService = jwtService;
-    }
+    public AuthenticateResponseDTO authenticate(Authentication authentication){
+        var token =  jwtService.generateToken(authentication);
+        var email = jwtService.extractSubject(token);
+        var user = usuarioRepository.findByEmail(email).get();
 
-    public String authenticate(Authentication authentication){
-        return jwtService.generateToken(authentication);
+       return new AuthenticateResponseDTO(token, user.getId());
     }
 }
