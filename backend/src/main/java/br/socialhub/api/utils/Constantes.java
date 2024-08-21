@@ -37,6 +37,7 @@ public interface Constantes {
 
     String WHITESPACE = " ";
     String UTF_8 = "UTF-8";
+    String DATE_FORMAT_DD_MM_YYYY = "dd/MM/yyyy";
 
     /**
      * Links

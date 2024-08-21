@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -16,6 +17,7 @@ public record UserCreateDTO(
         String name,
 
         @NotNull(message = VALIDATION_REQUIRED_BIRTH_DATE)
+        @DateTimeFormat(pattern = DATE_FORMAT_DD_MM_YYYY)
         LocalDate birthDate,
 
         @NotBlank(message = VALIDATION_REQUIRED_DOCUMENT_NUMBER)
