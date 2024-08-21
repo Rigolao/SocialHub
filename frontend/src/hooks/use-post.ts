@@ -1,7 +1,7 @@
 import axios from "axios";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {toast} from "sonner";
-import {ResponseError} from "@/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import {MessageResponse, ResponseError} from "@/types";
 
 interface usePostProps<Y> {
     url: string;
@@ -11,7 +11,17 @@ interface usePostProps<Y> {
     hideSuccessToast?: boolean;
 }
 
-export function usePost<T, Y = undefined>({url, queryKey, onSuccess, onFailure, hideSuccessToast = false}: usePostProps<Y>) {
+const hasMessage = (data: any): data is MessageResponse => {
+    return typeof data === 'object' && data !== null && 'message' in data;
+};
+
+export function usePost<T, Y = undefined>({
+                                              url,
+                                              queryKey,
+                                              onSuccess,
+                                              onFailure,
+                                              hideSuccessToast = false
+                                          }: usePostProps<Y>) {
     const queryClient = useQueryClient();
 
     const mutationFn = (data: T): Promise<Y> => {
@@ -25,20 +35,23 @@ export function usePost<T, Y = undefined>({url, queryKey, onSuccess, onFailure, 
         return promise;
     };
 
-    const processToast = (promise: Promise<Y>) => {
-        const toastOptions: { loading: string; success?: () => string; } = {
-            loading: "Carregando..."
+    const processToast = <Y>(promise: Promise<Y>, hideSuccessToast?: boolean) => {
+        const toastOptions: { loading: string; success?: (data: Y) => string } = {
+            loading: "Carregando...",
         };
 
         if (!hideSuccessToast) {
-            toastOptions.success = () => "Sucesso ao criar dados!";
+            toastOptions.success = (data: Y) => {
+                if (hasMessage(data)) {
+                    return data.message;
+                } else {
+                    return "Sucesso!";
+                }
+            };
         }
 
-        return toast.promise(
-            promise,
-            toastOptions
-        );
-    }
+        return toast.promise(promise, toastOptions);
+    };
 
     return useMutation({
         mutationFn,
@@ -46,11 +59,11 @@ export function usePost<T, Y = undefined>({url, queryKey, onSuccess, onFailure, 
             onSuccess && onSuccess(data);
 
             queryKey && queryClient.invalidateQueries({
-                queryKey
+                queryKey,
             });
         },
         onError: (error: ResponseError) => {
             onFailure && onFailure(error as ResponseError);
-        }
+        },
     });
 }

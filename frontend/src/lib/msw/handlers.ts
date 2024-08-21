@@ -1,7 +1,9 @@
 import {delay, http, HttpResponse} from "msw";
 import {LoginRequest, LoginResponse} from "@/types/login";
-import {ResponseError} from "@/types";
+import {MessageResponse, ResponseError} from "@/types";
 import {UserAppBarInfo} from "@/types/user";
+import {ForgotPasswordRequest, ForgotPasswordResponse} from "@/types/forgot-password";
+import {RegisterRequest} from "@/types/register";
 
 const handlers = [
     http.post<never, LoginRequest, LoginResponse | ResponseError>('api/login', async ({request}) => {
@@ -69,7 +71,45 @@ const handlers = [
             );
         }
 
-    })
+    }),
+    http.post<never, ForgotPasswordRequest, ForgotPasswordResponse | ResponseError>('api/esqueci-senha', async ({request}) => {
+        await delay(1000);
+
+        const req = await request.json();
+
+        if (req.email === 'mrigolao@gmail.com') {
+            return HttpResponse.json(
+                {
+                    message: 'Email enviado com sucesso'
+                },
+                {
+                    status: 200
+                }
+            );
+        } else {
+            return HttpResponse.json(
+                {
+                    message: 'Email não encontrado'
+                },
+                {
+                    status: 404
+                }
+            );
+        }
+    }),
+    http.post<never, RegisterRequest, MessageResponse | ResponseError>('api/registrar', async ({request}) => {
+        await delay(1000);
+
+        return HttpResponse.json(
+            {
+                message: 'Usuario criado com sucesso'
+            },
+            {
+                status: 200
+            }
+        );
+    }),
+
 ];
 
 export {handlers};
