@@ -207,7 +207,7 @@ public class UserService {
         var user = findByEmail(email);
 
         if (!Objects.equals(user.getId(), id)) {
-            throw new UnauthorizedAccessException(EXCEPTION_UNAUTHORIZED);
+            throw new UnauthorizedAccessException(EXCEPTION_UNAUTHORIZED_RESOURCE);
         }
 
     }

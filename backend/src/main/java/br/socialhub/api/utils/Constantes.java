@@ -45,7 +45,7 @@ public interface Constantes {
 
     String LINK_RESET = "http://localhost:5173/esqueci-minha-senha?token=%s";
     String LINK_URL_PHOTO = "http://localhost:8080/"+ENDPOINT_USERS+"/%s/photo";
-    String LINK_FRONT_END = "http://localhost:5173";
+    String LINK_FRONT_END = "https://localhost:5173";
 
     /**
      * Mensagem jakarta validation
@@ -85,8 +85,8 @@ public interface Constantes {
      */
 
     String EXCEPTION_PASSWORD_MISMATCH = "As senhas não coincidem.";
-    String EXCEPTION_UNAUTHORIZED_ACESS_PASSWORD = "O usuário não tem permissão para atualizar esta senha.";
-    String EXCEPTION_UNAUTHORIZED = "O usuário não tem permissão para acessar esse recurso.";
+    String EXCEPTION_UNAUTHORIZED_RESOURCE = "O usuário não tem permissão para acessar esse recurso.";
+    String EXCEPTION_UNAUTHORIZED = "O usuário não autorizado.";
 
     /**
      * Html template
