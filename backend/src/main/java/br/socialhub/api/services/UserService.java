@@ -154,7 +154,7 @@ public class UserService {
 
         var user = findByEmail(email);
 
-        _validateOldPassword(userUpdatePasswordDTO.oldPassword(), user.getPassword());
+        _validateOldPassword(userUpdatePasswordDTO.currentPassword(), user.getPassword());
 
         String newPasswordEncode = passwordEncoder.encode(userUpdatePasswordDTO.newPassword());
         user.setPassword(newPasswordEncode);
