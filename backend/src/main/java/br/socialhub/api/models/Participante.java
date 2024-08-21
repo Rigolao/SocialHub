@@ -1,14 +1,12 @@
 package br.socialhub.api.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -24,10 +22,10 @@ public class Participante {
     @JoinColumn(name = "IDUSUARIO")
     private Usuario usuario;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "IDTIPOPARTICIPANTE")
     private TipoParticipante tipoParticipante;
 
-    @OneToMany(mappedBy = "participante", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "participante", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ParticipanteSpace> participanteSpaces;
 }

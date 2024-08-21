@@ -39,7 +39,8 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(
                     auth -> auth.requestMatchers(HttpMethod.POST, "users").permitAll()
-                            .requestMatchers(ENDPOINT_AUTHENTICATE, ENDPOINT_PASSWORD+"/**", ENDPOINT_SWAGGER).permitAll()
+                            .requestMatchers(ENDPOINT_AUTHENTICATE, ENDPOINT_PASSWORD+"/**").permitAll()
+                            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                             .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(

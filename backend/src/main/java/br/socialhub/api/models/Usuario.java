@@ -47,7 +47,7 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<PlanoUsuario> planosUsuarios;
 
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Participante> participantes;
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)

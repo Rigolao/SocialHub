@@ -1,5 +1,5 @@
 package br.socialhub.api.dtos;
 
 
-public record ErroDTO (String mensagem) {
+public record ErroDTO (String message) {
 }

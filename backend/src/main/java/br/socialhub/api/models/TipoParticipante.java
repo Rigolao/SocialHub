@@ -18,6 +18,10 @@ public class TipoParticipante {
     @Column(name = "IDTIPOPARTICIPANTE")
     private Long id;
 
-    @Column(name = "NOME", length = 45, nullable = false)
+    @Column(name = "DESCRICAO", length = 45, nullable = false)
     private String name;
+
+    public TipoParticipante(String typeDefault){
+        this.name = typeDefault;
+    }
 }

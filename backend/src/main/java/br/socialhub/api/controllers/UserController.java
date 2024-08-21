@@ -1,6 +1,7 @@
 package br.socialhub.api.controllers;
 
 import br.socialhub.api.dtos.*;
+import br.socialhub.api.services.EmailService;
 import br.socialhub.api.services.JwtService;
 import br.socialhub.api.services.UserService;
 import jakarta.validation.Valid;
@@ -23,6 +24,7 @@ public class UserController {
 
     private final UserService userService;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
     @GetMapping("{id}")
     public ResponseEntity<UserResponseDTO> getUser(@PathVariable final Long id) {
@@ -32,9 +34,10 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Valid final UserCreateDTO userCreateDTO) {
 
-        var novoUsuario = userService.createUser(userCreateDTO);
-        var uri = URI.create("/users/" + novoUsuario.id());
-        return ResponseEntity.created(uri).body(novoUsuario);
+        var newUser = userService.createUser(userCreateDTO);
+        var uri = URI.create("/users/" + newUser.id());
+       // emailService.sendWelcomeEmail(newUser.email(), newUser.name());
+        return ResponseEntity.created(uri).body(newUser);
     }
 
     @PatchMapping

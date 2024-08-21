@@ -4,9 +4,7 @@ import br.socialhub.api.dtos.*;
 import br.socialhub.api.enums.DocumentType;
 import br.socialhub.api.enums.TokenStatus;
 import br.socialhub.api.exceptions.*;
-import br.socialhub.api.models.FotoUsuario;
-import br.socialhub.api.models.TokenAuditoria;
-import br.socialhub.api.models.Usuario;
+import br.socialhub.api.models.*;
 import br.socialhub.api.repositories.TokenAuditoriaRepository;
 import br.socialhub.api.repositories.UsuarioRepository;
 import br.socialhub.api.utils.CpfCnpjValidator;
@@ -14,12 +12,14 @@ import br.socialhub.api.utils.PhotoUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -41,17 +41,38 @@ public class UserService {
     public UserResponseDTO createUser(final UserCreateDTO userDTO) {
         _validationCreateUser(userDTO);
 
-        Usuario newUser = Usuario.builder()
-                .name(userDTO.name())
-                .email(userDTO.email())
-                .password(passwordEncoder.encode(userDTO.password()))
-                .birthDate(userDTO.birthDate())
-                .documentType(userDTO.documentType())
-                .documentNumber(userDTO.documentNumber())
-                .build();
+        Usuario newUser = _createNewUser(userDTO);
+        TipoParticipante tipoParticipante = _createDefaultTipoParticipante();
+        Participante participante = _createDefaultParticipante(newUser, tipoParticipante);
+        Space space = _createDefaultSpace();
+
+        _createParticipanteSpaceAssociation(participante, space);
+
+        newUser.setParticipantes(List.of(participante));
 
         return new UserResponseDTO(usuarioRepository.save(newUser));
     }
+
+    private void _createParticipanteSpaceAssociation(Participante participante, Space space) {
+        ParticipanteSpace participanteSpace = ParticipanteSpace.builder()
+                .participante(participante)
+                .space(space)
+                .build();
+
+        participante.setParticipanteSpaces(List.of(participanteSpace));
+        space.setParticipanteSpaces(List.of(participanteSpace));
+    }
+
+    private Space _createDefaultSpace() {
+        return Space.builder()
+                .nome(NAME_DEFAULT_SPACE)
+                .build();
+    }
+
+    private TipoParticipante _createDefaultTipoParticipante() {
+        return new TipoParticipante(TYPE_DEFAULT_PARTICIPANT);
+    }
+
 
     public UserResponseDTO getUser(final Long id) {
         return findById(id)
@@ -181,12 +202,31 @@ public class UserService {
         }
     }
 
+
     public void validateUser(final String email, final Long id) {
         var user = findByEmail(email);
 
         if (!Objects.equals(user.getId(), id)) {
-            throw new UnauthorizedAccessException(EXCEPTION_UNAUTHORIZED_ACESS_PASSWORD);
+            throw new UnauthorizedAccessException(EXCEPTION_UNAUTHORIZED);
         }
 
+    }
+
+    private Usuario _createNewUser(final UserCreateDTO userDTO) {
+        return Usuario.builder()
+                .name(userDTO.name())
+                .email(userDTO.email())
+                .password(passwordEncoder.encode(userDTO.password()))
+                .birthDate(userDTO.birthDate())
+                .documentType(userDTO.documentType())
+                .documentNumber(userDTO.documentNumber())
+                .build();
+    }
+
+    private Participante _createDefaultParticipante(Usuario newUser, TipoParticipante tipoParticipante) {
+        return Participante.builder()
+                .usuario(newUser)
+                .tipoParticipante(tipoParticipante)
+                .build();
     }
 }
