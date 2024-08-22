@@ -1,5 +1,6 @@
 package br.socialhub.api.models;
 
+import br.socialhub.api.converters.TokenStatusConverter;
 import br.socialhub.api.enums.TokenStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,7 +31,8 @@ public class TokenAuditoria {
     @Column(name = "DTFIM", nullable = false)
     private LocalDateTime dataFim;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "IS_USADO")
+    @Convert(converter = TokenStatusConverter.class)
     private TokenStatus status;
 }

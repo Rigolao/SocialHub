@@ -6,10 +6,10 @@ import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
-@ToString(of = "descricao")
+@ToString(of = "description")
 public enum DocumentType {
     CPF("CPF"),
     CNPJ("CNPJ");
 
-    private final String descricao;
+    private final String description;
 }

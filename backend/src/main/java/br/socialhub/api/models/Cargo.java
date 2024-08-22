@@ -1,5 +1,7 @@
 package br.socialhub.api.models;
 
+import br.socialhub.api.converters.RoleTypeConverter;
+import br.socialhub.api.enums.RoleType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,9 +21,10 @@ public class Cargo {
     private Long id;
 
     @Column(name = "DESCRICAO", length = 45, nullable = false)
-    private String name;
+    @Convert(converter = RoleTypeConverter.class)
+    private RoleType description;
 
-    public Cargo(String typeDefault){
-        this.name = typeDefault;
+    public Cargo(final RoleType roleType){
+        this.description = roleType;
     }
 }
