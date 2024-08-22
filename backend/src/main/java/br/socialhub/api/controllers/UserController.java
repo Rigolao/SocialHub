@@ -1,10 +1,11 @@
 package br.socialhub.api.controllers;
 
-import br.socialhub.api.dtos.*;
+import br.socialhub.api.dtos.user.*;
 import br.socialhub.api.services.EmailService;
 import br.socialhub.api.services.JwtService;
 import br.socialhub.api.services.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,14 +43,14 @@ public class UserController {
     }
 
     @PatchMapping
-    public ResponseEntity<UserResponseDTO> updateUser(@RequestHeader(AUTHORIZATION) final String token,
+    public ResponseEntity<UserResponseDTO> updateUser(@RequestHeader(AUTHORIZATION) @NotBlank final String token,
                                                       @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
         String email = jwtService.extractSubject(token.replace(BEARER, WHITESPACE));
         return ResponseEntity.ok(userService.updateUser(email, userUpdateDTO));
     }
 
     @PatchMapping("{id}/password")
-    public ResponseEntity<String> updatePasswordUser(@RequestHeader(AUTHORIZATION) final String token,
+    public ResponseEntity<String> updatePasswordUser(@RequestHeader(AUTHORIZATION) @NotBlank final String token,
                                                      @PathVariable final Long id,
                                                      @RequestBody @Valid final UserUpdatePasswordDTO userUpdatePasswordDTO) {
         String email = jwtService.extractSubject(token.replace(BEARER, WHITESPACE));

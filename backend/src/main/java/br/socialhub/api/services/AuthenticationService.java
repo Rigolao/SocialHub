@@ -1,6 +1,6 @@
 package br.socialhub.api.services;
 
-import br.socialhub.api.dtos.AuthenticateResponseDTO;
+import br.socialhub.api.dtos.security.AuthenticateResponseDTO;
 import br.socialhub.api.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

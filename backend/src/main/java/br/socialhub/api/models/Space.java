@@ -19,11 +19,11 @@ public class Space {
     private Long id;
 
     @Column(name = "NOME", length = 50, nullable = false)
-    private String nome;
+    private String name;
 
     @OneToMany(mappedBy = "space", fetch = FetchType.LAZY)
-    private List<Conta> contas;
+    private List<Conta> accounts;
 
-    @OneToMany(mappedBy = "space", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<UsuarioSpace> usuarioSpaces;
+    @OneToMany(mappedBy = "space", fetch = FetchType.LAZY)
+    private List<UsuarioSpace> userSpaces;
 }

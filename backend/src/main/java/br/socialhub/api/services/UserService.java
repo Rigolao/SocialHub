@@ -1,6 +1,7 @@
 package br.socialhub.api.services;
 
-import br.socialhub.api.dtos.*;
+import br.socialhub.api.dtos.reset_password.ResetPasswordDTO;
+import br.socialhub.api.dtos.user.*;
 import br.socialhub.api.enums.DocumentType;
 import br.socialhub.api.enums.RoleType;
 import br.socialhub.api.enums.TokenStatus;
@@ -53,7 +54,7 @@ public class UserService {
 
     private Space _createDefaultSpace() {
         return Space.builder()
-                .nome(NAME_DEFAULT_SPACE)
+                .name(NAME_DEFAULT_SPACE)
                 .build();
     }
 

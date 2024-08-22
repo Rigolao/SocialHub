@@ -10,7 +10,7 @@ public interface Constantes {
     String ENDPOINT_USERS = "users";
     String ENDPOINT_FORGOT = "forgot";
     String ENDPOINT_RESET = "reset";
-    String ENDPOINT_SPACE = "space";
+    String ENDPOINT_SPACE = "spaces";
 
     /**
      *  Recursos
@@ -18,6 +18,8 @@ public interface Constantes {
 
     String RESOURCE_USER = "Usuário";
     String NAME_DEFAULT_SPACE = "Space 1";
+
+    String RESOURCE_SPACE = "Space";
 
     /**
      * JWT AUTH

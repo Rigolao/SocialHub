@@ -1,7 +1,7 @@
 package br.socialhub.api.controllers;
 
-import br.socialhub.api.dtos.EmailDTO;
-import br.socialhub.api.dtos.ResetPasswordDTO;
+import br.socialhub.api.dtos.reset_password.EmailDTO;
+import br.socialhub.api.dtos.reset_password.ResetPasswordDTO;
 import br.socialhub.api.services.EmailService;
 import br.socialhub.api.services.TokenService;
 import br.socialhub.api.services.UserService;

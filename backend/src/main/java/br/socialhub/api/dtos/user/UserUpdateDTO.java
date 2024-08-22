@@ -1,4 +1,4 @@
-package br.socialhub.api.dtos;
+package br.socialhub.api.dtos.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;

@@ -1,6 +1,6 @@
 package br.socialhub.api.controllers;
 
-import br.socialhub.api.dtos.AuthenticateResponseDTO;
+import br.socialhub.api.dtos.security.AuthenticateResponseDTO;
 import br.socialhub.api.services.AuthenticationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

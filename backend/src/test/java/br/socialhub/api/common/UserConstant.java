@@ -1,6 +1,6 @@
 package br.socialhub.api.common;
 
-import br.socialhub.api.dtos.UserCreateDTO;
+import br.socialhub.api.dtos.user.UserCreateDTO;
 import br.socialhub.api.enums.DocumentType;
 import br.socialhub.api.models.Usuario;
 

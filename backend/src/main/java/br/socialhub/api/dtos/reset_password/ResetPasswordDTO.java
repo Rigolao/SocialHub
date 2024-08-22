@@ -1,4 +1,4 @@
-package br.socialhub.api.dtos;
+package br.socialhub.api.dtos.reset_password;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

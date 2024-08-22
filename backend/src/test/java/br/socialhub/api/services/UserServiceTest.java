@@ -1,8 +1,7 @@
 package br.socialhub.api.services;
 
-import br.socialhub.api.dtos.UserResponseDTO;
+import br.socialhub.api.dtos.user.UserResponseDTO;
 import br.socialhub.api.exceptions.MinimumAgeException;
-import br.socialhub.api.models.Usuario;
 import br.socialhub.api.repositories.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

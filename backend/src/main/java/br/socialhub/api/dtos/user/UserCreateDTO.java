@@ -1,4 +1,4 @@
-package br.socialhub.api.dtos;
+package br.socialhub.api.dtos.user;
 
 import br.socialhub.api.enums.DocumentType;
 import com.fasterxml.jackson.annotation.JsonFormat;
