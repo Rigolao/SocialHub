@@ -2,6 +2,7 @@ package br.socialhub.api.services;
 
 import br.socialhub.api.dtos.*;
 import br.socialhub.api.enums.DocumentType;
+import br.socialhub.api.enums.RoleType;
 import br.socialhub.api.enums.TokenStatus;
 import br.socialhub.api.exceptions.*;
 import br.socialhub.api.models.*;
@@ -42,8 +43,8 @@ public class UserService {
 
         Usuario newUser = _createNewUser(userDTO);
         Cargo cargo = _createDefaultCargo();
-        UsuarioSpace usuarioSpace = _createDefaultUsuarioSpace(newUser, cargo);
         Space space = _createDefaultSpace();
+        UsuarioSpace usuarioSpace = _createDefaultUsuarioSpace(newUser, cargo, space);
 
         newUser.setUsuarioSpaces(List.of(usuarioSpace));
 
@@ -57,7 +58,7 @@ public class UserService {
     }
 
     private Cargo _createDefaultCargo() {
-        return new Cargo(TYPE_DEFAULT_PARTICIPANT);
+        return new Cargo(RoleType.CREATOR);
     }
 
 
@@ -168,12 +169,12 @@ public class UserService {
         switch (documentType) {
             case CNPJ:
                 if (!CpfCnpjValidator.isCnpj(documentNumber)) {
-                    throw new InvalidDocumentException(documentType.getDescricao());
+                    throw new InvalidDocumentException(documentType.getDescription());
                 }
                 break;
             case CPF:
                 if (!CpfCnpjValidator.isCpf(documentNumber)) {
-                    throw new InvalidDocumentException(documentType.getDescricao());
+                    throw new InvalidDocumentException(documentType.getDescription());
                 }
                 break;
             default:
@@ -188,7 +189,6 @@ public class UserService {
             throw new MinimumAgeException();
         }
     }
-
 
     public void validateUser(final String email, final Long id) {
         var user = findByEmail(email);
@@ -210,10 +210,11 @@ public class UserService {
                 .build();
     }
 
-    private UsuarioSpace _createDefaultUsuarioSpace(Usuario newUser, Cargo cargo) {
+    private UsuarioSpace _createDefaultUsuarioSpace(Usuario newUser, Cargo cargo, Space space) {
         return UsuarioSpace.builder()
                 .usuario(newUser)
-                .cargo(List.of(cargo))
+                .cargo(cargo)
+                .space(space)
                 .build();
     }
 }

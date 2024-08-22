@@ -10,13 +10,13 @@ public interface Constantes {
     String ENDPOINT_USERS = "users";
     String ENDPOINT_FORGOT = "forgot";
     String ENDPOINT_RESET = "reset";
+    String ENDPOINT_SPACE = "space";
 
     /**
      *  Recursos
      */
 
     String RESOURCE_USER = "Usuário";
-    String TYPE_DEFAULT_PARTICIPANT = "Criador";
     String NAME_DEFAULT_SPACE = "Space 1";
 
     /**

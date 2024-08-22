@@ -26,10 +26,11 @@ public class UsuarioSpace {
     @JoinColumn(name = "IDSPACE")
     private Space space;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "IDCARGO")
+    private Cargo cargo;
+
     @OneToMany(mappedBy = "usuarioSpace")
     private List<Postagem> postagens;
 
-    @OneToMany
-    @Column(name = "IDCARGO")
-    private List<Cargo> cargo;
 }
