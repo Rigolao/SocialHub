@@ -20,6 +20,6 @@ public class UserSpaceService {
                 .cargo(role)
                 .build();
 
-        usuarioSpaceRepository.save(userSpace);
+       return usuarioSpaceRepository.save(userSpace);
     }
 }
