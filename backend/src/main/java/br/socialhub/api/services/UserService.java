@@ -41,25 +41,13 @@ public class UserService {
         _validationCreateUser(userDTO);
 
         Usuario newUser = _createNewUser(userDTO);
-        TipoParticipante tipoParticipante = _createDefaultTipoParticipante();
-        Participante participante = _createDefaultParticipante(newUser, tipoParticipante);
+        Cargo cargo = _createDefaultCargo();
+        UsuarioSpace usuarioSpace = _createDefaultUsuarioSpace(newUser, cargo);
         Space space = _createDefaultSpace();
 
-        _createParticipanteSpaceAssociation(participante, space);
-
-        newUser.setParticipantes(List.of(participante));
+        newUser.setUsuarioSpaces(List.of(usuarioSpace));
 
         return new UserResponseDTO(usuarioRepository.save(newUser));
-    }
-
-    private void _createParticipanteSpaceAssociation(Participante participante, Space space) {
-        ParticipanteSpace participanteSpace = ParticipanteSpace.builder()
-                .participante(participante)
-                .space(space)
-                .build();
-
-        participante.setParticipanteSpaces(List.of(participanteSpace));
-        space.setParticipanteSpaces(List.of(participanteSpace));
     }
 
     private Space _createDefaultSpace() {
@@ -68,8 +56,8 @@ public class UserService {
                 .build();
     }
 
-    private TipoParticipante _createDefaultTipoParticipante() {
-        return new TipoParticipante(TYPE_DEFAULT_PARTICIPANT);
+    private Cargo _createDefaultCargo() {
+        return new Cargo(TYPE_DEFAULT_PARTICIPANT);
     }
 
 
@@ -222,10 +210,10 @@ public class UserService {
                 .build();
     }
 
-    private Participante _createDefaultParticipante(Usuario newUser, TipoParticipante tipoParticipante) {
-        return Participante.builder()
+    private UsuarioSpace _createDefaultUsuarioSpace(Usuario newUser, Cargo cargo) {
+        return UsuarioSpace.builder()
                 .usuario(newUser)
-                .tipoParticipante(tipoParticipante)
+                .cargo(List.of(cargo))
                 .build();
     }
 }

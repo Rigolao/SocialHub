@@ -44,21 +44,11 @@ CREATE TABLE IF NOT EXISTS `socialhub`.`fotousuario`
     FOREIGN KEY (IDUSUARIO) REFERENCES `socialhub`.`usuario` (IDUSUARIO)
 );
 
-CREATE TABLE IF NOT EXISTS `socialhub`.`tipoparticipante`
+CREATE TABLE IF NOT EXISTS `socialhub`.`cargo`
 (
-    IDTIPOPARTICIPANTE            BIGINT NOT NULL AUTO_INCREMENT,
+    IDCARGO                       BIGINT NOT NULL AUTO_INCREMENT,
     DESCRICAO                     VARCHAR(45) NOT NULL,
-    PRIMARY KEY (IDTIPOPARTICIPANTE)
-);
-
-CREATE TABLE IF NOT EXISTS `socialhub`.`participante`
-(
-    IDPARTICIPANTE                BIGINT NOT NULL AUTO_INCREMENT,
-    IDUSUARIO                     BIGINT NOT NULL,
-    IDTIPOPARTICIPANTE            BIGINT NOT NULL,
-    PRIMARY KEY (IDPARTICIPANTE),
-    FOREIGN KEY (IDUSUARIO) REFERENCES `socialhub`.`usuario` (IDUSUARIO),
-    FOREIGN KEY (IDTIPOPARTICIPANTE) REFERENCES `socialhub`.`tipoparticipante` (IDTIPOPARTICIPANTE)
+    PRIMARY KEY (IDCARGO)
 );
 
 CREATE TABLE IF NOT EXISTS `socialhub`.`space`
@@ -68,24 +58,26 @@ CREATE TABLE IF NOT EXISTS `socialhub`.`space`
     PRIMARY KEY (IDSPACE)
 );
 
-CREATE TABLE IF NOT EXISTS `socialhub`.`participante_space`
+CREATE TABLE IF NOT EXISTS `socialhub`.`usuario_space`
 (
-    IDPARTICIPANTE_SPACE          BIGINT NOT NULL AUTO_INCREMENT,
-    IDPARTICIPANTE                BIGINT NOT NULL,
-    IDSPACE                       BIGINT NOT NULL,
-    PRIMARY KEY (IDPARTICIPANTE_SPACE),
-    FOREIGN KEY (IDPARTICIPANTE) REFERENCES `socialhub`.`participante`,
-    FOREIGN KEY (IDSPACE) REFERENCES `socialhub`.`space`
+    IDUSUARIOSPACE                  BIGINT NOT NULL AUTO_INCREMENT,
+    IDUSUARIO                       BIGINT NOT NULL,
+    IDSPACE                         BIGINT NOT NULL,
+    IDCARGO                         BIGINT NOT NULL,
+    PRIMARY KEY (IDUSUARIOSPACE),
+    FOREIGN KEY (IDUSUARIO) REFERENCES `socialhub`.`usuario` (IDUSUARIO),
+    FOREIGN KEY (IDSPACE)   REFERENCES `socialhub`.`space`   (IDSPACE),
+    FOREIGN KEY (IDCARGO)   REFERENCES `socialhub`.`cargo`   (IDCARGO)
 );
 
 CREATE TABLE IF NOT EXISTS `socialhub`.`postagem`
 (
     IDPOSTAGEM                    BIGINT NOT NULL AUTO_INCREMENT,
-    IDPARTICIPANTE_SPACE          BIGINT NOT NULL,
+    IDUSUARIOSPACE                BIGINT NOT NULL,
     DESCRICAO                     VARCHAR(500) NOT NULL,
     DATAAGENDAMENTO               TIMESTAMP NOT NULL,
     PRIMARY KEY (IDPOSTAGEM),
-    FOREIGN KEY (IDPARTICIPANTE_SPACE) REFERENCES `socialhub`.`participante_space`(IDPARTICIPANTE_SPACE)
+    FOREIGN KEY (IDUSUARIOSPACE) REFERENCES `socialhub`.`usuario_space`(IDUSUARIOSPACE)
 );
 
 CREATE TABLE IF NOT EXISTS `socialhub`.`anexo`

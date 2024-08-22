@@ -48,7 +48,7 @@ public class Usuario {
     private List<PlanoUsuario> planosUsuarios;
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Participante> participantes;
+    private List<UsuarioSpace> usuarioSpaces;
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
     private FotoUsuario userPhoto;

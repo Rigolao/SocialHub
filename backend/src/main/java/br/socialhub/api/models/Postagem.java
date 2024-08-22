@@ -22,8 +22,8 @@ public class Postagem {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "IDPARTICIPANTESPACE")
-    private ParticipanteSpace participanteSpace;
+    @JoinColumn(name = "IDUSUARIOSPACE")
+    private UsuarioSpace usuarioSpace;
 
     @Column(name = "DESCRICAO", nullable = false)
     private String descricao;

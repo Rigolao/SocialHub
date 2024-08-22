@@ -10,18 +10,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Table(name = "TIPOPARTICIPANTE", schema = "socialhub")
+@Table(name = "CARGO", schema = "socialhub")
 @Entity
-public class TipoParticipante {
+public class Cargo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IDTIPOPARTICIPANTE")
+    @Column(name = "IDCARGO")
     private Long id;
 
     @Column(name = "DESCRICAO", length = 45, nullable = false)
     private String name;
 
-    public TipoParticipante(String typeDefault){
+    public Cargo(String typeDefault){
         this.name = typeDefault;
     }
 }

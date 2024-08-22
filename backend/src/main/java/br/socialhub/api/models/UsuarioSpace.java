@@ -10,22 +10,26 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Table(name = "PARTICIPANTE_SPACE", schema = "socialhub")
+@Table(name = "USUARIO_SPACE", schema = "socialhub")
 @Entity
-public class ParticipanteSpace {
+public class UsuarioSpace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IDPARTICIPANTE_SPACE")
+    @Column(name = "IDUSUARIOSPACE")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "IDPARTICIPANTE")
-    private Participante participante;
+    @JoinColumn(name = "IDUSUARIO")
+    private Usuario usuario;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "IDSPACE")
     private Space space;
 
-    @OneToMany(mappedBy = "participanteSpace")
+    @OneToMany(mappedBy = "usuarioSpace")
     private List<Postagem> postagens;
+
+    @OneToMany
+    @Column(name = "IDCARGO")
+    private List<Cargo> cargo;
 }

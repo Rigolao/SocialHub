@@ -24,6 +24,6 @@ public class Space {
     @OneToMany(mappedBy = "space", fetch = FetchType.LAZY)
     private List<Conta> contas;
 
-    @OneToMany(mappedBy = "space", fetch = FetchType.LAZY)
-    private List<ParticipanteSpace> participanteSpaces;
+    @OneToMany(mappedBy = "space", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<UsuarioSpace> usuarioSpaces;
 }
