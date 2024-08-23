@@ -18,7 +18,6 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return super.handleMethodArgumentNotValid(ex, headers, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
-
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErroDTO> handleResourceNotFoundException (ResourceNotFoundException e){
         ErroDTO erro = new ErroDTO(e.getMessage());
@@ -45,6 +44,18 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UnauthorizedAccessException.class)
     public ResponseEntity<ErroDTO> handleUnauthorizedAccessException(UnauthorizedAccessException e){
+        ErroDTO erro = new ErroDTO(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
+    }
+
+    @ExceptionHandler(DocumentNumberNotUniqueException.class)
+    public ResponseEntity<ErroDTO> handleDocumentNumberNotUniqueException(DocumentNumberNotUniqueException e){
+        ErroDTO erro = new ErroDTO(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
+    }
+
+    @ExceptionHandler(EmailNotUniqueException.class)
+    public ResponseEntity<ErroDTO> handleEmailNotUniqueException(EmailNotUniqueException e){
         ErroDTO erro = new ErroDTO(e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
     }
