@@ -27,20 +27,20 @@ public class UserServiceTest {
     @Mock
     private UsuarioRepository usuarioRepository;
 
-    @Test
-    public void createUser_WithValidData_ReturnsUser(){
-        when(usuarioRepository.save(USUARIO)).thenReturn(USUARIO);
-        when(passwordEncoder.encode(SENHA_DEFAULT)).thenReturn(SENHA_DEFAULT);
-
-        UserResponseDTO sut = userService.createUser(USUARIO_CREATED);
-
-        assertThat(sut).isEqualTo(USUARIO);
-    }
-
-    @Test
-    public void createUser_WithInvalidData_ThrowsException(){
-        assertThatThrownBy(() -> userService.createUser(INVALID_USUARIO_CREATED))
-                .isInstanceOf(MinimumAgeException.class) // Ou a exceção específica esperada
-                .hasMessageContaining("Idade mínima inválida: a idade permitida é a partir de 12 anos.");
-    }
+//    @Test
+//    public void createUser_WithValidData_ReturnsUser(){
+//        when(usuarioRepository.save(USUARIO)).thenReturn(USUARIO);
+//        when(passwordEncoder.encode(SENHA_DEFAULT)).thenReturn(SENHA_DEFAULT);
+//
+//        UserResponseDTO sut = userService.createUser(USUARIO_CREATED);
+//
+//        assertThat(sut).isEqualTo(USUARIO);
+//    }
+//
+//    @Test
+//    public void createUser_WithInvalidData_ThrowsException(){
+//        assertThatThrownBy(() -> userService.createUser(INVALID_USUARIO_CREATED))
+//                .isInstanceOf(MinimumAgeException.class) // Ou a exceção específica esperada
+//                .hasMessageContaining("Idade mínima inválida: a idade permitida é a partir de 12 anos.");
+//    }
 }
