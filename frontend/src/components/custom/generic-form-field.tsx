@@ -30,7 +30,6 @@ export default function GenericFormField<T extends FieldValues>({control, name, 
                             {type === 'password' ? (
                                 <PasswordInput
                                     id={name}
-                                    type={type}
                                     placeholder={placeholder}
                                     disabled={disabled}
                                     maxLength={maxLength}
