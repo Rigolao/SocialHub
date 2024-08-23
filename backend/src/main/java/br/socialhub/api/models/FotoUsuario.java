@@ -19,7 +19,7 @@ public class FotoUsuario {
 
     @OneToOne
     @JoinColumn(name = "IDUSUARIO", referencedColumnName = "IDUSUARIO", nullable = false)
-    private Usuario usuario;
+    private Usuario user;
 
     @Column(name = "NOMEARQUIVO", nullable = false, length = 45)
     private String nomeArquivo;
