@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `socialhub`.`space`
 (
     IDSPACE                       BIGINT NOT NULL AUTO_INCREMENT,
     NOME                          VARCHAR(50),
+    DTCRIACAO                     TIMESTAMP NOT NULL,
     PRIMARY KEY (IDSPACE)
 );
 
@@ -64,6 +65,7 @@ CREATE TABLE IF NOT EXISTS `socialhub`.`usuario_space`
     IDUSUARIO                       BIGINT NOT NULL,
     IDSPACE                         BIGINT NOT NULL,
     IDCARGO                         BIGINT NOT NULL,
+    DTVINCULO                       TIMESTAMP NOT NULL,
     PRIMARY KEY (IDUSUARIOSPACE),
     FOREIGN KEY (IDUSUARIO) REFERENCES `socialhub`.`usuario` (IDUSUARIO),
     FOREIGN KEY (IDSPACE)   REFERENCES `socialhub`.`space`   (IDSPACE),
@@ -91,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `socialhub`.`anexo`
     FOREIGN KEY (IDPOSTAGEM) REFERENCES `socialhub`.`postagem`(IDPOSTAGEM)
 );
 
-CREATE TABLE IF NOT EXISTS `socialhub`.`redsocial`
+CREATE TABLE IF NOT EXISTS `socialhub`.`redesocial`
 (
     IDREDESOCIAL                  BIGINT NOT NULL AUTO_INCREMENT,
     NOME                          VARCHAR(45) NOT NULL,
@@ -107,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `socialhub`.`conta`
     TOKEN                         VARCHAR(200),
     PRIMARY KEY (IDCONTA),
     FOREIGN KEY (IDSPACE) REFERENCES `socialhub`.`space` (IDSPACE),
-    FOREIGN KEY (IDREDESOCIAL) REFERENCES `socialhub`.`redsocial` (IDREDESOCIAL)
+    FOREIGN KEY (IDREDESOCIAL) REFERENCES `socialhub`.`redesocial` (IDREDESOCIAL)
 );
 
 
