@@ -3,6 +3,7 @@ package br.socialhub.api.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -20,17 +21,26 @@ public class UsuarioSpace {
 
     @ManyToOne
     @JoinColumn(name = "IDUSUARIO")
-    private Usuario usuario;
+    private Usuario user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "IDSPACE")
     private Space space;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "IDCARGO")
-    private Cargo cargo;
+    private Cargo role;
+
+    @Column(name = "DTVINCULO", nullable = false)
+    private LocalDateTime dateCreation;
 
     @OneToMany(mappedBy = "usuarioSpace")
     private List<Postagem> postagens;
 
+    public UsuarioSpace(Usuario user, Space space, Cargo role){
+        this.space = space;
+        this.user = user;
+        this.role = role;
+        this.dateCreation = LocalDateTime.now();
+    }
 }
