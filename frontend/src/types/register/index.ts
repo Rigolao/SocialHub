@@ -10,5 +10,10 @@ export type RegisterRequest = {
     cardNumber: string | undefined,
     expirationDate: string | undefined,
     cvv: string | undefined,
-    plan: string
+    plan: {
+        id: number,
+        value: number,
+        startDate: string,
+        endDate?: string | undefined
+    }
 }

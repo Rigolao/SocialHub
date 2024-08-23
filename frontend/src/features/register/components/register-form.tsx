@@ -39,16 +39,21 @@ export const registerFormSchema = z.object({
     birthDate: birthDateSchema,
     password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
     confirmPassword: z.string(),
-    plan: z.string(),
+    plan: z.object({
+        id: z.number().min(1, 'Plano é obrigatório'),
+        value: z.number(),
+        startDate: z.string(),
+        endDate: z.string().optional(),
+    }),
     cardName: z.string().optional(),
     cardNumber: z.string().optional(),
     expirationDate: z.string().optional(),
-    cvv: z.string().optional(),
+    cvv: z.string().max(3).optional(),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "As senhas não coincidem",
     path: ["confirmPassword"],
 }).refine((data) => {
-    if (data.plan === 'premium' && !data.cardName) {
+    if (data.plan.id === 2 && !data.cardName) {
         return false;
     }
     return true;
@@ -56,7 +61,7 @@ export const registerFormSchema = z.object({
     message: "Nome no cartão é obrigatório para o plano premium",
     path: ["cardName"],
 }).refine((data) => {
-    if (data.plan === 'premium' && !data.cardNumber) {
+    if (data.plan.id === 2 && !data.cardNumber) {
         return false;
     }
     return true;
@@ -64,7 +69,7 @@ export const registerFormSchema = z.object({
     message: "Número do cartão é obrigatório para o plano premium",
     path: ["cardNumber"],
 }).refine((data) => {
-    if (data.plan === 'premium' && !data.expirationDate) {
+    if (data.plan.id === 2 && !data.expirationDate) {
         return false;
     }
     return true;
@@ -72,7 +77,7 @@ export const registerFormSchema = z.object({
     message: "Data de validade é obrigatória para o plano premium",
     path: ["expirationDate"],
 }).refine((data) => {
-    if (data.plan === 'premium' && data.expirationDate) {
+    if (data.plan.id === 2 && data.expirationDate) {
         const regex = /^\d{2}\/\d{4}$/;
         if (!regex.test(data.expirationDate || '')) {
             return false;
@@ -89,7 +94,7 @@ export const registerFormSchema = z.object({
     message: "A data de validade deve ser futura e no formato MM/AAAA",
     path: ["expirationDate"],
 }).refine((data) => {
-    if (data.plan === 'premium' && !data.cvv) {
+    if (data.plan.id === 2 && !data.cvv) {
         return false;
     }
     return true;
@@ -117,7 +122,12 @@ export default function RegisterForm() {
             cardNumber: '',
             expirationDate: '',
             cvv: '',
-            plan: 'premium'
+            plan: {
+                id: 2,
+                value: 19.90,
+                startDate: new Date().toLocaleDateString('pt-BR'),
+                endDate: new Date(new Date().setFullYear(new Date().getMonth() + 1)).toLocaleDateString('pt-BR')
+            }
         }
     });
 
@@ -175,7 +185,7 @@ export default function RegisterForm() {
                                 <TabsTrigger value="basicos" onClick={() => setActiveTab('basicos')}>Dados
                                     Básicos</TabsTrigger>
                                 <TabsTrigger value="plano" onClick={() => setActiveTab('plano')}>Plano</TabsTrigger>
-                                <TabsTrigger value="pagamento" disabled={form.getValues('plan') === 'free'} onClick={() => setActiveTab('pagamento')}>Dados
+                                <TabsTrigger value="pagamento" disabled={form.getValues('plan').id === 1} onClick={() => setActiveTab('pagamento')}>Dados
                                     Pagamento</TabsTrigger>
                             </TabsList>
                             <AnimatePresence mode='sync'>
@@ -197,7 +207,7 @@ export default function RegisterForm() {
                                         setActiveTab('plano');
                                         break;
                                     case 'plano':
-                                        if(form.getValues('plan') === 'free') {
+                                        if(form.getValues('plan').id === 1) {
                                             form.handleSubmit(onSubmit, onError)()
                                         } else {
                                             setActiveTab('pagamento');
@@ -208,7 +218,7 @@ export default function RegisterForm() {
                                         break;
                                 }
                             }}>
-                            {activeTab === 'basicos' || (activeTab === 'plano' && form.getValues('plan') === 'premium') ? (
+                            {activeTab === 'basicos' || (activeTab === 'plano' && form.getValues('plan').id === 2) ? (
                                     <div className="flex items-center gap-2">
                                         <span className="flex-grow text-left">Próximo</span>
                                         <ArrowRight className="h-4 w-4" />

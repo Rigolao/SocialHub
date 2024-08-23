@@ -11,6 +11,23 @@ interface PlanTabProps {
 
 export default function PlanTab({form}: PlanTabProps) {
 
+    const currentDay = new Date().toLocaleDateString('pt-BR');
+    const nextMonth = new Date(new Date().setFullYear(new Date().getMonth() + 1)).toLocaleDateString('pt-BR');
+
+    const freePlan = {
+        id: 1,
+        value: 0,
+        startDate: currentDay,
+        endDate: undefined
+    }
+
+    const premiumPlan = {
+        id: 2,
+        value: 19.90,
+        startDate: currentDay,
+        endDate: nextMonth
+    }
+
     return (
         <TabsContent value="plano">
             <motion.div
@@ -22,14 +39,14 @@ export default function PlanTab({form}: PlanTabProps) {
                     name="Plano Básico"
                     description="Plano básico para você começar a usar a plataforma. Podendo criar somente um space"
                     price="R$ 0,00"
-                    selected={form.watch('plan') === 'free'}
-                    onClick={() => form.setValue('plan', 'free')}/>
+                    selected={form.watch('plan').id === 1}
+                    onClick={() => form.setValue('plan', freePlan)}/>
                 <PlanCard
                     name="Plano Premium"
                     description="Plano completo com todos os recursos disponíveis. Podendo criar multiplos spaces e convidar pessoas para participar"
                     price="R$ 19,90"
-                    selected={form.watch('plan') === 'premium'}
-                    onClick={() => form.setValue('plan', 'premium')}/>
+                    selected={form.watch('plan').id === 2}
+                    onClick={() => form.setValue('plan', premiumPlan)}/>
             </motion.div>
         </TabsContent>
 );
