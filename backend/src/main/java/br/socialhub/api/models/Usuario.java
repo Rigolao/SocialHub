@@ -44,13 +44,13 @@ public class Usuario {
     @Column(name = "DATA_NASCIMENTO")
     private LocalDate birthDate;
 
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<PlanoUsuario> planosUsuarios;
 
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<UsuarioSpace> usuarioSpaces;
 
-    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private FotoUsuario userPhoto;
 
 
