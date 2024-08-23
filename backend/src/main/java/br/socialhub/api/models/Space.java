@@ -3,10 +3,10 @@ package br.socialhub.api.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -21,9 +21,17 @@ public class Space {
     @Column(name = "NOME", length = 50, nullable = false)
     private String name;
 
+    @Column(name = "DTCRIACAO")
+    private LocalDateTime dateCreation;
+
     @OneToMany(mappedBy = "space", fetch = FetchType.LAZY)
     private List<Conta> accounts;
 
     @OneToMany(mappedBy = "space", fetch = FetchType.LAZY)
     private List<UsuarioSpace> userSpaces;
+
+    public Space (String name){
+        this.name = name;
+        this.dateCreation = LocalDateTime.now();
+    }
 }

@@ -1,5 +1,7 @@
 package br.socialhub.api.models;
 
+import br.socialhub.api.converters.PlanTypeConverter;
+import br.socialhub.api.enums.PlanType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,11 +23,12 @@ public class Plano {
     private Long id;
 
     @Column(name = "DESCRICAO", nullable = false)
-    private String descricao;
+    private String description;
 
     @Column(name = "NOME", length = 45, nullable = false)
-    private String nome;
+    @Convert(converter = PlanTypeConverter.class)
+    private PlanType name;
 
-    @OneToMany(mappedBy = "plano", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "plan", fetch = FetchType.LAZY)
     private List<PlanoUsuario> planosUsuarios;
 }

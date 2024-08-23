@@ -1,5 +1,7 @@
 package br.socialhub.api.models;
 
+import br.socialhub.api.converters.SocialMediaTypeConverter;
+import br.socialhub.api.enums.SocialMediaType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,5 +21,6 @@ public class RedeSocial {
     private Long id;
 
     @Column(name = "DESCRICAO", nullable = false, length = 45)
-    private String descricao;
+    @Convert(converter = SocialMediaTypeConverter.class)
+    private SocialMediaType descricao;
 }

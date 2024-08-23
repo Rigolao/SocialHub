@@ -3,10 +3,11 @@ package br.socialhub.api.services;
 import br.socialhub.api.dtos.reset_password.ResetPasswordDTO;
 import br.socialhub.api.dtos.user.*;
 import br.socialhub.api.enums.DocumentType;
-import br.socialhub.api.enums.RoleType;
 import br.socialhub.api.enums.TokenStatus;
 import br.socialhub.api.exceptions.*;
-import br.socialhub.api.models.*;
+import br.socialhub.api.models.FotoUsuario;
+import br.socialhub.api.models.TokenAuditoria;
+import br.socialhub.api.models.Usuario;
 import br.socialhub.api.repositories.TokenAuditoriaRepository;
 import br.socialhub.api.repositories.UsuarioRepository;
 import br.socialhub.api.utils.CpfCnpjValidator;
@@ -20,7 +21,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,38 +39,27 @@ public class UserService {
     private static final int MINIMUM_AGE = 12;
     private static final long TOKEN_DURATION_IN_DAY = 1;
 
-    public UserResponseDTO createUser(final UserCreateDTO userDTO) {
+
+    public Usuario createUser(final UserCreateDTO userDTO) {
         _validationCreateUser(userDTO);
 
-        Usuario newUser = _createNewUser(userDTO);
-        Cargo cargo = _createDefaultCargo();
-        Space space = _createDefaultSpace();
-        UsuarioSpace usuarioSpace = _createDefaultUsuarioSpace(newUser, cargo, space);
-
-        newUser.setUsuarioSpaces(List.of(usuarioSpace));
-
-        return new UserResponseDTO(usuarioRepository.save(newUser));
+        return usuarioRepository.save(_createNewUser(userDTO));
     }
-
-    private Space _createDefaultSpace() {
-        return Space.builder()
-                .name(NAME_DEFAULT_SPACE)
-                .build();
-    }
-
-    private Cargo _createDefaultCargo() {
-        return new Cargo(RoleType.CREATOR);
-    }
-
 
     public UserResponseDTO getUser(final Long id) {
-        return findById(id)
+        return findByIdOptional(id)
                 .map(UserResponseDTO::new)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
     }
 
-    private Optional<Usuario> findById(final Long id) {
+    private Optional<Usuario> findByIdOptional(final Long id) {
         return usuarioRepository.findById(id);
+    }
+
+    public Usuario findById(final Long id) {
+        return usuarioRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
     }
 
     public Usuario findByEmail(final String email) {
@@ -80,20 +69,20 @@ public class UserService {
     }
 
     public PhotoResponseDTO getPhoto(final Long id) {
-        return findById(id)
+        return findByIdOptional(id)
                 .map(Usuario::getUserPhoto)
                 .map(PhotoResponseDTO::new)
                 .orElse(new PhotoResponseDTO(photoUtil.carregarFotoDefault(), MIDIA_TYPE_SVG));
     }
 
     public void uploadPhoto(final Long id, final MultipartFile file) throws IOException {
-        var user = findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
+        var user = findById(id);
 
         var foto = FotoUsuario.builder()
                 .nomeArquivo(file.getOriginalFilename())
                 .mimeType(file.getContentType())
                 .arquivo(file.getBytes())
-                .usuario(user)
+                .user(user)
                 .build();
 
         user.setUserPhoto(foto);
@@ -103,6 +92,9 @@ public class UserService {
     private void _validationCreateUser(final UserCreateDTO userDTO) {
         _validateMinimumAge(userDTO.birthDate());
         _validateDocument(userDTO.documentNumber(), userDTO.documentType());
+        _validateConfirmPassword(userDTO.password(), userDTO.confirmPassword());
+        _validateDocumentNumberUnique(userDTO.documentNumber());
+        _validateEmailUnique(userDTO.email());
     }
 
 
@@ -127,10 +119,10 @@ public class UserService {
         usuarioRepository.save(user);
     }
 
-    public UserResponseDTO updateUser(final String email, UserUpdateDTO userUpdateDTO) {
+    public UserResponseDTO updateUser(final Long id, UserUpdateDTO userUpdateDTO) {
         _validateMinimumAge(userUpdateDTO.birthDate());
 
-        var user = findByEmail(email);
+        var user = findById(id);
 
         user.setName(userUpdateDTO.name());
         user.setBirthDate(userUpdateDTO.birthDate());
@@ -162,6 +154,20 @@ public class UserService {
     private void _validateOldPassword(final String oldPassword, final String storedPassword) {
         if (!passwordEncoder.matches(oldPassword, storedPassword)) {
             throw new PasswordMismatchException();
+        }
+    }
+
+    private void _validateDocumentNumberUnique(final String documentNumber){
+        var user = usuarioRepository.findByDocumentNumber(documentNumber);
+        if(user.isPresent()){
+            throw new DocumentNumberNotUniqueException();
+        }
+    }
+
+    private void _validateEmailUnique(final String email){
+        var user = usuarioRepository.findByEmail(email);
+        if(user.isPresent()){
+            throw new EmailNotUniqueException();
         }
     }
 
@@ -208,14 +214,6 @@ public class UserService {
                 .birthDate(userDTO.birthDate())
                 .documentType(userDTO.documentType())
                 .documentNumber(userDTO.documentNumber())
-                .build();
-    }
-
-    private UsuarioSpace _createDefaultUsuarioSpace(Usuario newUser, Cargo cargo, Space space) {
-        return UsuarioSpace.builder()
-                .usuario(newUser)
-                .cargo(cargo)
-                .space(space)
                 .build();
     }
 }
