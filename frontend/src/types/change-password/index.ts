@@ -1,5 +1,6 @@
 export type ChangePasswordPublicRequest = {
-    password: string;
+    token: string;
+    newPassword: string;
     confirmPassword: string;
 }
 

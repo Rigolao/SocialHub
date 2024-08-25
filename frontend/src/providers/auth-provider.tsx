@@ -97,6 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             && location.pathname !== '/login'
             && location.pathname !== '/registrar'
             && location.pathname !== '/trocar-senha') {
+            && location.pathname !== '/esqueci-minha-senha') {
             navigate('/login');
         }
     }, [token, location.pathname, navigate]);

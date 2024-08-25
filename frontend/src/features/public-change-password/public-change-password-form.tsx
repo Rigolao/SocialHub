@@ -8,13 +8,14 @@ import {Card, CardContent, CardFooter} from "@/components/ui/card.tsx";
 import ModeToggle from "@/components/ui/mode-toggle.tsx";
 import {usePost} from "@/hooks/use-post.ts";
 import {ChangePasswordPublicRequest, ChangePasswordPublicResponse} from "@/types/change-password";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 
 const changePasswordFormSchema = z.object({
-    password: z.string().min(6, "A senha deve conter no mínimo 6 caracteres"),
+    token: z.string(),
+    newPassword: z.string().min(6, "A senha deve conter no mínimo 6 caracteres"),
     confirmPassword: z.string().min(6, "A senha deve conter no mínimo 6 caracteres")
 }).refine((data) => {
-    return data.password === data.confirmPassword;
+    return data.newPassword === data.confirmPassword;
 }, {
     message: "As senhas não coincidem",
     path: ["confirmPassword"]
@@ -23,9 +24,10 @@ const changePasswordFormSchema = z.object({
 export default function PublicChangePasswordForm() {
 
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     const { mutate, isPending } = usePost<ChangePasswordPublicRequest, ChangePasswordPublicResponse>({
-        url: '/change-password',
+        url: '/passwords/reset',
         queryKey: ['login'],
         onSuccess: (_) => {
             navigate('/');
@@ -35,7 +37,8 @@ export default function PublicChangePasswordForm() {
     const form = useForm<z.infer<typeof changePasswordFormSchema>>({
         resolver: zodResolver(changePasswordFormSchema),
         defaultValues: {
-            password: '',
+            token: searchParams.get('token') || '',
+            newPassword: '',
             confirmPassword: ''
         }
     });
@@ -57,7 +60,7 @@ export default function PublicChangePasswordForm() {
                         <div className="space-y-4 pt-6">
                             <GenericFormField
                                 control={form.control}
-                                name="password"
+                                name="newPassword"
                                 type='password'
                                 label="Nova senha"
                             />
