@@ -95,7 +95,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (token === null
             && location.pathname !== '/login'
-            && location.pathname !== '/registrar') {
+            && location.pathname !== '/registrar'
+            && location.pathname !== '/trocar-senha') {
             navigate('/login');
         }
     }, [token, location.pathname, navigate]);
