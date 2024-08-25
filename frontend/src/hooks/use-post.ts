@@ -5,14 +5,14 @@ import axiosClient from "@/lib/axios";
 
 interface usePostProps<Y> {
     url: string;
-    queryKey?: [unknown];
+    queryKey?: unknown[];
     onSuccess?(data: Y): void;
     onFailure?(data: ResponseError): void;
     hideSuccessToast?: boolean;
     getHeaders?: (data: any) => object;
 }
 
-const hasMessage = (data: any): data is MessageResponse => {
+const hasMessage = (data: unknown): data is MessageResponse => {
     return typeof data === 'object' && data !== null && 'message' in data;
 };
 

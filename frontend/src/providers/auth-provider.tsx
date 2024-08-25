@@ -1,10 +1,13 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useFacebook } from "@/providers/facebook-provider";
-import { usePost } from "@/hooks/use-post";
-import { LoginRequest, LoginResponse } from "@/types/login";
+import React, {createContext, useContext, useEffect, useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
+import {useFacebook} from "@/providers/facebook-provider";
+import {usePost} from "@/hooks/use-post";
+import {LoginRequest, LoginResponse} from "@/types/login";
 import {User} from "@/types/user";
 import {useGet} from "@/hooks/use-get.ts";
+import {UpdateProfileRequest, UpdateProfileResponse} from "@/types/update-profile";
+import {usePatch} from "@/hooks/use-patch.ts";
+import queryClient from "@/lib/query-client";
 
 type AuthProviderState = {
     id: number | null;
@@ -13,6 +16,7 @@ type AuthProviderState = {
     isLoading?: boolean;
     login: (email: string, password: string) => void;
     logout: () => void;
+    updateProfile: (data: UpdateProfileRequest) => void;
 }
 
 const initialState: AuthProviderState = {
@@ -21,7 +25,8 @@ const initialState: AuthProviderState = {
     user: null,
     isLoading: false,
     login: () => {},
-    logout: () => {}
+    logout: () => {},
+    updateProfile: () => {},
 }
 
 const AuthProviderContext = createContext<AuthProviderState>(initialState);
@@ -43,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
     };
 
-    const { mutate: loginMutate, isPending } = usePost<LoginRequest, LoginResponse>({
+    const { mutate: loginMutate, isPending: postIsPending } = usePost<LoginRequest, LoginResponse>({
         url: '/authenticate',
         queryKey: ['login'],
         onSuccess: (data) => {
@@ -53,6 +58,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
         hideSuccessToast: true,
         getHeaders,
+    });
+
+    const { mutate: updateMutate, isPending: patchIsPending } = usePatch<UpdateProfileRequest, UpdateProfileResponse>({
+        url: `/users/${id}`,
+        queryKey: [`updateProfile`, id?.toString()],
+        onSuccess: (data) => {
+            setUser(data.user);
+            queryClient.invalidateQueries({ queryKey: ['user'] });
+        },
+        getHeaders: () => ({
+            Authorization: `Bearer ${token}`
+        }),
     });
 
     const { isLoading } = useGet<User>({
@@ -92,6 +109,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const updateProfile = (data: UpdateProfileRequest) => {
+        updateMutate(data);
+    }
+
     useEffect(() => {
         if (token === null
             && location.pathname !== '/login'
@@ -106,9 +127,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: user?.id || id || null,
         token: token,
         user: user,
-        isLoading: isLoading || isPending,
+        isLoading: isLoading || postIsPending || patchIsPending,
         login: (email: string, password: string) => login(email, password),
-        logout: logout
+        logout: logout,
+        updateProfile: (data: UpdateProfileRequest) => updateProfile(data),
     }
 
     return (

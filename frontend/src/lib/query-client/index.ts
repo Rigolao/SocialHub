@@ -4,7 +4,7 @@ import axios from "axios";
 import {toast} from "sonner";
 import {RotateCcw} from "lucide-react";
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
     queryCache: new QueryCache({
         onError: ((error , query) => {
             if(!axios.isAxiosError(error)) {

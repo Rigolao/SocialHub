@@ -1,40 +1,57 @@
 import {toast} from "sonner";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {ResponseError} from "@/types";
+import {MessageResponse, ResponseError} from "@/types";
 import axiosClient from "@/lib/axios";
 
 interface usePatchProps<Y> {
     url: string;
-    queryKey: [unknown];
+    queryKey: unknown[];
     onSuccess?(data: Y): void;
     onFailure?(data: ResponseError): void;
     hideSuccessToast?: boolean;
+    getHeaders?: (data: unknown) => object;
 }
 
-export function usePatch<T, Y = undefined>({url, queryKey, onFailure, onSuccess, hideSuccessToast = false}: usePatchProps<Y>) {
+const hasMessage = (data: unknown): data is MessageResponse => {
+    return typeof data === 'object' && data !== null && 'message' in data;
+};
+
+export function usePatch<T, Y = undefined>({
+                                               url,
+                                               queryKey,
+                                               onFailure,
+                                               onSuccess,
+                                               hideSuccessToast = false,
+                                               getHeaders
+                                           }: usePatchProps<Y>) {
     const queryClient = useQueryClient();
 
     const mutationFn = (data: T): Promise<Y> => {
+        const headers = getHeaders ? getHeaders(data) : {};
+
         const promise = axiosClient
-            .patch<Y>(url, data)
+            .patch<Y>(url, data, {headers})
             .then(res => res.data);
         processToast(promise);
         return promise;
     }
 
     const processToast = (promise: Promise<Y>) => {
-        const toastOptions: { loading: string; success?: () => string; } = {
-            loading: "Carregando..."
+        const toastOptions: { loading: string; success?: (data: Y) => string } = {
+            loading: "Carregando...",
         };
 
         if (!hideSuccessToast) {
-            toastOptions.success = () => "Sucesso ao editar dados!";
+            toastOptions.success = (data: Y) => {
+                if (hasMessage(data)) {
+                    return data.message;
+                } else {
+                    return "Sucesso!";
+                }
+            };
         }
 
-        return toast.promise(
-            promise,
-            toastOptions
-        );
+        return toast.promise(promise, toastOptions);
     }
 
     return useMutation({
