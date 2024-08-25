@@ -8,6 +8,7 @@ import {useGet} from "@/hooks/use-get.ts";
 import {UpdateProfileRequest, UpdateProfileResponse} from "@/types/update-profile";
 import {usePatch} from "@/hooks/use-patch.ts";
 import queryClient from "@/lib/query-client";
+import {ChangePasswordRequest, ChangePasswordResponse} from "@/types/change-password";
 
 type AuthProviderState = {
     id: number | null;
@@ -17,6 +18,7 @@ type AuthProviderState = {
     login: (email: string, password: string) => void;
     logout: () => void;
     updateProfile: (data: UpdateProfileRequest) => void;
+    changePassword: (data: ChangePasswordRequest) => void;
 }
 
 const initialState: AuthProviderState = {
@@ -27,6 +29,7 @@ const initialState: AuthProviderState = {
     login: () => {},
     logout: () => {},
     updateProfile: () => {},
+    changePassword: () => {},
 }
 
 const AuthProviderContext = createContext<AuthProviderState>(initialState);
@@ -60,13 +63,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         getHeaders,
     });
 
-    const { mutate: updateMutate, isPending: patchIsPending } = usePatch<UpdateProfileRequest, UpdateProfileResponse>({
+    const { mutate: updateProfileMutate, isPending: updateProfileIsPending } = usePatch<UpdateProfileRequest, UpdateProfileResponse>({
         url: `/users/${id}`,
         queryKey: [`updateProfile`, id?.toString()],
         onSuccess: (data) => {
             setUser(data.user);
             queryClient.invalidateQueries({ queryKey: ['user'] });
         },
+        getHeaders: () => ({
+            Authorization: `Bearer ${token}`
+        }),
+    });
+
+    const { mutate: changePasswordMutate, isPending: changePasswordIsPending } = usePatch<ChangePasswordRequest, ChangePasswordResponse>({
+        url: `/users/${id}/password`,
+        queryKey: [`changePassword`, id?.toString()],
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
         }),
@@ -110,7 +121,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const updateProfile = (data: UpdateProfileRequest) => {
-        updateMutate(data);
+        updateProfileMutate(data);
+    }
+
+    const changePassword = (data: ChangePasswordRequest) => {
+        changePasswordMutate(data);
     }
 
     useEffect(() => {
@@ -127,10 +142,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: user?.id || id || null,
         token: token,
         user: user,
-        isLoading: isLoading || postIsPending || patchIsPending,
+        isLoading: isLoading || postIsPending || updateProfileIsPending || changePasswordIsPending,
         login: (email: string, password: string) => login(email, password),
         logout: logout,
         updateProfile: (data: UpdateProfileRequest) => updateProfile(data),
+        changePassword: (data: ChangePasswordRequest) => changePassword(data),
     }
 
     return (

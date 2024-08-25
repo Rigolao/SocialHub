@@ -4,6 +4,13 @@ export type ChangePasswordPublicRequest = {
     confirmPassword: string;
 }
 
-export type ChangePasswordPublicResponse = {
+export type ChangePasswordRequest = {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+}
+
+export type ChangePasswordResponse = {
     message: string;
 }
+
