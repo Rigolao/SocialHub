@@ -3,10 +3,8 @@ package br.socialhub.api.services;
 import br.socialhub.api.dtos.reset_password.ResetPasswordDTO;
 import br.socialhub.api.dtos.user.*;
 import br.socialhub.api.enums.DocumentType;
-import br.socialhub.api.enums.TokenStatus;
 import br.socialhub.api.exceptions.*;
 import br.socialhub.api.models.FotoUsuario;
-import br.socialhub.api.models.TokenAuditoria;
 import br.socialhub.api.models.Usuario;
 import br.socialhub.api.repositories.TokenAuditoriaRepository;
 import br.socialhub.api.repositories.UsuarioRepository;
@@ -19,12 +17,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static br.socialhub.api.utils.Constantes.*;
+import static br.socialhub.api.utils.Constantes.EXCEPTION_UNAUTHORIZED_RESOURCE;
+import static br.socialhub.api.utils.Constantes.RESOURCE_USER;
 
 @Service
 @RequiredArgsConstructor
@@ -97,22 +98,6 @@ public class UserService {
         _validateEmailUnique(userDTO.email());
     }
 
-
-    public String generateResetLink(final String email) {
-        var user = findByEmail(email);
-
-        var tokenAuditoria = TokenAuditoria.builder()
-                .usuario(user)
-                .dataInicio(LocalDateTime.now())
-                .dataFim(LocalDateTime.now().plusDays(TOKEN_DURATION_IN_DAY))
-                .status(TokenStatus.UNUSED)
-                .build();
-
-        var uuid = tokenAuditoriaRepository.save(tokenAuditoria).getToken();
-
-        return String.format(LINK_RESET, uuid);
-    }
-
     public void resetPassword(final Usuario user, final ResetPasswordDTO resetPasswordDTO) {
         _validateConfirmPassword(resetPasswordDTO.newPassword(), resetPasswordDTO.confirmPassword());
         user.setPassword(passwordEncoder.encode(resetPasswordDTO.newPassword()));
@@ -130,10 +115,10 @@ public class UserService {
         return new UserResponseDTO(usuarioRepository.save(user));
     }
 
-    public String updatePasswordUser(String email, UserUpdatePasswordDTO userUpdatePasswordDTO) {
+    public String updatePasswordUser(Long id, UserUpdatePasswordDTO userUpdatePasswordDTO) {
         _validateConfirmPassword(userUpdatePasswordDTO.newPassword(), userUpdatePasswordDTO.confirmPassword());
 
-        var user = findByEmail(email);
+        var user = findById(id);
 
         _validateOldPassword(userUpdatePasswordDTO.currentPassword(), user.getPassword());
 
@@ -215,5 +200,21 @@ public class UserService {
                 .documentType(userDTO.documentType())
                 .documentNumber(userDTO.documentNumber())
                 .build();
+    }
+
+    public List<UserBasicResponseDTO> searchUserByEmail(String filter) {
+       Optional<List<Usuario>> result = usuarioRepository.findByEmailStartingWithIgnoreCase(filter);
+
+       return result
+               .map(users -> users.stream()
+                       .map(UserBasicResponseDTO::new)
+                       .collect(Collectors.toList()))
+               .orElseGet(Collections::emptyList);
+
+    }
+
+    public boolean isUserSelf(String email, Long idUser){
+        return findByEmail(email).equals(findById(idUser));
+
     }
 }
