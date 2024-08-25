@@ -11,6 +11,7 @@ public interface Constantes {
     String ENDPOINT_FORGOT = "forgot";
     String ENDPOINT_RESET = "reset";
     String ENDPOINT_SPACE = "spaces";
+    String ENDPOINT_SOCIAL_MEDIA="social-medias";
 
     String ENDPOINT_ROLE = "roles";
     String ENDPOINT_INVITATIONS = "invitations";
@@ -98,6 +99,7 @@ public interface Constantes {
      */
 
     String EXCEPTION_PASSWORD_MISMATCH = "As senhas não coincidem.";
+    String EXCEPTION_PASSWORD_MISMATCH_OLD_PASSWORD = "A senha atual fornecida está incorreta. Por favor, verifique sua senha e tente novamente.";
     String EXCEPTION_UNAUTHORIZED_RESOURCE = "O usuário não tem permissão para acessar esse recurso.";
     String EXCEPTION_UNAUTHORIZED = "O usuário não autorizado.";
     String EXCEPTION_MINIMUM_AGE = "Idade mínima inválida: a idade permitida é a partir de 12 anos.";

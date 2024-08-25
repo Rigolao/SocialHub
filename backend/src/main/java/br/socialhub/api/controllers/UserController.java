@@ -80,7 +80,8 @@ public class UserController {
     public ResponseEntity<String> updatePasswordUser(@RequestHeader(AUTHORIZATION) @NotBlank final String token,
                                                      @PathVariable final Long id,
                                                      @RequestBody @Valid final UserUpdatePasswordDTO userUpdatePasswordDTO) {
-        return ResponseEntity.ok(userService.updatePasswordUser(id, userUpdatePasswordDTO));
+        userService.updatePasswordUser(id, userUpdatePasswordDTO);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("{id}/photo")
@@ -101,4 +102,5 @@ public class UserController {
         userService.uploadPhoto(id, file);
         return ResponseEntity.ok(MESSAGE_SUCESS_UPLOAD_PHOTO);
     }
+
 }

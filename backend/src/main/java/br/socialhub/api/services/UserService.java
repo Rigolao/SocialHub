@@ -11,6 +11,7 @@ import br.socialhub.api.repositories.UsuarioRepository;
 import br.socialhub.api.utils.CpfCnpjValidator;
 import br.socialhub.api.utils.PhotoUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,8 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static br.socialhub.api.utils.Constantes.EXCEPTION_UNAUTHORIZED_RESOURCE;
-import static br.socialhub.api.utils.Constantes.RESOURCE_USER;
+import static br.socialhub.api.utils.Constantes.*;
 
 @Service
 @RequiredArgsConstructor
@@ -115,7 +115,7 @@ public class UserService {
         return new UserResponseDTO(usuarioRepository.save(user));
     }
 
-    public String updatePasswordUser(Long id, UserUpdatePasswordDTO userUpdatePasswordDTO) {
+    public void updatePasswordUser(Long id, UserUpdatePasswordDTO userUpdatePasswordDTO) {
         _validateConfirmPassword(userUpdatePasswordDTO.newPassword(), userUpdatePasswordDTO.confirmPassword());
 
         var user = findById(id);
@@ -126,19 +126,17 @@ public class UserService {
         user.setPassword(newPasswordEncode);
 
         usuarioRepository.save(user);
-
-        return "Sucesso";
     }
 
     private void _validateConfirmPassword(final String password, final String confirmPassword) {
         if (!Objects.equals(password, confirmPassword)) {
-            throw new PasswordMismatchException();
+            throw new PasswordMismatchException(EXCEPTION_PASSWORD_MISMATCH);
         }
     }
 
     private void _validateOldPassword(final String oldPassword, final String storedPassword) {
         if (!passwordEncoder.matches(oldPassword, storedPassword)) {
-            throw new PasswordMismatchException();
+            throw new PasswordMismatchException(EXCEPTION_PASSWORD_MISMATCH_OLD_PASSWORD);
         }
     }
 
@@ -217,4 +215,5 @@ public class UserService {
         return findByEmail(email).equals(findById(idUser));
 
     }
+
 }
