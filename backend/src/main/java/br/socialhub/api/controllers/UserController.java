@@ -84,9 +84,7 @@ public class UserController {
     }
 
     @GetMapping("{id}/photo")
-    @PreAuthorize("@userService.isUserSelf(@jwtService.extractSubject(#token), #id)")
-    public ResponseEntity<byte[]> getPhoto(@RequestHeader(AUTHORIZATION) @NotBlank final String token,
-                                           @PathVariable final Long id) {
+    public ResponseEntity<byte[]> getPhoto(@PathVariable final Long id) {
 
         PhotoResponseDTO fotoResponse = userService.getPhoto(id);
 
