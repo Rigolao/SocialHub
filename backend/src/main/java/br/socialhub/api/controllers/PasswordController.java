@@ -23,21 +23,18 @@ public class PasswordController {
 
     @PostMapping(ENDPOINT_FORGOT)
     public ResponseEntity<String> forgotPassword(@RequestBody EmailDTO email) {
-        var token = userService.generateResetLink(email.email());
-        emailService.sendPasswordResetEmail(email.email(), token);
+        var user = userService.findByEmail(email.email());
+        var link = tokenService.generateResetLink(user);
+        emailService.sendPasswordResetEmail(email.email(), link);
 
         return ResponseEntity.ok(MESSAGE_SUCESS_FORGOT);
     }
 
     @PostMapping(ENDPOINT_RESET)
     public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordDTO resetPasswordDTO) {
-        if (!tokenService.isTokenValid(resetPasswordDTO.token())) {
-            return ResponseEntity.badRequest().body(MESSAGE_BAD_REQUEST_RESET);
-        }
-
+        tokenService.validateToken(resetPasswordDTO.token());
         var user = tokenService.getUserByToken(resetPasswordDTO.token());
         userService.resetPassword(user, resetPasswordDTO);
-        tokenService.invalidateToken(resetPasswordDTO.token());
 
         return ResponseEntity.ok(MESSAGE_SUCESS_RESET);
     }

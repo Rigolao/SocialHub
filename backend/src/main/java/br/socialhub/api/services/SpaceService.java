@@ -4,13 +4,12 @@ import br.socialhub.api.dtos.space.SpaceCreateDTO;
 import br.socialhub.api.dtos.space.SpaceResponseDTO;
 import br.socialhub.api.dtos.space.SpaceUpdateDTO;
 import br.socialhub.api.dtos.user.MemberResponseDTO;
+import br.socialhub.api.enums.RoleType;
 import br.socialhub.api.exceptions.ResourceNotFoundException;
-import br.socialhub.api.models.Cargo;
 import br.socialhub.api.models.Space;
 import br.socialhub.api.models.Usuario;
 import br.socialhub.api.models.UsuarioSpace;
 import br.socialhub.api.repositories.SpaceRepository;
-import br.socialhub.api.repositories.UsuarioSpaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +28,10 @@ public class SpaceService {
         return spaceRepository.save(new Space(spaceCreateDTO.name()));
     }
 
-    public void updateSpace(final SpaceUpdateDTO spaceUpdateDTO, final Long id) {
+    public SpaceResponseDTO updateSpace(final SpaceUpdateDTO spaceUpdateDTO, final Long id) {
         Space space = findById(id);
         space.setName(spaceUpdateDTO.name());
-        spaceRepository.save(space);
+       return createResponse(spaceRepository.save(space));
     }
 
     public Space createSpaceDefault() {
@@ -57,5 +56,13 @@ public class SpaceService {
 
     public SpaceResponseDTO createResponse(final Space space) {
         return new SpaceResponseDTO(space, getMembers(space));
+    }
+
+    public Usuario getCreatorInSpace(final Space space){
+        return space.getUserSpaces().stream()
+                .filter(userSpace -> userSpace.getRole().getDescription().equals(RoleType.CREATOR))
+                .map(UsuarioSpace::getUser)
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
     }
 }

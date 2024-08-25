@@ -1,7 +1,9 @@
 package br.socialhub.api.exceptions;
 
+import static br.socialhub.api.utils.Constantes.EXCEPTION_MINIMUM_AGE;
+
 public class MinimumAgeException extends RuntimeException {
     public MinimumAgeException(){
-        super("Idade mínima inválida: a idade permitida é a partir de 12 anos.");
+        super(EXCEPTION_MINIMUM_AGE);
     }
 }

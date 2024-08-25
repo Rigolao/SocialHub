@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,10 +23,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
-import static br.socialhub.api.utils.Constantes.*;
+import static br.socialhub.api.utils.Constantes.ENDPOINT_AUTHENTICATE;
+import static br.socialhub.api.utils.Constantes.ENDPOINT_PASSWORD;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
     @Value("${jwt.public.key}")
     private RSAPublicKey key;
@@ -41,6 +44,7 @@ public class SecurityConfig {
                     auth -> auth.requestMatchers(HttpMethod.POST, "users").permitAll()
                             .requestMatchers(ENDPOINT_AUTHENTICATE, ENDPOINT_PASSWORD+"/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/users/{id}/photo").permitAll()
+                            .requestMatchers("/invitations").permitAll()
                             .requestMatchers("/swagger-ui/*", "/v3/api-docs/**").permitAll()
                             .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())

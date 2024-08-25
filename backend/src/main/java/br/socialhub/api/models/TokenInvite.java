@@ -12,13 +12,14 @@ import java.time.LocalDateTime;
 
 import static br.socialhub.api.utils.Constantes.ONE_DAY;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "TOKEN_AUDITORIA", schema = "socialhub")
-public class TokenAuditoria {
+@Table(name = "TOKEN_INVITE", schema = "socialhub")
+public class TokenInvite {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String token;
@@ -27,19 +28,28 @@ public class TokenAuditoria {
     @JoinColumn(name = "IDUSUARIO",referencedColumnName = "IDUSUARIO", nullable = false)
     private Usuario user;
 
+    @ManyToOne
+    @JoinColumn(name = "IDSPACE",referencedColumnName = "IDSPACE", nullable = false)
+    private Space space;
+
+    @ManyToOne
+    @JoinColumn(name = "IDCARGO",referencedColumnName = "IDCARGO", nullable = false)
+    private Cargo role;
+
     @Column(name = "DTINICIO", nullable = false)
     private LocalDateTime startDate;
 
     @Column(name = "DTFIM", nullable = false)
     private LocalDateTime endDate;
 
-
-    @Column(name = "IS_USADO")
+    @Column(name = "STATUS")
     @Convert(converter = TokenStatusConverter.class)
     private TokenStatus status;
 
-    public TokenAuditoria(Usuario user) {
+    public TokenInvite(Usuario user, Space space, Cargo role){
         this.user = user;
+        this.space = space;
+        this.role = role;
         this.startDate = LocalDateTime.now();
         this.endDate = startDate.plusDays(ONE_DAY);
         this.status = TokenStatus.UNUSED;

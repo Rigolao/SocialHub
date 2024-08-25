@@ -10,7 +10,4 @@ import java.util.Optional;
 
 @Repository
 public interface TokenAuditoriaRepository extends JpaRepository<TokenAuditoria,String> {
-
-    @Query("SELECT t FROM TokenAuditoria t WHERE t.token = :token AND t.status = 'UNUSED'")
-    Optional<TokenAuditoria> findValidToken(@Param("token") String token);
 }
