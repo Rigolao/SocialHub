@@ -21,7 +21,7 @@ public class InvitationController {
     private final UserSpaceService userSpaceService;
 
     @Transactional
-    @PostMapping
+    @GetMapping
     public ResponseEntity<Void> confirmInvitation(@RequestParam final String token){
         var tokenInvite = tokenService.confirmInvitation(token);
 
