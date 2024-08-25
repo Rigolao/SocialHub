@@ -34,7 +34,13 @@ export default function GenericFormField<T extends FieldValues>({control, name, 
                                     disabled={disabled}
                                     maxLength={maxLength}
                                     onChange={(e) => {
-                                        const formattedValue = onChange ? onChange(e.target.value) : e.target.value;
+                                        let value = e.target.value;
+
+                                        if (maxLength && value.length > maxLength) {
+                                            value = value.slice(0, maxLength);
+                                        }
+
+                                        const formattedValue = onChange ? onChange(value) : value;
                                         field.onChange(formattedValue);
                                     }}
                                     {...restField} />
@@ -46,7 +52,13 @@ export default function GenericFormField<T extends FieldValues>({control, name, 
                                     disabled={disabled}
                                     maxLength={maxLength}
                                     onChange={(e) => {
-                                        const formattedValue = onChange ? onChange(e.target.value) : e.target.value;
+                                        let value = e.target.value;
+
+                                        if (maxLength && value.length > maxLength) {
+                                            value = value.slice(0, maxLength);
+                                        }
+
+                                        const formattedValue = onChange ? onChange(value) : value;
                                         field.onChange(formattedValue);
                                     }}
                                     {...restField} />
