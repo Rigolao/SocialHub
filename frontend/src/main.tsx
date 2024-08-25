@@ -10,15 +10,7 @@ import queryClient from "@/lib/query-client";
 import {BrowserRouter} from "react-router-dom";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
 
-const setupMockWorker = async () => {
-    const {worker} = await import("@/lib/msw/browser.ts");
-    return worker.start({
-        onUnhandledRequest: "bypass"
-    });
-}
-
 initFacebookSdk().then(() => {
-    setupMockWorker().then(() => {
         ReactDOM.createRoot(document.getElementById('root')!).render(
             <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
                 <QueryClientProvider client={queryClient}>
@@ -35,5 +27,4 @@ initFacebookSdk().then(() => {
                 </QueryClientProvider>
             </ThemeProvider>
         );
-    });
 });
