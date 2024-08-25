@@ -25,7 +25,7 @@ public class PasswordController {
     public ResponseEntity<String> forgotPassword(@RequestBody EmailDTO email) {
         var user = userService.findByEmail(email.email());
         var link = tokenService.generateResetLink(user);
-        emailService.sendPasswordResetEmail(email.email(), link);
+        emailService.sendPasswordResetEmail(email.email(), link, user.getName());
 
         return ResponseEntity.ok(MESSAGE_SUCESS_FORGOT);
     }

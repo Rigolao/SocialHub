@@ -54,9 +54,9 @@ public interface Constantes {
      * Links
      */
 
-    String LINK_RESET = "http://localhost:5173/esqueci-minha-senha?token=%s";
-    String LINK_URL_PHOTO = "http://localhost:8080/"+ENDPOINT_USERS+"/%s/photo";
     String LINK_FRONT_END = "https://localhost:5173";
+    String LINK_RESET = LINK_FRONT_END+"/esqueci-minha-senha?token=%s";
+    String LINK_URL_PHOTO = "http://localhost:8080/"+ENDPOINT_USERS+"/%s/photo";
     String LINK_INVITE_USER = "http://localhost:8080/invitations?token=%s";
 
     /**
