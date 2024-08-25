@@ -43,7 +43,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(
                     auth -> auth.requestMatchers(HttpMethod.POST, "users").permitAll()
                             .requestMatchers(ENDPOINT_AUTHENTICATE, ENDPOINT_PASSWORD+"/**").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/users/{id}/photo").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/users/*/photo").permitAll()
                             .requestMatchers("/invitations").permitAll()
                             .requestMatchers("/swagger-ui/*", "/v3/api-docs/**").permitAll()
                             .anyRequest().authenticated())

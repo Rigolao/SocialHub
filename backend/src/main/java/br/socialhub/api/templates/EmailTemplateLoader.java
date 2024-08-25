@@ -38,11 +38,12 @@ public class EmailTemplateLoader {
             throw new RuntimeException("Erro ao carregar o template de e-mail", e);
         }
     }
-    public String loadResetPasswordTemplate(String link) {
+    public String loadResetPasswordTemplate(final String link, final String name) {
         try {
             ClassPathResource resource = new ClassPathResource(RESET_EMAIL_TEMPLATE_PATH);
             String content = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
             return content.replace("{{resetLink}}", link)
+                    .replace("{{name}}", name)
                     .replace("{{year}}", String.valueOf(LocalDate.now().getYear()));
         } catch (IOException e) {
             throw new RuntimeException("Erro ao carregar o template de e-mail", e);

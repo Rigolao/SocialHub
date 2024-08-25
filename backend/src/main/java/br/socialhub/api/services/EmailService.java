@@ -22,8 +22,8 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final EmailTemplateLoader emailTemplateLoader;
 
-    public void sendPasswordResetEmail(final String email, final String resetLink) {
-        String content = emailTemplateLoader.loadResetPasswordTemplate(resetLink);
+    public void sendPasswordResetEmail(final String email, final String resetLink, final String name) {
+        String content = emailTemplateLoader.loadResetPasswordTemplate(resetLink, name);
         _sendHtmlEmail(email, RESET_PASSWORD_TITLE_EMAIL, content);
     }
 
