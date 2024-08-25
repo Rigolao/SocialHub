@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
+import static br.socialhub.api.utils.Constantes.BEARER;
 import static br.socialhub.api.utils.Constantes.WHITESPACE;
 
 
@@ -44,7 +45,7 @@ public class JwtService {
 
     public String extractSubject(String token) {
         try {
-            Jwt jwt = decoder.decode(token);
+            Jwt jwt = decoder.decode(token.replace(BEARER, WHITESPACE));
             return jwt.getSubject();
         } catch (JwtException e) {
             // Trate a exceção conforme necessário
