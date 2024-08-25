@@ -81,7 +81,7 @@ public class SpaceController {
     }
 
     @Transactional
-    @PatchMapping("{spaceId}/roles/{userId}")
+    @PatchMapping("{spaceId}/users/{userId}/roles")
     @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
     public ResponseEntity<Void> assignRoleToUser(@PathVariable final Long spaceId,
                                                  @PathVariable final Long userId,
