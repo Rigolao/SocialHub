@@ -1,21 +1,21 @@
 package br.socialhub.api.controllers;
 
 import br.socialhub.api.dtos.user.*;
-import br.socialhub.api.enums.RoleType;
 import br.socialhub.api.services.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 
 import static br.socialhub.api.utils.Constantes.*;
 
@@ -25,7 +25,6 @@ import static br.socialhub.api.utils.Constantes.*;
 public class UserController {
 
     private final UserService userService;
-    private final JwtService jwtService;
     private final EmailService emailService;
     private final SpaceService spaceService;
     private final PlanService planService;
@@ -34,8 +33,15 @@ public class UserController {
     private final PlanUserService planUserService;
 
     @GetMapping("{id}")
-    public ResponseEntity<UserResponseDTO> getUser(@PathVariable final Long id) {
+    @PreAuthorize("@userService.isUserSelf(@jwtService.extractSubject(#token), #id)")
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable final Long id,
+                                                   @RequestHeader(AUTHORIZATION) final String token) {
         return ResponseEntity.ok(userService.getUser(id));
+    }
+
+    @GetMapping("search")
+    public ResponseEntity<List<UserBasicResponseDTO>> findUserByLikeEmail(@RequestParam final String filter) {
+        return ResponseEntity.ok(userService.searchUserByEmail(filter));
     }
 
     @Transactional
@@ -62,6 +68,7 @@ public class UserController {
     }
 
     @PatchMapping("{id}")
+    @PreAuthorize("@userService.isUserSelf(@jwtService.extractSubject(#token), #id)")
     public ResponseEntity<UserResponseDTO> updateUser(@RequestHeader(AUTHORIZATION) @NotBlank final String token,
                                                       @PathVariable final Long id,
                                                       @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
@@ -69,21 +76,17 @@ public class UserController {
     }
 
     @PatchMapping("{id}/password")
+    @PreAuthorize("@userService.isUserSelf(@jwtService.extractSubject(#token), #id)")
     public ResponseEntity<String> updatePasswordUser(@RequestHeader(AUTHORIZATION) @NotBlank final String token,
                                                      @PathVariable final Long id,
                                                      @RequestBody @Valid final UserUpdatePasswordDTO userUpdatePasswordDTO) {
-        String email = jwtService.extractSubject(token.replace(BEARER, WHITESPACE));
-        userService.validateUser(email, id);
-        return ResponseEntity.ok(userService.updatePasswordUser(email, userUpdatePasswordDTO));
+        return ResponseEntity.ok(userService.updatePasswordUser(id, userUpdatePasswordDTO));
     }
 
     @GetMapping("{id}/photo")
-    public ResponseEntity<?> getPhoto(@PathVariable final Long id,
-                                      @RequestParam @NotNull final String token) {
-
-        if (!jwtService.validateToken(token.replace(BEARER, WHITESPACE))) {
-            return ResponseEntity.badRequest().build();
-        }
+    @PreAuthorize("@userService.isUserSelf(@jwtService.extractSubject(#token), #id)")
+    public ResponseEntity<byte[]> getPhoto(@RequestHeader(AUTHORIZATION) @NotBlank final String token,
+                                           @PathVariable final Long id) {
 
         PhotoResponseDTO fotoResponse = userService.getPhoto(id);
 
@@ -93,7 +96,9 @@ public class UserController {
     }
 
     @PostMapping("{id}/photo")
-    public ResponseEntity<String> uploadFoto(@PathVariable final Long id,
+    @PreAuthorize("@userService.isUserSelf(@jwtService.extractSubject(#token), #id)")
+    public ResponseEntity<String> uploadFoto(@RequestHeader(AUTHORIZATION) @NotBlank final String token,
+                                             @PathVariable final Long id,
                                              @RequestParam("photo") final MultipartFile file) throws IOException {
         userService.uploadPhoto(id, file);
         return ResponseEntity.ok(MESSAGE_SUCESS_UPLOAD_PHOTO);
