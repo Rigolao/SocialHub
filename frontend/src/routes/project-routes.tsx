@@ -10,6 +10,7 @@ import PortifolioPage from "@/pages/portifolio-page.tsx";
 import ChangePasswordPage from "@/pages/change-password-page.tsx";
 import ProfilePage from "@/pages/profile-page.tsx";
 import PublicChangePasswordPage from "@/pages/public-change-password-page.tsx";
+import AcceptedInvitePage from "@/pages/accepted-invite-page.tsx";
 
 export default function ProjectRoutes() {
 
@@ -19,7 +20,8 @@ export default function ProjectRoutes() {
         <Routes key={location.pathname.split('/')[1]} location={location}>
             <Route index path='/login' element={<LoginPage/>} errorElement={<NotFoundPage/>}/>,
             <Route path='/registrar' element={<RegisterPage/>} errorElement={<NotFoundPage/>}/>,
-            <Route path='/trocar-senha' element={<PublicChangePasswordPage />} errorElement={<NotFoundPage/>}/>,
+            <Route path='/esqueci-minha-senha' element={<PublicChangePasswordPage />} errorElement={<NotFoundPage/>}/>,
+            <Route path='/convite-aceito' element={<AcceptedInvitePage />} errorElement={<NotFoundPage/>}/>,
             <Route path='/' element={<Root/>} errorElement={<NotFoundPage/>}>
                 <Route index element={<HomePage/>}/>
                 <Route path='postagens/' element={<PostsCalendarPage/>}/>
