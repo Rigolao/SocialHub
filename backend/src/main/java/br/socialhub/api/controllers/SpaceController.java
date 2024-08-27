@@ -72,7 +72,7 @@ public class SpaceController {
         var role = roleService.findById(inviteDTO.idRole());
         var space = spaceService.findById(id);
 
-        var link = tokenService.gerenateLinkInvite(user, space, role);
+        var link = tokenService.generateInviteLink(user, space, role);
         var userCreator = spaceService.getCreatorInSpace(space);
 
         emailService.sendInviteUser(space.getName(), user.getName(), user.getEmail(), userCreator.getName(), link);

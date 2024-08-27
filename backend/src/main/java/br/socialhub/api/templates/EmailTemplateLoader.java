@@ -7,6 +7,7 @@ import org.springframework.util.StreamUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import static br.socialhub.api.utils.Constantes.*;
 
