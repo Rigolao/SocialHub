@@ -26,12 +26,13 @@ export default function ProfileForm() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit((values) => updateProfile(values))}>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col md:flex-row gap-4">
                     <GenericFormField
                         name="name"
                         label="Nome"
                         placeholder="Nome"
                         type="text"
+                        className="md:w-2/4"
                     />
 
                     <GenericFormField

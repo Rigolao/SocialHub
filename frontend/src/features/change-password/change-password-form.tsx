@@ -31,7 +31,7 @@ export default function ChangePasswordForm() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit((values) => changePassword(values))}>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col md:flex-row gap-4">
                     <GenericFormField
                         name="currentPassword"
                         label="Senha atual"
