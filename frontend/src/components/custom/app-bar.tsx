@@ -10,10 +10,13 @@ import ModeToggle from "@/components/ui/mode-toggle.tsx";
 import {useAlertDialog} from "@/providers/alert-dialog-provider.tsx";
 import {useAuth} from "@/providers/auth-provider.tsx";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
+import SpaceSelector from "@/components/custom/space-selector.tsx";
+import useGetUser from "@/hooks/user/use-get-user.ts";
 
 export function AppBar() {
 
-    const { logout, token, user, isLoading} = useAuth();
+    const { logout, token } = useAuth();
+    const { data: user, isLoading } = useGetUser();
     const { showDialog } = useAlertDialog();
 
     const sair = () => {
@@ -58,20 +61,28 @@ export function AppBar() {
                         <ProfileConfig />
                     </div>
                     <Separator />
+                    <div className='md:hidden'>
+                        <SpaceSelector />
+                        <Separator />
+                    </div>
                     <AppBarItem label={"Início"} icon={HomeIcon} route={'/'}/>
                     <AppBarItem label={"Postagens"} icon={CalendarIcon} route={'/postagens'}/>
                     <AppBarItem label={"Agendar postagem"} icon={PlusIcon} route={'/agendar-postagem'}/>
                     <AppBarItem label={"Portfólio"} icon={PersonIcon} route={'/portifolio'}/>
                     <SheetFooter className="md:hidden flex flex-row justify-between mt-auto">
                         <ModeToggle/>
-                        <CustomButton onClick={sair} tooltip={"Sair"} label={"Sair"} icon={ExitIcon}/>
+
+                        <CustomButton onClick={sair} tooltip="Sair" label="Sair" icon={ExitIcon}/>
                     </SheetFooter>
                 </SheetContent>
 
             </Sheet>
             <div className="hidden md:flex gap-3">
+                <SpaceSelector />
+
                 <ModeToggle/>
-                <CustomButton type={'button'} onClick={sair} tooltip={"Sair"} icon={ExitIcon}/>
+
+                <CustomButton type='button' onClick={sair} tooltip="Sair" icon={ExitIcon}/>
             </div>
         </div>
     )

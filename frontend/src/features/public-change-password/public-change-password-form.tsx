@@ -6,9 +6,8 @@ import {Button} from "@/components/ui/button.tsx";
 import GenericFormField from "@/components/custom/generic-form-field.tsx";
 import {Card, CardContent, CardFooter} from "@/components/ui/card.tsx";
 import ModeToggle from "@/components/ui/mode-toggle.tsx";
-import {usePost} from "@/hooks/use-post.ts";
-import {ChangePasswordPublicRequest, ChangePasswordResponse} from "@/types/change-password";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
+import usePublicPasswordReset from "@/hooks/user/use-public-passwors-reset.ts";
 
 const changePasswordFormSchema = z.object({
     token: z.string(),
@@ -23,16 +22,8 @@ const changePasswordFormSchema = z.object({
 
 export default function PublicChangePasswordForm() {
 
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-
-    const { mutate, isPending } = usePost<ChangePasswordPublicRequest, ChangePasswordResponse>({
-        url: '/passwords/reset',
-        queryKey: ['login'],
-        onSuccess: (_) => {
-            navigate('/');
-        },
-    });
+    const { mutate, isPending } = usePublicPasswordReset();
 
     const form = useForm<z.infer<typeof changePasswordFormSchema>>({
         resolver: zodResolver(changePasswordFormSchema),

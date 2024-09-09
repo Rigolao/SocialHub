@@ -1,10 +1,10 @@
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useAuth} from "@/providers/auth-provider.tsx";
 import {Form} from "@/components/ui/form.tsx";
 import GenericFormField from "@/components/custom/generic-form-field.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import useChangePassword from "@/hooks/user/use-change-password.ts";
 
 const changePasswordFormSchema = z.object({
     currentPassword: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres'),
@@ -17,7 +17,7 @@ const changePasswordFormSchema = z.object({
 
 export default function ChangePasswordForm() {
 
-    const {changePassword} = useAuth();
+    const { mutate, isPending } = useChangePassword();
 
     const form = useForm<z.infer<typeof changePasswordFormSchema>>({
         resolver: zodResolver(changePasswordFormSchema),
@@ -30,7 +30,7 @@ export default function ChangePasswordForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit((values) => changePassword(values))}>
+            <form onSubmit={form.handleSubmit((values) => mutate(values))}>
                 <div className="flex flex-col md:flex-row gap-4">
                     <GenericFormField
                         name="currentPassword"
@@ -55,6 +55,7 @@ export default function ChangePasswordForm() {
                 </div>
                 <div className="flex justify-end gap-4 mt-4">
                     <Button
+                        disabled={isPending}
                         type="submit">
                         Alterar senha
                     </Button>

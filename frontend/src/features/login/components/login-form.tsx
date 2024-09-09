@@ -28,7 +28,7 @@ export default function LoginForm() {
         }
     });
 
-    const onSubmit = (values: z.infer<typeof loginFormSchema>) => login(values.email, values.password);
+    const onSubmit = (values: z.infer<typeof loginFormSchema>) => login?.mutate(values);
 
     return (
         <Form {...form}>
@@ -62,6 +62,7 @@ export default function LoginForm() {
                     <CardFooter className='flex flex-col gap-2'>
                         <Button
                             className="w-full"
+                            disabled={login?.isPending}
                             type="submit">Entrar</Button>
                         <Button onClick={(e) => {
                             e.preventDefault();
