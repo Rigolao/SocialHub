@@ -23,18 +23,18 @@ export function ProfileConfig() {
                 className="w-56">
                 <DropdownMenuLabel>Configurações</DropdownMenuLabel>
                 <DropdownMenuSeparator/>
-                <DropdownMenuItem>
-                    <PersonIcon className="w-4 h-4 mr-2"/>
-                    <Link to={'perfil/'}>
+                <Link to={'perfil/'}>
+                    <DropdownMenuItem className='cursor-pointer'>
+                        <PersonIcon className="w-4 h-4 mr-2"/>
                         Perfil
-                    </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    <LockIcon className="w-4 h-4 mr-2"/>
-                    <Link to={'alterar-senha/'}>
-                        Alterar senha
-                    </Link>
-                </DropdownMenuItem>
+                    </DropdownMenuItem>
+                </Link>
+                <Link to={'alterar-senha/'}>
+                    <DropdownMenuItem className='cursor-pointer'>
+                        <LockIcon className="w-4 h-4 mr-2"/>
+                            Alterar senha
+                    </DropdownMenuItem>
+                </Link>
             </DropdownMenuContent>
         </DropdownMenu>
     )
