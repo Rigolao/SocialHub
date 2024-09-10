@@ -1,28 +1,26 @@
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {useSpace} from "@/providers/space-provider.tsx";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
-import {useEffect} from "react";
 
 export default function SpaceSelector() {
 
     const { spaces, temp, selectedSpace, setSelectedSpace } = useSpace();
 
     const handleSelectSpace = (id: string) => {
-        spaces?.data?.find(s => s.id.toString() === id) && setSelectedSpace(spaces?.data?.find(s => s.id.toString() === id));
-    }
+        // const space: Space | undefined = spaces?.data?.find(s => s.id.toString() === id);
 
-    useEffect(() => {
-        console.log(selectedSpace);
-    }, [selectedSpace]);
+        const space = temp?.data; //TODO - Temporário enquanto nao existe endpoint
+        !!space && setSelectedSpace(space);
+    }
 
     return (
         <>
             {!temp?.data || temp.isLoading ? (
                 <LoadingSpinner />
             ) : (
-                <Select value={selectedSpace?.name} onValueChange={handleSelectSpace}>
+                <Select value={selectedSpace?.id.toString()} onValueChange={handleSelectSpace}>
                     <SelectTrigger>
-                        <SelectValue placeholder={selectedSpace?.name} />
+                        <SelectValue placeholder="Selecione o espaço" />
                     </SelectTrigger>
                     <SelectContent>
                          {/*spaces?.data.map(space => (*/}
@@ -31,10 +29,8 @@ export default function SpaceSelector() {
                          {/*    </SelectItem>*/}
                          {/*))*/}
                         <SelectItem value={temp.data.id.toString()}>{temp.data.name}</SelectItem>
-                        <SelectItem value={"1"}>{1}</SelectItem>
                     </SelectContent>
                 </Select>
-
             )}
         </>
     );
