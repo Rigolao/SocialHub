@@ -6,6 +6,7 @@ import GenericFormField from "@/components/custom/generic-form-field.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import useUpdateProfile from "@/hooks/user/use-update-profile.ts";
 import useGetUser from "@/hooks/user/use-get-user.ts";
+import {FormEvent} from "react";
 
 const updateProfileFormSchema = z.object({
     name: z.string(),
@@ -23,11 +24,21 @@ export default function ProfileForm() {
             name: data?.name || '',
             birthDate: data?.birthDate || '',
         }
-    })
+    });
+
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault();
+
+        form.handleSubmit((values) => {
+            mutate(values);
+
+            form.reset(values);
+        })();
+    };
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit((values) => mutate(values))}>
+            <form onSubmit={handleSubmit}>
                 <div className="flex flex-col md:flex-row gap-4">
                     <GenericFormField
                         name="name"
@@ -45,7 +56,7 @@ export default function ProfileForm() {
                 </div>
                 <div className="flex justify-end gap-4 mt-4">
                     <Button
-                        disabled={isPending}
+                        disabled={isPending || !form.formState.isDirty}
                         type="submit">
                         Atualizar dados
                     </Button>
