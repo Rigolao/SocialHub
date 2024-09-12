@@ -9,8 +9,14 @@ export interface InputProps
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ({className, type, ...props}, ref) => {
+        let error;
 
-        const { error} = useFormField();
+        try {
+            const formField = useFormField();
+            error = formField?.error;
+        } catch (e) {
+            error = undefined;
+        }
 
         return (
             <input
