@@ -1,6 +1,6 @@
 import {Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger} from "@/components/ui/sheet.tsx";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
-import {MenuIcon} from "lucide-react";
+import {MenuIcon, OrbitIcon} from "lucide-react";
 import {ProfileConfig} from "@/components/custom/profile-config.tsx";
 import {CalendarIcon, ExitIcon, HomeIcon, PersonIcon, PlusIcon} from "@radix-ui/react-icons";
 import {AppBarItem} from "@/components/custom/app-bar-item.tsx";
@@ -66,6 +66,7 @@ export function AppBar() {
                         <Separator />
                     </div>
                     <AppBarItem label={"Início"} icon={HomeIcon} route={'/'}/>
+                    <AppBarItem label={"Spaces"} icon={OrbitIcon} route={'/spaces'}/>
                     <AppBarItem label={"Postagens"} icon={CalendarIcon} route={'/postagens'}/>
                     <AppBarItem label={"Agendar postagem"} icon={PlusIcon} route={'/agendar-postagem'}/>
                     <AppBarItem label={"Portfólio"} icon={PersonIcon} route={'/portifolio'}/>
