@@ -7,7 +7,6 @@ import CustomFileUploader from "@/features/schedule-post/components/custom-file-
 import {Button} from "@/components/ui/button.tsx";
 import CustomMultiSelect from "@/components/custom/custom-multi-select.tsx";
 import DatePicker from "@/components/custom/date-picker.tsx";
-
 const schedulePostFormSchema = z.object({
     title: z.string().min(6, 'O título deve ter no mínimo 6 caracteres'),
     description: z.string().min(6, 'A descrição deve ter no mínimo 6 caracteres'),
