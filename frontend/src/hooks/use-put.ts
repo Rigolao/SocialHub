@@ -1,6 +1,6 @@
 import {toast} from "sonner";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {ResponseError} from "@/types";
+import {MessageResponse, ResponseError} from "@/types";
 import axiosClient from "@/lib/axios";
 
 interface usePutProps<Y> {
@@ -8,10 +8,14 @@ interface usePutProps<Y> {
     queryKey?: [unknown];
     onSuccess?(data: Y): void;
     onFailure?(data: object): void;
-    hideSuccessToast?: boolean;
+    hideToast?: boolean;
 }
 
-export function usePut<T, Y = undefined>({url, queryKey, onSuccess, onFailure, hideSuccessToast = false}: usePutProps<Y>) {
+const hasMessage = (data: unknown): data is MessageResponse => {
+    return typeof data === 'object' && data !== null && 'message' in data;
+};
+
+export function usePut<T, Y = undefined>({url, queryKey, onSuccess, onFailure, hideToast = false}: usePutProps<Y>) {
     const queryClient = useQueryClient();
 
     const mutationFn = (data: T): Promise<Y> => {
@@ -23,11 +27,22 @@ export function usePut<T, Y = undefined>({url, queryKey, onSuccess, onFailure, h
     }
 
     const processToast = (promise: Promise<Y>) => {
-        const toastOptions: { loading: string; success?: () => string; } = {
-            loading: "Carregando..."
+        if(hideToast) {
+            return promise;
+        }
+
+        const toastOptions: { loading: string; success?: (data: Y) => string; } = {
+            loading: "Carregando...",
+            success: (data: Y) => {
+                if (hasMessage(data)) {
+                    return data.message;
+                } else {
+                    return "Sucesso!";
+                }
+            }
         };
 
-        if (!hideSuccessToast) {
+        if (!hideToast) {
             toastOptions.success = () => "Sucesso ao criar dados!";
         }
 

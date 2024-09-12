@@ -1,6 +1,6 @@
 import {toast} from "sonner";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {ResponseError} from "@/types";
+import {MessageResponse, ResponseError} from "@/types";
 import axiosClient from "@/lib/axios";
 
 interface useDeleteProps<T> {
@@ -8,10 +8,14 @@ interface useDeleteProps<T> {
     queryKey?: [unknown];
     onSuccess?(data: T): void;
     onFailure?(data: ResponseError): void;
-    hideSuccessToast?: boolean;
+    hideToast?: boolean;
 }
 
-export function useDelete<T>({url, queryKey, onFailure, onSuccess, hideSuccessToast = false}: useDeleteProps<T>) {
+const hasMessage = (data: unknown): data is MessageResponse => {
+    return typeof data === 'object' && data !== null && 'message' in data;
+};
+
+export function useDelete<T>({url, queryKey, onFailure, onSuccess, hideToast = false}: useDeleteProps<T>) {
     const queryClient = useQueryClient();
 
     const mutationFn = (): Promise<T> => {
@@ -23,13 +27,20 @@ export function useDelete<T>({url, queryKey, onFailure, onSuccess, hideSuccessTo
     }
 
     const processToast = (promise: Promise<T>) => {
-        const toastOptions: { loading: string; success?: () => string; } = {
-            loading: "Carregando..."
-        };
-
-        if (!hideSuccessToast) {
-            toastOptions.success = () => "Sucesso ao deletar dados!";
+        if (hideToast) {
+            return promise;
         }
+
+        const toastOptions: { loading: string; success?: (data: T) => string; } = {
+            loading: "Carregando...",
+            success: (data: T) => {
+                if (hasMessage(data)) {
+                    return data.message;
+                } else {
+                    return "Sucesso!";
+                }
+            }
+        };
 
         return toast.promise(
             promise,

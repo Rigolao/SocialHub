@@ -8,7 +8,7 @@ interface usePostProps<Y> {
     queryKey?: unknown[];
     onSuccess?(data: Y): void;
     onFailure?(data: ResponseError): void;
-    hideSuccessToast?: boolean;
+    hideToast?: boolean;
     getHeaders?: (data: any) => object;
 }
 
@@ -21,7 +21,7 @@ export function usePost<T, Y = undefined>({
                                               queryKey,
                                               onSuccess,
                                               onFailure,
-                                              hideSuccessToast = false,
+                                              hideToast = false,
                                               getHeaders,
                                           }: usePostProps<Y>) {
     const queryClient = useQueryClient();
@@ -39,20 +39,21 @@ export function usePost<T, Y = undefined>({
         return promise;
     };
 
-    const processToast = <Y>(promise: Promise<Y>, hideSuccessToast?: boolean) => {
+    const processToast = <Y>(promise: Promise<Y>) => {
+        if (hideToast) {
+            return promise;
+        }
+
         const toastOptions: { loading: string; success?: (data: Y) => string } = {
             loading: "Carregando...",
-        };
-
-        if (!hideSuccessToast) {
-            toastOptions.success = (data: Y) => {
+            success: (data: Y) => {
                 if (hasMessage(data)) {
                     return data.message;
                 } else {
                     return "Sucesso!";
                 }
-            };
-        }
+            }
+        };
 
         return toast.promise(promise, toastOptions);
     };

@@ -7,13 +7,13 @@ interface useGetProps<T> {
     queryKey: [string, ...unknown[]];
     onSuccess?(data: T): void;
     onFailure?(data: object): void;
-    hideSuccessToast?: boolean;
+    hideToast?: boolean;
     retry?: boolean | number;
     enabled?: boolean;
     getHeaders?: () => object;
 }
 
-export function useGet<T>({ url, queryKey, onSuccess, onFailure, hideSuccessToast, retry = false, enabled = true, getHeaders }: useGetProps<T>) {
+export function useGet<T>({ url, queryKey, onSuccess, onFailure, hideToast, retry = false, enabled = true, getHeaders }: useGetProps<T>) {
 
     const queryFn = async () => {
         const headers = getHeaders ? getHeaders() : {};
@@ -55,13 +55,14 @@ export function useGet<T>({ url, queryKey, onSuccess, onFailure, hideSuccessToas
     };
 
     const processToast = (promise: Promise<T>) => {
+        if (hideToast) {
+            return promise;
+        }
+
         const toastOptions: { loading: string; success?: () => string; } = {
             loading: "Carregando...",
+            success: () => "Sucesso ao recuperar dados!"
         };
-
-        if (!hideSuccessToast) {
-            toastOptions.success = () => "Sucesso ao recuperar dados!";
-        }
 
         return toast.promise(
             promise,

@@ -8,7 +8,7 @@ interface usePatchProps<Y> {
     queryKey: unknown[];
     onSuccess?(data: Y): void;
     onFailure?(data: ResponseError): void;
-    hideSuccessToast?: boolean;
+    hideToast?: boolean;
     getHeaders?: (data: unknown) => object;
 }
 
@@ -21,7 +21,7 @@ export function usePatch<T, Y = undefined>({
                                                queryKey,
                                                onFailure,
                                                onSuccess,
-                                               hideSuccessToast = false,
+                                               hideToast = false,
                                                getHeaders
                                            }: usePatchProps<Y>) {
     const queryClient = useQueryClient();
@@ -37,19 +37,20 @@ export function usePatch<T, Y = undefined>({
     }
 
     const processToast = (promise: Promise<Y>) => {
+        if (hideToast) {
+            return promise;
+        }
+
         const toastOptions: { loading: string; success?: (data: Y) => string } = {
             loading: "Carregando...",
-        };
-
-        if (!hideSuccessToast) {
-            toastOptions.success = (data: Y) => {
+            success: (data: Y) => {
                 if (hasMessage(data)) {
                     return data.message;
                 } else {
                     return "Sucesso!";
                 }
-            };
-        }
+            }
+        };
 
         return toast.promise(promise, toastOptions);
     }
