@@ -31,7 +31,7 @@ export function SpaceProvider({children}: {children: React.ReactNode}) {
         queryKey: ['spaces'],
         retry: 3,
         enabled: token !== null,
-        hideSuccessToast: true,
+        hideToast: true,
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
         }),
@@ -45,7 +45,7 @@ export function SpaceProvider({children}: {children: React.ReactNode}) {
         queryKey: ['spaces'],
         retry: 3,
         enabled: token !== null,
-        hideSuccessToast: true,
+        hideToast: true,
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
         }),

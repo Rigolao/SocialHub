@@ -10,7 +10,7 @@ export default function useGetUser() {
         queryKey: ['user'],
         retry: 3,
         enabled: token !== null,
-        hideSuccessToast: true,
+        hideToast: true,
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
         })

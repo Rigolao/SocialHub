@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setToken(data.token);
             navigate('/');
         },
-        hideSuccessToast: true,
+        hideToast: true,
         getHeaders,
     });
 
