@@ -14,12 +14,14 @@ import {
 import {useSpace} from "@/providers/space-provider.tsx";
 import useGetUser from "@/hooks/user/use-get-user.ts";
 import NewSpaceButton from "@/features/spaces/components/new-space-button.tsx";
+import {useNavigate} from "react-router-dom";
 
 export default function SpacesPage() {
 
     const {selectedSpace, setSelectedSpace} = useSpace();
-
     const {data: user} = useGetUser();
+
+    const navigate = useNavigate();
 
     const spaces: Space[] = [
         {
@@ -59,6 +61,7 @@ export default function SpacesPage() {
     const columns: ColumnDef<Space>[] = [
         {
             id: 'select',
+            header: 'Selecionado',
             cell: ({ row }) => {
                 const space = row.original;
 
@@ -117,7 +120,7 @@ export default function SpacesPage() {
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Ações</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>Gerenciar</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => navigate(`/gerenciar-space/${space.id}`)}>Gerenciar</DropdownMenuItem>
                             {space.members.find(member => member.id === user?.id && member.roleType === 'Criador') && (
                                 <DropdownMenuItem>Deletar</DropdownMenuItem>
                             )}

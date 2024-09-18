@@ -19,3 +19,13 @@ export type CreateSpaceResponse = {
     name: string;
     members: Member[];
 }
+
+export type EditSpaceRequest = {
+    name: string
+}
+
+export type EditSpaceResponse = {
+    id: number;
+    name: string;
+    members: Member[];
+}
