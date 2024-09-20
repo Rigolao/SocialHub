@@ -50,7 +50,9 @@ export function DataTable<TData, TValue>({columns, data, filterKey, actions}: Da
                         className="max-w-sm"
                     />
                 )}
-                {actions}
+                <div className='self-end flex'>
+                    {actions}
+                </div>
             </div>
             <div className="rounded-md border">
                 <Table>
