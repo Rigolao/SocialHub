@@ -106,6 +106,7 @@ export default function SpacesPage() {
         },
         {
             id: 'actions',
+            header: 'Ações',
             cell: ({ row }) => {
                 const space = row.original;
 

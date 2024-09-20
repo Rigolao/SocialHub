@@ -14,6 +14,7 @@ export default function useGetSpace({ id }: UseGetSpaceProps) {
         url: `/spaces/${id}`,
         queryKey: ['space', id],
         retry: 3,
+        enabled: !!token,
         hideToast: true,
         getHeaders: () => ({
             Authorization: `Bearer ${token}`

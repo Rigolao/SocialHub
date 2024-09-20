@@ -29,3 +29,7 @@ export type EditSpaceResponse = {
     name: string;
     members: Member[];
 }
+
+export type RoleRequest = {
+    id: number
+}

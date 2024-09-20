@@ -15,7 +15,6 @@ export default function useEditSpace({id}: UseEditSpaceProps) {
         url: `/spaces/${id}`,
         queryKey: ['editSpace'],
         onSuccess: () => {
-            console.log('entrou')
             queryClient.invalidateQueries({ queryKey: ['spaces'] });
             queryClient.invalidateQueries({ queryKey: ['space', id] });
         },

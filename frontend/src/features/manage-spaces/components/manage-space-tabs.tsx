@@ -8,11 +8,12 @@ import useGetSpace from "@/hooks/spaces/use-get-space.ts";
 import {useParams} from "react-router-dom";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
 import {Space} from "@/types/spaces";
+import SpaceMembersDataTable from "@/features/manage-spaces/components/space-members-data-table.tsx";
 
 export default function ManageSpaceTabs() {
 
-    const { idSpace } = useParams();
-    const { data: space, isLoading } = useGetSpace({id: idSpace as unknown as number})
+    const {idSpace} = useParams();
+    const {data: space, isLoading} = useGetSpace({id: idSpace as unknown as number})
     const [activeTab, setActiveTab] = useState<'dados' | 'membros'>('dados');
 
     const renderContent = () => {
@@ -23,10 +24,7 @@ export default function ManageSpaceTabs() {
                 )
             case "membros":
                 return (
-                    <div>
-                        <h2 className="text-2xl font-bold">Pessoas</h2>
-                        <p>Content for Pessoas tab</p>
-                    </div>
+                    <SpaceMembersDataTable space={space as Space}/>
                 )
             default:
                 return null
@@ -50,7 +48,7 @@ export default function ManageSpaceTabs() {
                         Membros
                     </Button>
                 </nav>
-                <Separator />
+                <Separator/>
             </div>
             <aside className="hidden md:block md:w-64 p-2">
                 <nav className="space-y-2">
@@ -68,10 +66,12 @@ export default function ManageSpaceTabs() {
                     </Button>
                 </nav>
             </aside>
-            <Separator className="hidden md:block" orientation="vertical" />
-            <main className="flex-1 p-4 md:p-8">
+            <Separator className="hidden md:block" orientation="vertical"/>
+            <main className="flex-1 p-1 md:p-4">
                 {isLoading
-                    ? (<LoadingSpinner />)
+                    ? (<div className='flex h-full w-full justify-center items-center'>
+                        <LoadingSpinner/>
+                    </div>)
                     : renderContent()}
             </main>
         </div>
