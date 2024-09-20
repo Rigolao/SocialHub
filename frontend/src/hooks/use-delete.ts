@@ -5,22 +5,25 @@ import axiosClient from "@/lib/axios";
 
 interface useDeleteProps<T> {
     url: string;
-    queryKey?: [unknown];
+    queryKey: unknown[];
     onSuccess?(data: T): void;
     onFailure?(data: ResponseError): void;
     hideToast?: boolean;
+    getHeaders?: (data: unknown) => object;
 }
 
 const hasMessage = (data: unknown): data is MessageResponse => {
     return typeof data === 'object' && data !== null && 'message' in data;
 };
 
-export function useDelete<T>({url, queryKey, onFailure, onSuccess, hideToast = false}: useDeleteProps<T>) {
+export function useDelete<T>({url, queryKey, onFailure, onSuccess, hideToast = false, getHeaders}: useDeleteProps<T>) {
     const queryClient = useQueryClient();
 
-    const mutationFn = (): Promise<T> => {
+    const mutationFn = (data: T): Promise<T> => {
+        const headers = getHeaders ? getHeaders(data) : {};
+
         const promise = axiosClient
-            .delete(url)
+            .delete(url, {headers})
             .then(res => res.data);
         processToast(promise);
         return promise;
