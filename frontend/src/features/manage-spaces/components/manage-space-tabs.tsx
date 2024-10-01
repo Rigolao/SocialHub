@@ -68,7 +68,7 @@ export default function ManageSpaceTabs() {
             </aside>
             <Separator className="hidden md:block" orientation="vertical"/>
             <main className="flex-1 p-1 md:p-4">
-                {isLoading
+                {isLoading || !space
                     ? (<div className='flex h-full w-full justify-center items-center'>
                         <LoadingSpinner/>
                     </div>)
