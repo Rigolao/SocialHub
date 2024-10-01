@@ -9,3 +9,5 @@ Bem-vindo ao SocialHub! Este projeto é uma plataforma de integração de redes 
 - **Integração com Diversas Redes Sociais**: Suporte para Facebook, Twitter, Instagram, LinkedIn, entre outras.
 - **Agendamento de Postagens**: Programe postagens para serem publicadas no momento mais oportuno.
 - **Interface Amigável**: Design intuitivo e fácil de usar, ideal para iniciantes e profissionais.
+
+Continua...
