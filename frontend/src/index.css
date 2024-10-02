@@ -117,6 +117,10 @@
     .youtube {
         background-color: #FF0000;
     }
+
+    .bluesky {
+        background-color: #0085ff;
+    }
 }
 
 @layer base {
