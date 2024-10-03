@@ -1,39 +1,45 @@
-import {useEffect, useState} from "react";
-import {Button} from "@/components/ui/button.tsx";
 import {
     Dialog,
-    DialogContent,
+    DialogContent, DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog.tsx";
-import GenericFormField from "@/components/custom/generic-form-field.tsx";
-import {Form} from "@/components/ui/form.tsx";
-import useCreateSpace from "@/hooks/spaces/use-create-space.ts";
-import {useForm} from "react-hook-form";
+import {useState} from "react";
 import {z} from "zod";
+import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {Button} from "@/components/ui/button.tsx";
+import {Form} from "@/components/ui/form.tsx";
+import GenericFormField from "@/components/custom/generic-form-field.tsx";
+import useAddUserToSpace from "@/hooks/spaces/use-add-user-to-space.ts";
+import RoleSelector from "@/components/custom/role-selector.tsx";
 
-const newSpaceFormSchema = z.object({
-    name: z.string().min(3, "O nome do espaço deve conter no mínimo 3 caracteres")
-});
+interface AddMemberButtonProps {
+    idSpace: number
+}
 
+const addMemberFormSchema = z.object({
+    email: z.string().email('E-mail inválido'),
+    role: z.string().min(1, 'O cargo é obrigatório')
+})
 
-export default function NewSpaceButton() {
+export default function AddMemberButton({idSpace}: AddMemberButtonProps) {
     const [open, setOpen] = useState(false);
 
-    const {mutateAsync, isPending} = useCreateSpace();
+    const {mutateAsync, isPending} = useAddUserToSpace({idSpace});
 
-    const form = useForm<z.infer<typeof newSpaceFormSchema>>({
-        resolver: zodResolver(newSpaceFormSchema),
+    const form = useForm<z.infer<typeof addMemberFormSchema>>({
+        resolver: zodResolver(addMemberFormSchema),
         mode: 'onSubmit',
         defaultValues: {
-            name: ''
+            email: '',
+            role: ''
         }
     });
 
-    const onSubmit = (values: z.infer<typeof newSpaceFormSchema>) => {
+    const onSubmit = (values: z.infer<typeof addMemberFormSchema>) => {
         mutateAsync(values).then(() => {
             onClose();
         });
@@ -54,7 +60,7 @@ export default function NewSpaceButton() {
         }}>
             <DialogTrigger asChild>
                 <Button>
-                    Criar Space
+                    Adicionar membro
                 </Button>
             </DialogTrigger>
 
@@ -63,16 +69,24 @@ export default function NewSpaceButton() {
                     <form className='flex flex-col gap-4' onSubmit={form.handleSubmit(onSubmit)}>
                         <DialogHeader>
                             <DialogTitle>
-                                Criar novo Space
+                                Adicionar novo membro
                             </DialogTitle>
+                            <DialogDescription>
+                                Envie um e-mail a um usuário do SocialHub convidando-o para participar do seu space.
+                            </DialogDescription>
                         </DialogHeader>
 
                         <GenericFormField
                             control={form.control}
-                            name="name"
-                            label="Nome"
-                            placeholder="Nome do space"
+                            name="email"
+                            label="E-mail"
+                            placeholder="E-mail do usuário"
                         />
+
+                        <RoleSelector
+                            control={form.control}
+                            name='role'
+                            label='Cargo'/>
 
                         <DialogFooter>
                             <Button
@@ -84,12 +98,12 @@ export default function NewSpaceButton() {
                             <Button
                                 type='submit'
                                 disabled={isPending}>
-                                Criar space
+                                Enviar e-mail
                             </Button>
                         </DialogFooter>
                     </form>
                 </Form>
             </DialogContent>
         </Dialog>
-    )
+    );
 }

@@ -7,6 +7,7 @@ import {useNavigate} from "react-router-dom";
 import useChangeUserRole from "@/hooks/spaces/use-change-user-role.ts";
 import {useRef} from "react";
 import useRemoveUserFromSpace from "@/hooks/spaces/use-remove-user-from-space.ts";
+import AddMemberButton from "@/features/manage-spaces/components/add-member-button.tsx";
 
 interface SpaceMembersDataTableProps {
     space: Space
@@ -66,7 +67,8 @@ export default function SpaceMembersDataTable({ space }: SpaceMembersDataTablePr
             <DataTable
                 columns={columns}
                 data={space.members}
-                filterKey='name'/>
+                filterKey='name'
+                actions={<AddMemberButton />}/>
             <Button
                 variant='secondary'
                 className='self-end'
