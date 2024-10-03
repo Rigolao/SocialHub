@@ -30,6 +30,6 @@ export type EditSpaceResponse = {
     members: Member[];
 }
 
-export type RoleRequest = {
-    id: number
+export type AddUserToSpaceRequest = {
+    email: string
 }
