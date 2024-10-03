@@ -26,6 +26,8 @@ public interface Constantes {
     String RESOURCE_ROLE = "Cargo";
     String RESOURCE_TOKEN = "Token";
 
+    String RESOURCE_SOCIAL_NETWORK = "Rede social";
+
 
 
     String NAME_DEFAULT_SPACE = "Space 1";

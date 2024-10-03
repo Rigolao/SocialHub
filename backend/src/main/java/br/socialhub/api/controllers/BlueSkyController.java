@@ -1,7 +1,6 @@
 package br.socialhub.api.controllers;
 
 import br.socialhub.api.services.BlueSkyService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

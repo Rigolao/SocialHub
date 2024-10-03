@@ -1,14 +1,13 @@
 package br.socialhub.api.converters;
 
-import br.socialhub.api.enums.PlanType;
-import br.socialhub.api.enums.SocialMediaType;
+import br.socialhub.api.enums.SocialNetworkType;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
-public class SocialMediaTypeConverter implements AttributeConverter<SocialMediaType, String> {
+public class SocialMediaTypeConverter implements AttributeConverter<SocialNetworkType, String> {
     @Override
-    public String convertToDatabaseColumn(SocialMediaType attribute) {
+    public String convertToDatabaseColumn(SocialNetworkType attribute) {
         if (attribute == null) {
             return null;
         }
@@ -16,12 +15,12 @@ public class SocialMediaTypeConverter implements AttributeConverter<SocialMediaT
     }
 
     @Override
-    public SocialMediaType convertToEntityAttribute(String dbData) {
+    public SocialNetworkType convertToEntityAttribute(String dbData) {
         if (dbData == null) {
             return null;
         }
 
-        for (SocialMediaType status : SocialMediaType.values()) {
+        for (SocialNetworkType status : SocialNetworkType.values()) {
             if (status.getDescription().equals(dbData)) {
                 return status;
             }

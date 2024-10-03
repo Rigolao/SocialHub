@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum SocialMediaType {
+public enum SocialNetworkType {
     FACEBOOK("Facebook"),
     X("X"),
     INSTAGRAM("Instagram");
