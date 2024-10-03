@@ -24,10 +24,19 @@ public class Conta {
     @JoinColumn(name = "IDSPACE", referencedColumnName = "IDSPACE", nullable = false)
     private Space space;
 
+    @Column(name = "TOKEN")
+    private String token;
+
     @OneToOne
     @JoinColumn(name = "IDREDESOCIAL", referencedColumnName = "IDREDESOCIAL", nullable = false)
-    private RedeSocial redeSocial;
+    private SocialNetwork socialNetwork;
 
     @OneToMany(mappedBy = "conta", fetch = FetchType.LAZY)
     private List<ContaPostagem> contaPostagem;
+
+    public Conta(Space space, SocialNetwork socialNetwork, String token){
+        this.socialNetwork = socialNetwork;
+        this.space = space;
+        this.token = token;
+    }
 }

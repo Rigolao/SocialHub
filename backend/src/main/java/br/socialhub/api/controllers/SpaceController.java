@@ -1,6 +1,7 @@
 package br.socialhub.api.controllers;
 
 import br.socialhub.api.dtos.RoleAssigmentDTO;
+import br.socialhub.api.dtos.SocialAccountDTO;
 import br.socialhub.api.dtos.space.SpaceCreateDTO;
 import br.socialhub.api.dtos.space.SpaceResponseDTO;
 import br.socialhub.api.dtos.space.SpaceUpdateDTO;
@@ -28,6 +29,7 @@ public class SpaceController {
     private final UserSpaceService userSpaceService;
     private final TokenService tokenService;
     private final EmailService emailService;
+    private final SocialNetworkService socialNetworkService;
 
     @Transactional
     @PostMapping
@@ -105,6 +107,21 @@ public class SpaceController {
         var space = spaceService.findById(spaceId);
 
         userSpaceService.removeUserFromSpace(user,space);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Transactional
+    @PostMapping("{spaceId}/social-networks/{socialNetworkId}")
+    @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #id)")
+    public ResponseEntity<Void> associateSocialAccount(@PathVariable final Long spaceId,
+                                                       @PathVariable final Long socialNetworkId,
+                                                       @RequestBody @Valid final SocialAccountDTO socialAccountDTO,
+                                                       @RequestHeader(AUTHORIZATION) final String token){
+        var space = spaceService.findById(spaceId);
+        var socialNetwork = socialNetworkService.findById(socialNetworkId);
+
+        socialNetworkService.associateSocialAccount(space, socialNetwork, socialAccountDTO);
 
         return ResponseEntity.ok().build();
     }
