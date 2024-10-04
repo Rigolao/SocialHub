@@ -68,7 +68,7 @@ export default function SpaceMembersDataTable({ space }: SpaceMembersDataTablePr
                 columns={columns}
                 data={space.members}
                 filterKey='name'
-                actions={<AddMemberButton />}/>
+                actions={<AddMemberButton idSpace={space.id} />}/>
             <Button
                 variant='secondary'
                 className='self-end'

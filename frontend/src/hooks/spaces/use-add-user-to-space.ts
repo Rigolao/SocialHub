@@ -12,7 +12,7 @@ export default function useAddUserToSpace({ idSpace }: UseAddUserToSpaceProps) {
     const { token } = useAuth();
 
     const addUserToSpace = usePost<AddUserToSpaceRequest, MessageResponse>({
-        url: `/spaces/${idSpace}/adicionar-usuario`,
+        url: `/spaces/${idSpace}/invitations`,
         queryKey: ['addUserToSpace'],
         getHeaders: () => ({
             Authorization: `Bearer ${token}`

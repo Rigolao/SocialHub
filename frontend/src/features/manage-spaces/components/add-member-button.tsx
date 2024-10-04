@@ -1,6 +1,7 @@
 import {
     Dialog,
-    DialogContent, DialogDescription,
+    DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -12,35 +13,38 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button.tsx";
 import {Form} from "@/components/ui/form.tsx";
-import GenericFormField from "@/components/custom/generic-form-field.tsx";
 import useAddUserToSpace from "@/hooks/spaces/use-add-user-to-space.ts";
 import RoleSelector from "@/components/custom/role-selector.tsx";
+import UserSelector from "@/components/custom/user-selector.tsx";
 
 interface AddMemberButtonProps {
     idSpace: number
 }
 
 const addMemberFormSchema = z.object({
-    email: z.string().email('E-mail inválido'),
+    user: z.string().min(1, 'O usuário é obrigatório'),
     role: z.string().min(1, 'O cargo é obrigatório')
 })
 
 export default function AddMemberButton({idSpace}: AddMemberButtonProps) {
     const [open, setOpen] = useState(false);
 
-    const {mutateAsync, isPending} = useAddUserToSpace({idSpace});
+    const {mutateAsync, isPending} = useAddUserToSpace({idSpace: idSpace});
 
     const form = useForm<z.infer<typeof addMemberFormSchema>>({
         resolver: zodResolver(addMemberFormSchema),
         mode: 'onSubmit',
         defaultValues: {
-            email: '',
+            user: '',
             role: ''
         }
     });
 
     const onSubmit = (values: z.infer<typeof addMemberFormSchema>) => {
-        mutateAsync(values).then(() => {
+        mutateAsync({
+            idUser: parseInt(values.user, 10),
+            idRole: parseInt(values.role, 10)
+        }).then(() => {
             onClose();
         });
     }
@@ -76,12 +80,10 @@ export default function AddMemberButton({idSpace}: AddMemberButtonProps) {
                             </DialogDescription>
                         </DialogHeader>
 
-                        <GenericFormField
+                        <UserSelector
                             control={form.control}
-                            name="email"
-                            label="E-mail"
-                            placeholder="E-mail do usuário"
-                        />
+                            name='user'
+                            label='Usuário'/>
 
                         <RoleSelector
                             control={form.control}

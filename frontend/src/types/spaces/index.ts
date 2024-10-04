@@ -31,5 +31,6 @@ export type EditSpaceResponse = {
 }
 
 export type AddUserToSpaceRequest = {
-    email: string
+    idUser: number;
+    idRole: number;
 }
