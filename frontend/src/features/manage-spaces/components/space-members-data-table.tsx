@@ -2,12 +2,20 @@ import {DataTable} from "@/components/custom/data-table.tsx";
 import {Member, Space} from "@/types/spaces";
 import {ColumnDef} from "@tanstack/react-table";
 import {Button} from "@/components/ui/button.tsx";
-import {ArrowUpDown} from "lucide-react";
+import {ArrowUpDown, MoreHorizontal} from "lucide-react";
 import {useNavigate} from "react-router-dom";
 import useChangeUserRole from "@/hooks/spaces/use-change-user-role.ts";
 import {useRef} from "react";
 import useRemoveUserFromSpace from "@/hooks/spaces/use-remove-user-from-space.ts";
 import AddMemberButton from "@/features/manage-spaces/components/add-member-button.tsx";
+import {
+    DropdownMenu,
+    DropdownMenuContent, DropdownMenuItem,
+    DropdownMenuLabel, DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu.tsx";
+import useGetUser from "@/hooks/user/use-get-user.ts";
+import {useAlertDialog} from "@/providers/alert-dialog-provider.tsx";
 
 interface SpaceMembersDataTableProps {
     space: Space
@@ -17,8 +25,20 @@ export default function SpaceMembersDataTable({ space }: SpaceMembersDataTablePr
 
     const navigate = useNavigate();
     const userIdRef = useRef<number>();
-    const { mutate: changeRoleMutate, isPending: changeRolePending } = useChangeUserRole({spaceId: space.id, userId: userIdRef?.current as number});
-    const { mutate: removeUserMutate, isPending: removeUserPending } = useRemoveUserFromSpace({spaceId: space.id, userId: userIdRef?.current as number});
+    const { showDialog } = useAlertDialog();
+    const { data: user } = useGetUser();
+    const { mutateAsync: changeRoleMutate, isPending: changeRolePending } = useChangeUserRole({spaceId: space.id, userId: userIdRef?.current as number});
+    const { mutateAsync: removeUserMutate } = useRemoveUserFromSpace({spaceId: space.id, userId: userIdRef?.current as number});
+
+    const onDelete = (idUser: number) => {
+        userIdRef.current = idUser;
+
+        showDialog({
+            title: 'Excluir membro',
+            description: 'Tem certeza de quer remover este membro do space?',
+            onConfirm: () => removeUserMutate
+        })
+    }
 
     const columns: ColumnDef<Member>[] = [
         {
@@ -59,8 +79,33 @@ export default function SpaceMembersDataTable({ space }: SpaceMembersDataTablePr
                     </Button>
                 )
             },
-        },
+        }
     ]
+
+    if(space.members.find(member => member.id === user?.id as number && member.roleType === 'Criador')) {
+        columns.push({
+            id: 'actions',
+            header: 'Ações',
+            cell: ({ row }) => {
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Abrir menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => navigate(`/gerenciar-space/${space.id}`)}>Alterar cargo</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onDelete(parseInt(row.id))}>Deletar</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )
+            }
+        })
+    }
 
     return (
         <div className='flex flex-col'>
