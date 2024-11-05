@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu.tsx";
 import useGetUser from "@/hooks/user/use-get-user.ts";
 import {useAlertDialog} from "@/providers/alert-dialog-provider.tsx";
+import ChangeMemberRoleButton from "@/features/manage-spaces/components/change-member-role-button.tsx";
 
 interface SpaceMembersDataTableProps {
     space: Space
@@ -95,11 +96,11 @@ export default function SpaceMembersDataTable({ space }: SpaceMembersDataTablePr
                                 <MoreHorizontal className="h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className='flex flex-col'>
                             <DropdownMenuLabel>Ações</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => navigate(`/gerenciar-space/${space.id}`)}>Alterar cargo</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onDelete(parseInt(row.id))}>Deletar</DropdownMenuItem>
+                            <ChangeMemberRoleButton space={space} userId={parseInt(row.id)} />
+                            <Button variant='ghost' onClick={() => onDelete(parseInt(row.id))}>Deletar</Button>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 )
