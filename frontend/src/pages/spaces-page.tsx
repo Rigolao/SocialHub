@@ -11,10 +11,10 @@ import {
     DropdownMenuLabel, DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
-import {useSpace} from "@/providers/space-provider.tsx";
 import useGetUser from "@/hooks/user/use-get-user.ts";
 import NewSpaceButton from "@/features/spaces/components/new-space-button.tsx";
 import {useNavigate} from "react-router-dom";
+import {useSpace} from "@/hooks/spaces/use-space.ts";
 
 export default function SpacesPage() {
 

@@ -18,6 +18,7 @@ export default function useChangeUserRole({ spaceId, userId }: UseChangeUserRole
         queryKey: ['changeRole', spaceId, userId],
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['spaces'] });
+            queryClient.invalidateQueries({ queryKey: ['get-space', spaceId] });
             queryClient.invalidateQueries({ queryKey: ['space', spaceId] });
         },
         getHeaders: () => ({

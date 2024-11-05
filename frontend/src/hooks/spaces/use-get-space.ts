@@ -3,7 +3,7 @@ import {Space} from "@/types/spaces";
 import {useAuth} from "@/providers/auth-provider.tsx";
 
 interface UseGetSpaceProps {
-    id: number
+    id: number | null;
 }
 
 export default function useGetSpace({ id }: UseGetSpaceProps) {
@@ -12,9 +12,9 @@ export default function useGetSpace({ id }: UseGetSpaceProps) {
 
     const spaceQuery = useGet<Space>({
         url: `/spaces/${id}`,
-        queryKey: ['space', id],
+        queryKey: ['get-space', id],
         retry: 3,
-        enabled: !!token,
+        enabled: !!token && !!id,
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
         })

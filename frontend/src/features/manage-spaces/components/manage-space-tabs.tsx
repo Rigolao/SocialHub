@@ -13,7 +13,7 @@ import SpaceMembersDataTable from "@/features/manage-spaces/components/space-mem
 export default function ManageSpaceTabs() {
 
     const {idSpace} = useParams();
-    const {data: space, isLoading} = useGetSpace({id: idSpace as unknown as number})
+    const {data: space, isLoading} = useGetSpace({id: Number(idSpace)});
     const [activeTab, setActiveTab] = useState<'dados' | 'membros'>('dados');
 
     const renderContent = () => {

@@ -1,6 +1,6 @@
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
-import {useSpace} from "@/providers/space-provider.tsx";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
+import {useSpace} from "@/hooks/spaces/use-space.ts";
 
 export default function SpaceSelector() {
 
