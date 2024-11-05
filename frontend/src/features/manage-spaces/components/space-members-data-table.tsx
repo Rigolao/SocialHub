@@ -36,7 +36,7 @@ export default function SpaceMembersDataTable({ space }: SpaceMembersDataTablePr
         showDialog({
             title: 'Excluir membro',
             description: 'Tem certeza de quer remover este membro do space?',
-            onConfirm: () => removeUserMutate
+            onConfirm: () => removeUserMutate({ message: "Usuário removido do space." })
         })
     }
 

@@ -18,6 +18,7 @@ export default function useRemoveUserFromSpace({spaceId, userId}: UseRemoveUserF
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['spaces']});
             queryClient.invalidateQueries({queryKey: ['space', spaceId]});
+            queryClient.invalidateQueries({queryKey: ['get-space', spaceId]});
         },
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
