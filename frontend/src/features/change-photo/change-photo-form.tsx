@@ -18,7 +18,7 @@ export default function ChangePhotoForm() {
         },
     });
 
-    const { mutate, isPending } = useChangePhoto();
+    const { mutateAsync, isPending } = useChangePhoto();
 
     const onSubmit = (data: z.infer<typeof changePhotoFormSchema>) => {
         const formData = new FormData();
@@ -26,7 +26,7 @@ export default function ChangePhotoForm() {
             formData.append('photo', data.photo);
         }
 
-        mutate(formData);
+        mutateAsync(formData).then(() => form.reset);
     };
 
     return (
