@@ -3,7 +3,7 @@ import {Form, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import CustomFileUploader from "@/features/schedule-post/components/custom-file-uploader.tsx";
+import CustomFileUploader from "@/components/custom/custom-file-uploader.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import CustomMultiSelect from "@/components/custom/custom-multi-select.tsx";
 import DatePicker from "@/components/custom/date-picker.tsx";
@@ -80,6 +80,7 @@ export default function SchedulePostForm() {
                     <div className='flex flex-col py-2 space-y-2'>
                         <FormLabel className='mb-1 pt-0'>Arquivos</FormLabel>
                         <CustomFileUploader
+                            multiple={true}
                             files={form.watch('files')}
                             error={form.formState.errors.files?.message}
                             onFilesChange={(files: File[] | null) => form.setValue('files', files)}/>

@@ -8,3 +8,7 @@ export type UpdateProfileRequest = {
 export type UpdateProfileResponse = {
     user: User;
 }
+
+export type ChangePhotoRequest = {
+    photo: File | null;
+}

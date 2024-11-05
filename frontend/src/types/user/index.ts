@@ -1,8 +1,3 @@
-export type UserAppBarInfo = {
-    name: string;
-    photo: string;
-}
-
 export type User = {
     id: number;
     name: string;
