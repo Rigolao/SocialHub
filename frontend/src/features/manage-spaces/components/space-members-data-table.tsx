@@ -4,14 +4,14 @@ import {ColumnDef} from "@tanstack/react-table";
 import {Button} from "@/components/ui/button.tsx";
 import {ArrowUpDown, MoreHorizontal} from "lucide-react";
 import {useNavigate} from "react-router-dom";
-import useChangeUserRole from "@/hooks/spaces/use-change-user-role.ts";
 import {useRef} from "react";
 import useRemoveUserFromSpace from "@/hooks/spaces/use-remove-user-from-space.ts";
 import AddMemberButton from "@/features/manage-spaces/components/add-member-button.tsx";
 import {
     DropdownMenu,
-    DropdownMenuContent, DropdownMenuItem,
-    DropdownMenuLabel, DropdownMenuSeparator,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
 import useGetUser from "@/hooks/user/use-get-user.ts";
@@ -28,7 +28,6 @@ export default function SpaceMembersDataTable({ space }: SpaceMembersDataTablePr
     const userIdRef = useRef<number>();
     const { showDialog } = useAlertDialog();
     const { data: user } = useGetUser();
-    const { mutateAsync: changeRoleMutate, isPending: changeRolePending } = useChangeUserRole({spaceId: space.id, userId: userIdRef?.current as number});
     const { mutateAsync: removeUserMutate } = useRemoveUserFromSpace({spaceId: space.id, userId: userIdRef?.current as number});
 
     const onDelete = (idUser: number) => {
