@@ -34,3 +34,7 @@ export type AddUserToSpaceRequest = {
     idUser: number;
     idRole: number;
 }
+
+export type ChangeUserRoleRequest = {
+    idRole: number;
+}
