@@ -87,6 +87,8 @@ export default function SpaceMembersDataTable({ space }: SpaceMembersDataTablePr
             id: 'actions',
             header: 'Ações',
             cell: ({ row }) => {
+                const value = row.original;
+
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -98,8 +100,8 @@ export default function SpaceMembersDataTable({ space }: SpaceMembersDataTablePr
                         <DropdownMenuContent align="end" className='flex flex-col'>
                             <DropdownMenuLabel>Ações</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <ChangeMemberRoleButton space={space} userId={parseInt(row.id)} />
-                            <Button variant='ghost' onClick={() => onDelete(parseInt(row.id))}>Deletar</Button>
+                            <ChangeMemberRoleButton space={space} userId={value.id} />
+                            <Button variant='ghost' onClick={() => onDelete(value.id)}>Deletar</Button>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 )
