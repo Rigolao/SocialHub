@@ -31,7 +31,7 @@ public class SpaceService {
     public SpaceResponseDTO updateSpace(final SpaceUpdateDTO spaceUpdateDTO, final Long id) {
         Space space = findById(id);
         space.setName(spaceUpdateDTO.name());
-       return createResponse(spaceRepository.save(space));
+        return createResponse(spaceRepository.save(space));
     }
 
     public Space createSpaceDefault() {
@@ -58,7 +58,7 @@ public class SpaceService {
         return new SpaceResponseDTO(space, getMembers(space));
     }
 
-    public Usuario getCreatorInSpace(final Space space){
+    public Usuario getCreatorInSpace(final Space space) {
         return space.getUserSpaces().stream()
                 .filter(userSpace -> userSpace.getRole().getDescription().equals(RoleType.CREATOR))
                 .map(UsuarioSpace::getUser)

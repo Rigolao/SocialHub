@@ -1,6 +1,7 @@
 package br.socialhub.api.services;
 
 import br.socialhub.api.dtos.reset_password.ResetPasswordDTO;
+import br.socialhub.api.dtos.space.SpaceBasicResponseDTO;
 import br.socialhub.api.dtos.user.*;
 import br.socialhub.api.enums.DocumentType;
 import br.socialhub.api.exceptions.*;
@@ -11,7 +12,6 @@ import br.socialhub.api.repositories.UsuarioRepository;
 import br.socialhub.api.utils.CpfCnpjValidator;
 import br.socialhub.api.utils.PhotoUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,8 +49,14 @@ public class UserService {
 
     public UserResponseDTO getUser(final Long id) {
         return findByIdOptional(id)
-                .map(UserResponseDTO::new)
+                .map(user -> new UserResponseDTO(user, getSpaces(user)))
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
+    }
+
+    private List<SpaceBasicResponseDTO> getSpaces(final Usuario usuario){
+        return usuario.getUsuarioSpaces().stream()
+                .map(SpaceBasicResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
     private Optional<Usuario> findByIdOptional(final Long id) {
@@ -112,7 +118,7 @@ public class UserService {
         user.setName(userUpdateDTO.name());
         user.setBirthDate(userUpdateDTO.birthDate());
 
-        return new UserResponseDTO(usuarioRepository.save(user));
+        return new UserResponseDTO(usuarioRepository.save(user), getSpaces(user));
     }
 
     public void updatePasswordUser(Long id, UserUpdatePasswordDTO userUpdatePasswordDTO) {

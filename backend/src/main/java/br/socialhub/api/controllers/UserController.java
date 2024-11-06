@@ -58,7 +58,7 @@ public class UserController {
 
         userSpaceService.assignRoleToUserInSpace(user, space, role);
 
-        var response = new UserResponseDTO(user);
+        var response = userService.getUser(user.getId());
 
         var uri = URI.create("/users/" + response.id());
 
