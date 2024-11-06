@@ -7,8 +7,10 @@ import {Button} from "@/components/ui/button.tsx";
 import {ArrowUpDown, MoreHorizontal} from "lucide-react";
 import {
     DropdownMenu,
-    DropdownMenuContent, DropdownMenuItem,
-    DropdownMenuLabel, DropdownMenuSeparator,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
 import useGetUser from "@/hooks/user/use-get-user.ts";
@@ -19,50 +21,15 @@ import {useSpace} from "@/hooks/spaces/use-space.ts";
 export default function SpacesPage() {
 
     const {selectedSpace, setSelectedSpace} = useSpace();
-    const {data: user} = useGetUser();
+    const {data: user, isLoading} = useGetUser();
 
     const navigate = useNavigate();
-
-    const spaces: Space[] = [
-        {
-            id: 1,
-            name: 'Space 1',
-            members: [
-                {
-                    id: 1,
-                    name: 'User 1',
-                    roleType: 'Criador'
-                },
-                {
-                    id: 2,
-                    name: 'User 2',
-                    roleType: 'Editor'
-                },
-                {
-                    id: 3,
-                    name: 'User 3',
-                    roleType: 'Visualizador'
-                }
-            ]
-        },
-        {
-            id: 2,
-            name: 'Space 2',
-            members: [
-                {
-                    id: 2,
-                    name: 'User 2',
-                    roleType: 'Criador'
-                },
-            ]
-        }
-    ]
 
     const columns: ColumnDef<Space>[] = [
         {
             id: 'select',
             header: 'Selecionado',
-            cell: ({ row }) => {
+            cell: ({row}) => {
                 const space = row.original;
 
                 return (
@@ -78,28 +45,28 @@ export default function SpacesPage() {
         },
         {
             accessorKey: 'id',
-            header: ({ column }) => {
+            header: ({column}) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Identificador
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                        <ArrowUpDown className="ml-2 h-4 w-4"/>
                     </Button>
                 )
             },
         },
         {
             accessorKey: 'name',
-            header: ({ column }) => {
+            header: ({column}) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Nome
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                        <ArrowUpDown className="ml-2 h-4 w-4"/>
                     </Button>
                 )
             },
@@ -107,7 +74,7 @@ export default function SpacesPage() {
         {
             id: 'actions',
             header: 'Ações',
-            cell: ({ row }) => {
+            cell: ({row}) => {
                 const space = row.original;
 
                 return (
@@ -120,11 +87,16 @@ export default function SpacesPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => navigate(`/gerenciar-space/${space.id}`)}>Gerenciar</DropdownMenuItem>
-                            {space.members.find(member => member.id === user?.id && member.roleType === 'Criador') && (
-                                <DropdownMenuItem>Deletar</DropdownMenuItem>
-                            )}
+                            <DropdownMenuSeparator/>
+                            <DropdownMenuItem
+                                disabled={space.role !== 'CREATOR'}
+                                onClick={() => navigate(`/gerenciar-space/${space.id}`)}>
+                                Gerenciar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                disabled={space.role !== 'CREATOR'}>
+                                Deletar
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 );
@@ -138,7 +110,7 @@ export default function SpacesPage() {
                 title='Spaces'
                 subtitle='Gerencie os spaces no qual você faz parte.'/>
             <DataTable
-                data={spaces}
+                data={isLoading ? [] : user?.spaces}
                 columns={columns}
                 actions={
                     <NewSpaceButton/>

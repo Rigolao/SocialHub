@@ -1,3 +1,5 @@
+import {Space} from "@/types/spaces";
+
 export type User = {
     id: number;
     name: string;
@@ -6,4 +8,5 @@ export type User = {
     documentType: string;
     documentNumber: string;
     url_photo: string;
+    spaces: Space[];
 }

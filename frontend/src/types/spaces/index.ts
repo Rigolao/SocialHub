@@ -1,6 +1,7 @@
 export type Space = {
     id: number;
     name: string;
+    role: string;
     members: Member[];
 }
 

@@ -16,6 +16,7 @@ import {Form} from "@/components/ui/form.tsx";
 import useAddUserToSpace from "@/hooks/spaces/use-add-user-to-space.ts";
 import RoleSelector from "@/components/custom/role-selector.tsx";
 import UserSelector from "@/components/custom/user-selector.tsx";
+import useGetSpace from "@/hooks/spaces/use-get-space.ts";
 
 interface AddMemberButtonProps {
     idSpace: number
@@ -28,6 +29,8 @@ const addMemberFormSchema = z.object({
 
 export default function AddMemberButton({idSpace}: AddMemberButtonProps) {
     const [open, setOpen] = useState(false);
+
+    const { data } = useGetSpace({idSpace: idSpace});
 
     const {mutateAsync, isPending} = useAddUserToSpace({idSpace: idSpace});
 
@@ -82,6 +85,7 @@ export default function AddMemberButton({idSpace}: AddMemberButtonProps) {
 
                         <UserSelector
                             control={form.control}
+                            excludedUsers={data?.members}
                             name='user'
                             label='Usuário'/>
 

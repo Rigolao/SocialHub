@@ -3,18 +3,18 @@ import {Space} from "@/types/spaces";
 import {useAuth} from "@/providers/auth-provider.tsx";
 
 interface UseGetSpaceProps {
-    id: number | null;
+    idSpace: number | null;
 }
 
-export default function useGetSpace({ id }: UseGetSpaceProps) {
+export default function useGetSpace({ idSpace }: UseGetSpaceProps) {
 
     const {token} = useAuth();
 
     const spaceQuery = useGet<Space>({
-        url: `/spaces/${id}`,
-        queryKey: ['get-space', id],
+        url: `/spaces/${idSpace}`,
+        queryKey: ['get-space', idSpace],
         retry: 3,
-        enabled: !!token && !!id,
+        enabled: !!token && !!idSpace,
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
         })
