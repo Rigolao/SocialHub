@@ -17,7 +17,8 @@ export default function useGetSpace({ idSpace }: UseGetSpaceProps) {
         enabled: !!token && !!idSpace,
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
-        })
+        }),
+        hideToast: true
     });
 
     return spaceQuery;
