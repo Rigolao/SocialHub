@@ -3,6 +3,7 @@ import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
 import {useSpace} from "@/hooks/spaces/use-space.ts";
 import useGetUser from "@/hooks/user/use-get-user.ts";
 import {Space} from "@/types/spaces";
+import {useEffect} from "react";
 
 export default function SpaceSelector() {
 
@@ -14,6 +15,12 @@ export default function SpaceSelector() {
 
         !!space && setSelectedSpace(space);
     }
+
+    useEffect(() => {
+        if (!selectedSpace && user?.spaces.length) {
+            setSelectedSpace(user.spaces.filter(space => space.role === 'CREATOR')[0]);
+        }
+    }, [selectedSpace, setSelectedSpace, user?.spaces]);
 
     return (
         <>
