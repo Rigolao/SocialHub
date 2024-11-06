@@ -1,7 +1,5 @@
 package br.socialhub.api.models;
 
-import br.socialhub.api.converters.SocialMediaTypeConverter;
-import br.socialhub.api.enums.SocialNetworkType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +18,6 @@ public class SocialNetwork {
     @Column(name = "IDREDESOCIAL")
     private Long id;
 
-    @Column(name = "DESCRICAO", nullable = false, length = 45)
-    @Convert(converter = SocialMediaTypeConverter.class)
-    private SocialNetworkType descricao;
+    @Column(name = "NOME", nullable = false, length = 45)
+    private String nome;
 }

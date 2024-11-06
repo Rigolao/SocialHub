@@ -4,6 +4,6 @@ import br.socialhub.api.models.SocialNetwork;
 
 public record SocialMediaResponseDTO(Long id, String name) {
     public SocialMediaResponseDTO(SocialNetwork socialNetwork){
-        this(socialNetwork.getId(), socialNetwork.getDescricao().getDescription());
+        this(socialNetwork.getId(), socialNetwork.getNome());
     }
 }
