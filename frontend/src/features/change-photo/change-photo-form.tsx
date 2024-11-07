@@ -39,9 +39,9 @@ export default function ChangePhotoForm() {
                     <FormLabel className='mb-1 pt-0'>Foto</FormLabel>
                     <CustomFileUploader
                         multiple={false}
-                        files={form.watch('photo')}
+                        file={form.watch('photo')}
                         error={form.formState.errors.photo?.message}
-                        onFilesChange={(files) => {
+                        onFileChange={(files) => {
                             const file = Array.isArray(files) ? files[0] : files;
                             form.setValue('photo', file);
                         }}

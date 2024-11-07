@@ -9,7 +9,6 @@ import CustomMultiSelect from "@/components/custom/custom-multi-select.tsx";
 import DatePicker from "@/components/custom/date-picker.tsx";
 import useGetSpaceSocialNetworks from "@/hooks/spaces/use-get-space-social-networks.ts";
 import {useSpace} from "@/hooks/spaces/use-space.ts";
-import {useEffect} from "react";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
 
 const schedulePostFormSchema = z.object({
@@ -41,6 +40,7 @@ export default function SchedulePostForm() {
         console.log(data);
     };
 
+    // @ts-ignore
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

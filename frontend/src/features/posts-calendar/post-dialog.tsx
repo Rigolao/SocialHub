@@ -7,35 +7,35 @@ import {
     DialogTitle
 } from "@/components/ui/dialog.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {CalendarPost} from "@/types/post";
+import {SimplePost} from "@/types/post";
 import {InstagramIcon} from "lucide-react";
 
 interface PostDialogProps {
-    calendarPost: CalendarPost | undefined;
+    postDay: SimplePost[] | undefined;
     open: boolean;
     setOpen: (open: boolean) => void;
 }
 
-export default function PostDialog({calendarPost, open, setOpen}: PostDialogProps) {
+export default function PostDialog({postDay, open, setOpen}: PostDialogProps) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        {calendarPost?.date.toLocaleDateString('pt-BR')}
+                        {postDay && postDay.length > 0 && postDay[0].date && postDay[0].date.toLocaleDateString()}
                     </DialogTitle>
                     <DialogDescription>
                         Posts agendados:
                     </DialogDescription>
                 </DialogHeader>
                 <div className='flex flex-col gap-2 text-center'>
-                    {calendarPost?.posts.map(post => (
+                    {postDay?.map(post => (
                         <div key={post.id}
                              className='flex justify-between items-center gap-2'>
                             {post.title}
                             <div className='flex-1 flex justify-evenly'>
-                                {post.socialNetworks.map(socialMedia => (
+                                {post.socialNetwork.map(socialMedia => (
                                     <InstagramIcon key={socialMedia.id} size={24}/>
                                 ))}
                             </div>

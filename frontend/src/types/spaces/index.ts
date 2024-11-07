@@ -1,8 +1,10 @@
+import {User} from "@/types/user";
+
 export type Space = {
     id: number;
     name: string;
     role: string;
-    members: Member[];
+    members: User[];
 }
 
 export type Member = {

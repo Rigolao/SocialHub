@@ -1,3 +1,5 @@
+// custom-file-uploader.tsx
+
 import {
     FileInput,
     FileUploader,
@@ -8,38 +10,48 @@ import { DropzoneOptions } from "react-dropzone";
 import { cn } from "@/lib/utils.ts";
 
 interface CustomFileUploaderProps {
-    files: File | File[] | null; // Pode ser um único arquivo ou um array de arquivos
+    file?: File | null; // Aceita um único arquivo
+    files?: File | File[] | null; // Aceita um único arquivo ou múltiplos arquivos
     error?: string;
-    onFilesChange: (files: File | File[] | null) => void;
+    onFileChange?: (file: File | null) => void;
+    onFilesChange?: (files: File[] | null) => void;
     multiple?: boolean; // Indica se deve aceitar múltiplos arquivos
 }
 
-export default function CustomFileUploader({ files, error, onFilesChange, multiple = false }: CustomFileUploaderProps) {
-    const dropzone = {
-        accept: {
-            "image/*": [".jpg", ".jpeg", ".png"],
-        },
-        multiple: multiple,
-        maxFiles: multiple ? 4 : 1, // Limita a 4 arquivos se for múltiplo, caso contrário, apenas 1
-        maxSize: 1 * 1024 * 1024,
-    } satisfies DropzoneOptions;
+export default function CustomFileUploader({
+                                               file,
+                                               files,
+                                               error,
+                                               onFileChange,
+                                               onFilesChange,
+                                               multiple = false,
+                                           }: CustomFileUploaderProps) {
+    // Configuração do Dropzone
+    const dropzone: DropzoneOptions = {
+        accept: { "image/*": [".jpg", ".jpeg", ".png"] },
+        multiple,
+        maxFiles: multiple ? 4 : 1,
+        maxSize: 1 * 1024 * 1024, // Limite de 1 MB
+    };
 
-    // Converte um único arquivo em um array para uniformizar o tratamento
-    const normalizedFiles = Array.isArray(files) ? files : files ? [files] : [];
+    // Normaliza os arquivos para serem sempre um array (mesmo que contenha um único arquivo)
+    const normalizedFiles = multiple
+        ? Array.isArray(files) ? files : files ? [files] : []
+        : file ? [file] : [];
+
+    // Função para atualizar o arquivo(s) conforme `multiple`
+    const handleFileChange = (newFiles: File[] | null) => {
+        if (multiple && onFilesChange) {
+            onFilesChange(newFiles); // Chama `onFilesChange` com um array
+        } else if (!multiple && onFileChange) {
+            onFileChange(newFiles && newFiles.length > 0 ? newFiles[0] : null); // Chama `onFileChange` com um único arquivo
+        }
+    };
 
     return (
         <FileUploader
             value={normalizedFiles}
-            onValueChange={(newFiles) => {
-                // Se newFiles for null, chamar onFilesChange com null
-                if (newFiles) {
-                    // Se for um único arquivo, converte de volta para File, senão mantém como array
-                    onFilesChange(multiple ? newFiles : newFiles[0] || null);
-                } else {
-                    // Se newFiles é null, passa null para onFilesChange
-                    onFilesChange(null);
-                }
-            }}
+            onValueChange={handleFileChange}
             dropzoneOptions={dropzone}
         >
             <FileInput>
@@ -53,7 +65,7 @@ export default function CustomFileUploader({ files, error, onFilesChange, multip
                         key={i}
                         index={i}
                         className="size-20 p-0 rounded-md overflow-hidden"
-                        aria-roledescription={`file ${i + 1} containing ${file.name}`}
+                        aria-roledescription={`file ${i + 1} contendo ${file.name}`}
                     >
                         <img
                             src={URL.createObjectURL(file)}

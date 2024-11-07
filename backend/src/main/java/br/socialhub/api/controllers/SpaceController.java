@@ -145,10 +145,6 @@ public class SpaceController {
                                                        @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getMonthValue()}") int month){
         List<PostDTO> posts = spaceService.getSpacePosts(spaceId, year, month);
 
-        if (posts.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
         return ResponseEntity.ok(posts);
     }
 
