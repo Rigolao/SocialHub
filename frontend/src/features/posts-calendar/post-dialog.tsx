@@ -35,7 +35,7 @@ export default function PostDialog({calendarPost, open, setOpen}: PostDialogProp
                              className='flex justify-between items-center gap-2'>
                             {post.title}
                             <div className='flex-1 flex justify-evenly'>
-                                {post.social_medias.map(socialMedia => (
+                                {post.socialNetworks.map(socialMedia => (
                                     <InstagramIcon key={socialMedia.id} size={24}/>
                                 ))}
                             </div>
