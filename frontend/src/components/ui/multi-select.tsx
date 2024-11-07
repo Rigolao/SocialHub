@@ -335,7 +335,7 @@ const MultiSelectorList = forwardRef<
         >
             {children}
             <CommandEmpty>
-                <span className="text-muted-foreground">No results found</span>
+                <span className="text-muted-foreground">Sem resultados</span>
             </CommandEmpty>
         </CommandList>
     );

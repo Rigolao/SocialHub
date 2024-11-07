@@ -7,18 +7,24 @@ import CustomFileUploader from "@/components/custom/custom-file-uploader.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import CustomMultiSelect from "@/components/custom/custom-multi-select.tsx";
 import DatePicker from "@/components/custom/date-picker.tsx";
+import useGetSpaceSocialNetworks from "@/hooks/spaces/use-get-space-social-networks.ts";
+import {useSpace} from "@/hooks/spaces/use-space.ts";
+import {useEffect} from "react";
+import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
+
 const schedulePostFormSchema = z.object({
     title: z.string().min(6, 'O título deve ter no mínimo 6 caracteres'),
     description: z.string().min(6, 'A descrição deve ter no mínimo 6 caracteres'),
     date: z.date({message: 'Selecione uma data válida'}),
     files: z.array(z.instanceof(File)).nullable(),
-    socialMedia: z.array(z.string()).min(1, 'Selecione ao menos uma rede social')
+    socialNetworks: z.array(z.string()).min(1, 'Selecione ao menos uma rede social')
 });
 
 
 export default function SchedulePostForm() {
 
-    const socialMediaOptions = ['Facebook', 'Instagram', 'Twitter', 'LinkedIn'];
+    const {selectedSpace} = useSpace();
+    const {data: socialNetworks, isLoading} = useGetSpaceSocialNetworks({idSpace: Number(selectedSpace?.id)});
 
     const form = useForm<z.infer<typeof schedulePostFormSchema>>({
         resolver: zodResolver(schedulePostFormSchema),
@@ -27,7 +33,7 @@ export default function SchedulePostForm() {
             description: '',
             date: undefined,
             files: [],
-            socialMedia: []
+            socialNetworks: []
         }
     });
 
@@ -68,13 +74,18 @@ export default function SchedulePostForm() {
                             className='md:w-1/2 resize-none'
                         />
 
-                        <CustomMultiSelect
-                            control={form.control}
-                            label='Redes Sociais'
-                            name='socialMedia'
-                            placeholder='Selecione as redes sociais'
-                            options={socialMediaOptions}
-                            className='w-full h-full md:w-1/2'/>
+                        {(isLoading || !socialNetworks)
+                            ? <div className='flex flex-col justify-center h-14'>
+                                <LoadingSpinner/>
+                            </div>
+                            : <CustomMultiSelect
+                                control={form.control}
+                                label='Redes Sociais'
+                                name='socialNetworks'
+                                placeholder='Selecione as redes sociais'
+                                options={socialNetworks?.map(socialNetwork => socialNetwork.name)}
+                                className='w-full h-full md:w-1/2'/>}
+
                     </div>
 
                     <div className='flex flex-col py-2 space-y-2'>
