@@ -1,18 +1,23 @@
 package br.socialhub.api.services;
 
+import br.socialhub.api.dtos.social_media.SocialMediaResponseDTO;
 import br.socialhub.api.dtos.space.SpaceCreateDTO;
 import br.socialhub.api.dtos.space.SpaceResponseDTO;
 import br.socialhub.api.dtos.space.SpaceUpdateDTO;
 import br.socialhub.api.dtos.user.MemberResponseDTO;
 import br.socialhub.api.enums.RoleType;
 import br.socialhub.api.exceptions.ResourceNotFoundException;
+import br.socialhub.api.models.Postagem;
 import br.socialhub.api.models.Space;
 import br.socialhub.api.models.Usuario;
 import br.socialhub.api.models.UsuarioSpace;
+import br.socialhub.api.repositories.PostRepository;
 import br.socialhub.api.repositories.SpaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +27,7 @@ import static br.socialhub.api.utils.Constantes.*;
 @Service
 public class SpaceService {
     private final SpaceRepository spaceRepository;
+    private final PostRepository postRepository;
 
     public Space createSpace(final SpaceCreateDTO spaceCreateDTO) {
 
@@ -64,5 +70,20 @@ public class SpaceService {
                 .map(UsuarioSpace::getUser)
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
+    }
+
+    public List<SocialMediaResponseDTO> getSocialNetworksForSpace(Long id) {
+        Space space = findById(id);
+
+        return space.getAccounts().stream()
+                .map(conta -> new SocialMediaResponseDTO(conta.getSocialNetwork().getId(), conta.getSocialNetwork().getNome())).toList();
+    }
+
+    public List<Postagem> getSpacePosts(Long id,  int year, int month) {
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
+        LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+
+        return postRepository.findAllBySpaceIdAndMonthAndYear(id, startOfMonth, endOfMonth);
     }
 }
