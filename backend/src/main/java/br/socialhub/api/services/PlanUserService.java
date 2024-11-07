@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -18,6 +19,7 @@ public class PlanUserService {
     public void assignPlanToUser(Plano plan, Usuario user, PlanDTO planDTO) {
         PlanoUsuario planUser = new PlanoUsuario(plan, user, planDTO);
         planoUsuarioRepository.save(planUser);
+        user.setPlanosUsuarios(List.of(planUser));
     }
 
 }

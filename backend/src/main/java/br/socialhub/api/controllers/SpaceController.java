@@ -2,10 +2,12 @@ package br.socialhub.api.controllers;
 
 import br.socialhub.api.dtos.RoleAssigmentDTO;
 import br.socialhub.api.dtos.SocialAccountDTO;
+import br.socialhub.api.dtos.social_media.SocialMediaResponseDTO;
 import br.socialhub.api.dtos.space.SpaceCreateDTO;
 import br.socialhub.api.dtos.space.SpaceResponseDTO;
 import br.socialhub.api.dtos.space.SpaceUpdateDTO;
 import br.socialhub.api.dtos.user.InviteUserDTO;
+import br.socialhub.api.models.Postagem;
 import br.socialhub.api.services.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -14,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static br.socialhub.api.utils.Constantes.AUTHORIZATION;
 import static br.socialhub.api.utils.Constantes.ENDPOINT_SPACE;
@@ -113,7 +117,7 @@ public class SpaceController {
 
     @Transactional
     @PostMapping("{spaceId}/social-networks/{socialNetworkId}")
-    @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #id)")
+    @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
     public ResponseEntity<Void> associateSocialAccount(@PathVariable final Long spaceId,
                                                        @PathVariable final Long socialNetworkId,
                                                        @RequestBody @Valid final SocialAccountDTO socialAccountDTO,
@@ -124,6 +128,28 @@ public class SpaceController {
         socialNetworkService.associateSocialAccount(space, socialNetwork, socialAccountDTO);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("{spaceId}/social-networks")
+    @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
+    public ResponseEntity<List<SocialMediaResponseDTO>> getSocialNetworksForSpace(@PathVariable final Long spaceId,
+                                                                                  @RequestHeader(AUTHORIZATION) final String token){
+
+        return ResponseEntity.ok(spaceService.getSocialNetworksForSpace(spaceId));
+    }
+
+
+    @GetMapping("{spaceId}/posts")
+    public ResponseEntity<List<Postagem>> getSpacePosts(@PathVariable final Long spaceId,
+                                                  @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") int year,
+                                                  @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getMonthValue()}") int month){
+        List<Postagem> posts = spaceService.getSpacePosts(spaceId, year, month);
+
+        if (posts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(posts);
     }
 
 
