@@ -26,7 +26,10 @@ export default function ChangePhotoForm() {
             formData.append('photo', data.photo);
         }
 
-        mutateAsync(formData).then(() => form.reset);
+        mutateAsync(formData).then(() => {
+            form.reset();
+            form.setValue('photo', null);
+        });
     };
 
     return (
