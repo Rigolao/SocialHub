@@ -1,5 +1,7 @@
 package br.socialhub.api.services;
 
+import br.socialhub.api.dtos.post.PostDTO;
+import br.socialhub.api.dtos.post.PostQueryDTO;
 import br.socialhub.api.dtos.social_media.SocialMediaResponseDTO;
 import br.socialhub.api.dtos.space.SpaceCreateDTO;
 import br.socialhub.api.dtos.space.SpaceResponseDTO;
@@ -7,7 +9,6 @@ import br.socialhub.api.dtos.space.SpaceUpdateDTO;
 import br.socialhub.api.dtos.user.MemberResponseDTO;
 import br.socialhub.api.enums.RoleType;
 import br.socialhub.api.exceptions.ResourceNotFoundException;
-import br.socialhub.api.models.Postagem;
 import br.socialhub.api.models.Space;
 import br.socialhub.api.models.Usuario;
 import br.socialhub.api.models.UsuarioSpace;
@@ -79,11 +80,29 @@ public class SpaceService {
                 .map(conta -> new SocialMediaResponseDTO(conta.getSocialNetwork().getId(), conta.getSocialNetwork().getNome())).toList();
     }
 
-    public List<SocialMediaResponseDTO> getSpacePosts(Long id,  int year, int month) {
+    public List<PostDTO> getSpacePosts(Long id,  int year, int month) {
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
         LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
 
-        return postRepository.findAllBySpaceIdAndMonthAndYear(id, startOfMonth, endOfMonth).stream().map(SocialMediaResponseDTO::new).collect(Collectors.toList());
+        List<PostQueryDTO> result = postRepository.findAllBySpaceIdAndMonthAndYear(id,startOfMonth,endOfMonth);
+
+        return result.stream()
+                .collect(Collectors.groupingBy(
+                        PostQueryDTO::id,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                postList -> {
+                                    PostQueryDTO first = postList.get(0);
+                                    List<SocialMediaResponseDTO> redesSociais = postList.stream()
+                                            .map(postList1 -> new SocialMediaResponseDTO(postList1.idRedeSocial(), postList1.nomeRedeSocial()))
+                                            .collect(Collectors.toList());
+                                    return new PostDTO(first.id(), first.descricao(), redesSociais);
+                                }
+                        )
+                ))
+                .values()
+                .stream()
+                .toList();
     }
 }

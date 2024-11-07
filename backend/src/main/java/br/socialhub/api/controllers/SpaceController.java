@@ -2,12 +2,12 @@ package br.socialhub.api.controllers;
 
 import br.socialhub.api.dtos.RoleAssigmentDTO;
 import br.socialhub.api.dtos.SocialAccountDTO;
+import br.socialhub.api.dtos.post.PostDTO;
 import br.socialhub.api.dtos.social_media.SocialMediaResponseDTO;
 import br.socialhub.api.dtos.space.SpaceCreateDTO;
 import br.socialhub.api.dtos.space.SpaceResponseDTO;
 import br.socialhub.api.dtos.space.SpaceUpdateDTO;
 import br.socialhub.api.dtos.user.InviteUserDTO;
-import br.socialhub.api.models.Postagem;
 import br.socialhub.api.services.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -140,10 +140,10 @@ public class SpaceController {
 
 
     @GetMapping("{spaceId}/posts")
-    public ResponseEntity<List<SocialMediaResponseDTO>> getSpacePosts(@PathVariable final Long spaceId,
-                                                  @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") int year,
-                                                  @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getMonthValue()}") int month){
-        List<SocialMediaResponseDTO> posts = spaceService.getSpacePosts(spaceId, year, month);
+    public ResponseEntity<List<PostDTO>> getSpacePosts(@PathVariable final Long spaceId,
+                                                       @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") int year,
+                                                       @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getMonthValue()}") int month){
+        List<PostDTO> posts = spaceService.getSpacePosts(spaceId, year, month);
 
         if (posts.isEmpty()) {
             return ResponseEntity.noContent().build();

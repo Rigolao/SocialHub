@@ -32,5 +32,8 @@ public class Postagem {
     private LocalDateTime dataAgendamento;
 
     @OneToMany(mappedBy = "postagem", fetch = FetchType.LAZY)
+    private List<ContaPostagem> contaPostagens;
+
+    @OneToMany(mappedBy = "postagem", fetch = FetchType.LAZY)
     private List<Anexo> anexos;
 }
