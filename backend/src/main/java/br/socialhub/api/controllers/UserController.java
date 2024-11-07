@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import static br.socialhub.api.utils.Constantes.*;
@@ -58,7 +59,9 @@ public class UserController {
 
         userSpaceService.assignRoleToUserInSpace(user, space, role);
 
-        var response = userService.getUser(user.getId());
+//        var response = userService.getUser(user.getId());
+
+        var response = new UserResponseDTO(user, new ArrayList<>());
 
         var uri = URI.create("/users/" + response.id());
 
