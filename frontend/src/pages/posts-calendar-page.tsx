@@ -1,28 +1,78 @@
 import PageTitle from "@/components/custom/page-title.tsx";
 import {Calendar} from "@/components/ui/calendar.tsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {cn} from "@/lib/utils.ts";
 import { ptBR } from "date-fns/locale";
 import {isSameDay} from "date-fns";
 import PostDialog from "@/features/posts-calendar/post-dialog.tsx";
+import {CalendarPost} from "@/types/post";
 
 export default function PostsCalendarPage() {
 
     const [date, setDate] = useState<Date | undefined>(new Date());
+    const [selectedCalendarPost, setSelectedCalendarPost] = useState<CalendarPost | undefined>();
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+    const [posts, setPosts] = useState<CalendarPost[]>([]);
 
-    const datesWithPosts = [
-        new Date(2024, 8, 10),
-        new Date(2024, 8, 15),
-        new Date(2024, 8, 20),
+    const temp  = [
+        {
+            date: new Date(2024, 10, 20),
+            posts: [
+                {
+                    id: 1,
+                    title: 'Post 1',
+                    social_medias: [
+                        {
+                            id: 1,
+                            name: 'Instagram',
+                            icon: 'InstagramIcon'
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    title: 'Post 2',
+                    social_medias: [
+                        {
+                            id: 1,
+                            name: 'Instagram'
+                        },
+                        {
+                            id: 2,
+                            name: 'Facebook'
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            date: new Date(2024, 10, 21),
+            posts: [
+                {
+                    id: 3,
+                    title: 'Post 3',
+                    social_medias: [
+                        {
+                            id: 1,
+                            name: 'Instagram'
+                        }
+                    ]
+                }
+            ]
+        }
     ];
 
     const handleDayClick = (selectedDay: Date, modifiers: any) => {
         if (modifiers.posts) {
+            setSelectedCalendarPost(posts.find(post => isSameDay(post.date, selectedDay)));
             setDate(selectedDay);
             setDialogOpen(true);
         }
     };
+
+    useEffect(() => {
+        setPosts(temp);
+    }, [temp]);
 
     return (
         <>
@@ -31,7 +81,7 @@ export default function PostsCalendarPage() {
 
                 <Calendar
                     modifiers={{
-                        posts: (day) => datesWithPosts.some(postDate => isSameDay(postDate, day))
+                        posts: (day) => posts.some(post => isSameDay(post.date, day))
                     }}
                     modifiersClassNames={{
                         posts: 'bg-blue-200 text-blue-800 font-semibold rounded-full'
@@ -55,7 +105,7 @@ export default function PostsCalendarPage() {
                     }}
                 />
             </div>
-            {date && <PostDialog open={dialogOpen} setOpen={setDialogOpen} date={date} />}
+            {date && <PostDialog open={dialogOpen} setOpen={setDialogOpen} calendarPost={selectedCalendarPost} />}
         </>
     );
 }
