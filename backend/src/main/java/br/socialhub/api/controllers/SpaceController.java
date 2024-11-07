@@ -140,10 +140,10 @@ public class SpaceController {
 
 
     @GetMapping("{spaceId}/posts")
-    public ResponseEntity<List<Postagem>> getSpacePosts(@PathVariable final Long spaceId,
+    public ResponseEntity<List<SocialMediaResponseDTO>> getSpacePosts(@PathVariable final Long spaceId,
                                                   @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") int year,
                                                   @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getMonthValue()}") int month){
-        List<Postagem> posts = spaceService.getSpacePosts(spaceId, year, month);
+        List<SocialMediaResponseDTO> posts = spaceService.getSpacePosts(spaceId, year, month);
 
         if (posts.isEmpty()) {
             return ResponseEntity.noContent().build();

@@ -79,11 +79,11 @@ public class SpaceService {
                 .map(conta -> new SocialMediaResponseDTO(conta.getSocialNetwork().getId(), conta.getSocialNetwork().getNome())).toList();
     }
 
-    public List<Postagem> getSpacePosts(Long id,  int year, int month) {
+    public List<SocialMediaResponseDTO> getSpacePosts(Long id,  int year, int month) {
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
         LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
 
-        return postRepository.findAllBySpaceIdAndMonthAndYear(id, startOfMonth, endOfMonth);
+        return postRepository.findAllBySpaceIdAndMonthAndYear(id, startOfMonth, endOfMonth).stream().map(SocialMediaResponseDTO::new).collect(Collectors.toList());
     }
 }
