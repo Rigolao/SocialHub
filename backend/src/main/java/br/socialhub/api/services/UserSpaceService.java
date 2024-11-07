@@ -33,6 +33,7 @@ public class UserSpaceService {
         _validateAssignRoleToUserInSpace(user, space);
         var userSpace = userSpaceRepository.save(new UsuarioSpace(user, space, role));
         space.setUserSpaces(List.of(userSpace));
+        user.setUsuarioSpaces(List.of(userSpace));
     }
 
     public void updateRoleInSpace(final Usuario user, final Space space, final Cargo role) {
