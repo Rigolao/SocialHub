@@ -84,15 +84,17 @@ public class UserService {
 
     public void uploadPhoto(final Long id, final MultipartFile file) throws IOException {
         var user = findById(id);
+        final FotoUsuario photo = user.getUserPhoto() != null ? user.getUserPhoto() : new FotoUsuario();
 
-        var foto = FotoUsuario.builder()
-                .nomeArquivo(file.getOriginalFilename())
-                .mimeType(file.getContentType())
-                .arquivo(file.getBytes())
-                .user(user)
-                .build();
+        if (photo.getUser() == null) {
+            photo.setUser(user);
+        }
 
-        user.setUserPhoto(foto);
+        photo.setArquivo(file.getBytes());
+        photo.setMimeType(file.getContentType());
+        photo.setNomeArquivo(file.getOriginalFilename());
+
+        user.setUserPhoto(photo);
         usuarioRepository.save(user);
     }
 
@@ -204,6 +206,10 @@ public class UserService {
                 .documentType(userDTO.documentType())
                 .documentNumber(userDTO.documentNumber())
                 .build();
+    }
+
+    public UserResponseDTO convertUserForUserResponseDTO(final Usuario user){
+        return new UserResponseDTO(user, getSpaces(user));
     }
 
     public List<UserBasicResponseDTO> searchUserByEmail(String filter) {
