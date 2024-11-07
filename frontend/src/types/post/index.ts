@@ -1,4 +1,4 @@
-import {SocialMedia} from "@/types/social-media";
+import {SocialNetwork} from "@/types/social-media";
 
 export type CalendarPost = {
     date: Date;
@@ -8,5 +8,5 @@ export type CalendarPost = {
 export type SimplePost = {
     id: number;
     title: string;
-    social_medias: SocialMedia[];
+    socialNetworks: SocialNetwork[];
 }

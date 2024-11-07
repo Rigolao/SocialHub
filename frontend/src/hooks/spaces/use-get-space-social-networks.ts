@@ -1,4 +1,4 @@
-import {SocialMedia} from "@/types/social-media";
+import {SocialNetwork} from "@/types/social-media";
 import {useGet} from "@/hooks/use-get.ts";
 import {useAuth} from "@/providers/auth-provider.tsx";
 
@@ -10,7 +10,7 @@ export default function useGetSpaceSocialNetworks({idSpace}: UseGetSpaceSocialNe
 
     const { token } = useAuth();
 
-    const getSpaceSocialMedias = useGet<SocialMedia[]>({
+    const getSpaceSocialMedias = useGet<SocialNetwork[]>({
         url: `/spaces/${idSpace}/social-networks`,
         queryKey: ['getSpaceSocialNetworks', idSpace],
         getHeaders: () => ({
