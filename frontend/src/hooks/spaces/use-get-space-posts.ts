@@ -1,5 +1,5 @@
 import {useGet} from "@/hooks/use-get.ts";
-import {useAuth} from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 import {SimplePost} from "@/types/post";
 
 interface UseGetSpacePostsProps {

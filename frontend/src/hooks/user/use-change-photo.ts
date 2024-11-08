@@ -1,4 +1,4 @@
-import {useAuth} from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 import {usePost} from "@/hooks/use-post.ts";
 import {MessageResponse} from "@/types";
 

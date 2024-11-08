@@ -1,4 +1,4 @@
-import {useAuth} from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 import {useDelete} from "@/hooks/use-delete.ts";
 import {MessageResponse} from "@/types";
 import queryClient from "@/lib/query-client";

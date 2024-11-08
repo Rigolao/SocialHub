@@ -1,6 +1,6 @@
 import {useGet} from "@/hooks/use-get.ts";
 import {Space} from "@/types/spaces";
-import {useAuth} from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 
 interface UseGetSpaceProps {
     idSpace: number | null;

@@ -1,7 +1,7 @@
 import {CreateSpaceRequest, CreateSpaceResponse} from "@/types/spaces";
 import {usePost} from "@/hooks/use-post.ts";
 import queryClient from "@/lib/query-client";
-import {useAuth} from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 
 export default function useCreateSpace() {
 

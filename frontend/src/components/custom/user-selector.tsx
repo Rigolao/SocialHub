@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils.ts";
 import useSearchUser from "@/hooks/user/use-search-user.ts";
 import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
-import { useAuth } from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 import { FieldValues, UseControllerProps } from "react-hook-form";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
 

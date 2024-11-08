@@ -1,6 +1,6 @@
 import {usePatch} from "@/hooks/use-patch.ts";
 import {ChangePasswordRequest, ChangePasswordResponse} from "@/types/change-password";
-import {useAuth} from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 
 export default function useChangePassword() {
 

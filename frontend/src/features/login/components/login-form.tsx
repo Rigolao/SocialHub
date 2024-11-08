@@ -4,7 +4,7 @@ import GenericFormField from "@/components/custom/generic-form-field.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Form} from "@/components/ui/form.tsx";
 import {z} from "zod";
-import {useAuth} from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 import {useNavigate} from "react-router-dom";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";

@@ -1,6 +1,6 @@
 import {usePatch} from "@/hooks/use-patch.ts";
 import {EditSpaceRequest, EditSpaceResponse} from "@/types/spaces";
-import {useAuth} from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 import queryClient from "@/lib/query-client";
 
 interface UseEditSpaceProps {

@@ -3,7 +3,7 @@ import {Space} from "@/types/spaces";
 
 type SpaceProviderState = {
     selectedSpace: Space | null;
-    setSelectedSpace: (space: Space) => void;
+    setSelectedSpace: (space: Space | null) => void;
 }
 
 const initialState: SpaceProviderState = {

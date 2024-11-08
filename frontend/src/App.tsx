@@ -7,11 +7,11 @@ function App() {
 
     return (
         <AnimatePresence mode="wait">
-            <AuthProvider>
-                <SpaceProvider>
-                    <ProjectRoutes />
-                </SpaceProvider>
-            </AuthProvider>
+            <SpaceProvider>
+                <AuthProvider>
+                    <ProjectRoutes/>
+                </AuthProvider>
+            </SpaceProvider>
         </AnimatePresence>
     )
 }

@@ -1,4 +1,4 @@
-import {useAuth} from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 import {usePatch} from "@/hooks/use-patch.ts";
 import {ChangeUserRoleRequest} from "@/types/spaces";
 import {MessageResponse} from "@/types";

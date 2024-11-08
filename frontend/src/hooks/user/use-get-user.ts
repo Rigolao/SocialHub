@@ -1,6 +1,6 @@
 import {useGet} from "@/hooks/use-get.ts";
 import {User} from "@/types/user";
-import {useAuth} from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 
 export default function useGetUser() {
     const { id, token } = useAuth();

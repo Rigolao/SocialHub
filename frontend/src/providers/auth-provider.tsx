@@ -1,35 +1,22 @@
-import React, {createContext, useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useFacebook} from "@/providers/facebook-provider";
 import {usePost} from "@/hooks/use-post";
 import {LoginRequest, LoginResponse} from "@/types/login";
-import {ResponseError} from "@/types";
-import {UseMutationResult} from "@tanstack/react-query";
-
-type AuthProviderState = {
-    id: number | null;
-    token: string | null;
-    login?: UseMutationResult<LoginResponse, ResponseError, LoginRequest, unknown>;
-    logout: () => void;
-}
-
-const initialState: AuthProviderState = {
-    id: null,
-    token: null,
-    login: undefined,
-    logout: () => {},
-}
-
-const AuthProviderContext = createContext<AuthProviderState>(initialState);
+import {AuthProviderContext} from "@/contexts/auth-provider-context.ts";
+import {useSpace} from "@/hooks/spaces/use-space.ts";
+import queryClient from "@/lib/query-client";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [id, setId] = useState<number | null>(initialState.id);
-    const [token, setToken] = useState<string | null>(initialState.token);
+    const [id, setId] = useState<number | null>(null);
+    const [token, setToken] = useState<string | null>(null);
 
     const { facebookResponse, facebookLogout } = useFacebook();
+
+    const { setSelectedSpace } = useSpace();
 
     const getHeaders = (data: LoginRequest) => {
         const { email, password } = data;
@@ -60,6 +47,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             setId(null);
             setToken(null);
+            setSelectedSpace(null);
+            queryClient.clear(); // Limpa todas as queries do cache
+
+            console.log('Deslogado com sucesso');
 
             navigate('/login');
         } catch (error) {
@@ -89,14 +80,4 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             {children}
         </AuthProviderContext.Provider>
     )
-}
-
-export const useAuth = () => {
-    const context = useContext(AuthProviderContext);
-
-    if (context === undefined) {
-        throw new Error('useAuth deve ser usado dentro de um AuthProvider');
-    }
-
-    return context;
 }

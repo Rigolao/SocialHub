@@ -1,4 +1,4 @@
-import {useAuth} from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 import {RoleResponse} from "@/types/role";
 import {useGet} from "@/hooks/use-get.ts";
 

@@ -8,7 +8,7 @@ import {Separator} from "@/components/ui/separator.tsx";
 import CustomButton from "@/components/custom/custom-button.tsx";
 import ModeToggle from "@/components/ui/mode-toggle.tsx";
 import {useAlertDialog} from "@/providers/alert-dialog-provider.tsx";
-import {useAuth} from "@/providers/auth-provider.tsx";
+import {useAuth} from "@/hooks/auth/use-auth.ts";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
 import SpaceSelector from "@/components/custom/space-selector.tsx";
 import useGetUser from "@/hooks/user/use-get-user.ts";
