@@ -213,6 +213,10 @@ public class UserService {
     }
 
     public List<UserBasicResponseDTO> searchUserByEmail(String filter) {
+        if(filter == null || filter.isBlank()){
+            return Collections.emptyList();
+        }
+
        Optional<List<Usuario>> result = usuarioRepository.findByEmailStartingWithIgnoreCase(filter);
 
        return result
