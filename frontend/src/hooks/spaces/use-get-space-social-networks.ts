@@ -15,7 +15,8 @@ export default function useGetSpaceSocialNetworks({idSpace}: UseGetSpaceSocialNe
         queryKey: ['getSpaceSocialNetworks', idSpace],
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
-        })
+        }),
+        hideToast: true
     });
 
     return getSpaceSocialMedias;

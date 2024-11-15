@@ -40,7 +40,6 @@ export default function SchedulePostForm() {
         console.log(data);
     };
 
-    // @ts-ignore
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
