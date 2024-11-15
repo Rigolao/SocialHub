@@ -17,8 +17,6 @@ export default function SpaceSelector() {
     }
 
     useEffect(() => {
-        console.log('User Spaces', user);
-        console.log('Selected Space', selectedSpace);
         if (!selectedSpace && user?.spaces.length) {
             setSelectedSpace(user.spaces.filter(space => space.role === 'CREATOR')[0]);
         }
