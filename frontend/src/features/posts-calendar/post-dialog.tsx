@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/dialog.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {SimplePost} from "@/types/post";
-import {InstagramIcon} from "lucide-react";
+import {useNavigate} from "react-router-dom";
+import {BlueskyIcon} from "@/components/custom/bluesky-icon.tsx";
 
 interface PostDialogProps {
     postDay: SimplePost[] | undefined;
@@ -17,6 +18,8 @@ interface PostDialogProps {
 }
 
 export default function PostDialog({postDay, open, setOpen}: PostDialogProps) {
+
+    const navigate = useNavigate();
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -36,10 +39,10 @@ export default function PostDialog({postDay, open, setOpen}: PostDialogProps) {
                             {post.title}
                             <div className='flex-1 flex justify-evenly'>
                                 {post.socialNetwork.map(socialMedia => (
-                                    <InstagramIcon key={socialMedia.id} size={24}/>
+                                    <BlueskyIcon key={socialMedia.id} />
                                 ))}
                             </div>
-                            <Button type="button" variant="default" onClick={() => {}}>
+                            <Button type="button" variant="default" onClick={() => navigate(`agendar-postagem/${post.id}`)}>
                                 Visualizar
                             </Button>
                         </div>
