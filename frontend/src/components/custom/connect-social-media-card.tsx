@@ -1,10 +1,11 @@
-import {ElementType} from 'react';
+import {ElementType, useEffect, useState} from 'react';
 import {Card, CardContent, CardTitle} from "@/components/ui/card.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {InfoIcon} from "lucide-react";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip.tsx";
 import {cn} from "@/lib/utils.ts";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
+import {useSpace} from "@/hooks/spaces/use-space.ts";
 
 interface ConnectSocialMediaCardProps {
     label: string;
@@ -18,9 +19,17 @@ interface ConnectSocialMediaCardProps {
 
 export function ConnectSocialMediaCard({ label, data, isLoading, icon: Icon, ribbonColor, connectSocialMedia, disconnectSocialMedia }: ConnectSocialMediaCardProps) {
 
+    const {selectedSpace} = useSpace();
+
+    const [userCanInteract, setUserCanInteract] = useState<boolean>(selectedSpace?.role === 'CREATOR');
+
     const randomNumber = () => {
         return (Math.random() * 500).toFixed();
     }
+
+    useEffect(() => {
+        setUserCanInteract(selectedSpace?.role === 'CREATOR');
+    }, [selectedSpace]);
 
     return (
         <Card className="flex flex-col w-full min-w-72 min-h-52 md:min-h-48 items-center text-center justify-center gap-4">
@@ -71,7 +80,7 @@ export function ConnectSocialMediaCard({ label, data, isLoading, icon: Icon, rib
                                 <Button
                                     className='flex gap-2'
                                     variant="outline"
-                                    disabled={isLoading}
+                                    disabled={isLoading || !userCanInteract}
                                     onClick={disconnectSocialMedia}>
                                     <>
                                         {isLoading && <LoadingSpinner />} Desconectar
@@ -85,7 +94,7 @@ export function ConnectSocialMediaCard({ label, data, isLoading, icon: Icon, rib
                         <Button
                             className='flex gap-2'
                             variant="default"
-                            disabled={isLoading}
+                            disabled={isLoading || !userCanInteract}
                             onClick={connectSocialMedia}>
                             <>
                                 {isLoading && <LoadingSpinner />} Conectar
