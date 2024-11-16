@@ -10,6 +10,10 @@ import DatePicker from "@/components/custom/date-picker.tsx";
 import useGetSpaceSocialNetworks from "@/hooks/spaces/use-get-space-social-networks.ts";
 import {useSpace} from "@/hooks/spaces/use-space.ts";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
+import {useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
+import useCreatePost from "@/hooks/posts/use-create-post.ts";
+import useGetPost from "@/hooks/posts/use-get-post.ts";
 
 const schedulePostFormSchema = z.object({
     title: z.string().min(6, 'O título deve ter no mínimo 6 caracteres'),
@@ -22,8 +26,13 @@ const schedulePostFormSchema = z.object({
 
 export default function SchedulePostForm() {
 
+    const {idPost} = useParams();
     const {selectedSpace} = useSpace();
     const {data: socialNetworks, isLoading} = useGetSpaceSocialNetworks({idSpace: Number(selectedSpace?.id)});
+    const {data: postData, isLoading: postLoadind} = useGetPost({idPost: Number(null)});
+    const {mutateAsync, isPending} = useCreatePost();
+
+    const [userCanPost, setUserCanPost] = useState(selectedSpace?.role !== 'VISUALIZADOR');
 
     const form = useForm<z.infer<typeof schedulePostFormSchema>>({
         resolver: zodResolver(schedulePostFormSchema),
@@ -37,8 +46,35 @@ export default function SchedulePostForm() {
     });
 
     const onSubmit = (data: z.infer<typeof schedulePostFormSchema>) => {
-        console.log(data);
+        const formData = new FormData();
+
+        formData.append('title', data.title);
+        formData.append('description', data.description);
+        formData.append('date', data.date.toISOString());
+        data.socialNetworks.forEach(socialNetwork => {
+            formData.append('socialNetworks', socialNetwork);
+        });
+        data.files?.forEach(file => {
+            formData.append('files', file);
+        });
+
+        mutateAsync(formData).then(() => {
+            form.reset();
+            form.setValue('files', []);
+            form.setValue('socialNetworks', []);
+        });
     };
+
+    useEffect(() => {
+        if(idPost) {
+            console.log('fetch post data');
+            // fetch post data
+        }
+    }, [idPost]);
+
+    useEffect(() => {
+        setUserCanPost(selectedSpace?.role !== 'VISUALIZADOR');
+    }, [selectedSpace]);
 
     return (
         <Form {...form}>
@@ -100,6 +136,7 @@ export default function SchedulePostForm() {
                 </div>
                 <div className="flex justify-end gap-4 mt-4">
                     <Button
+                        disabled={isPending || !userCanPost}
                         type="submit">
                         Agendar
                     </Button>

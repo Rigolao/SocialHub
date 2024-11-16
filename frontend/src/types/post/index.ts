@@ -6,3 +6,18 @@ export type SimplePost = {
     date: Date;
     socialNetwork: SocialNetwork[];
 }
+
+export type Post = {
+    title: string;
+    description: string;
+    date: Date;
+    socialNetworks: string[];
+}
+
+export type CreatePostResponse = {
+    id: number;
+    title: string;
+    description: string;
+    date: Date;
+    socialNetworks: string[];
+}
