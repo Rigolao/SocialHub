@@ -14,6 +14,7 @@ import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import useCreatePost from "@/hooks/posts/use-create-post.ts";
 import useGetPost from "@/hooks/posts/use-get-post.ts";
+import useEditPost from "@/hooks/posts/use-edit-post.ts";
 
 const schedulePostFormSchema = z.object({
     title: z.string().min(6, 'O título deve ter no mínimo 6 caracteres'),
@@ -29,8 +30,9 @@ export default function SchedulePostForm() {
     const {idPost} = useParams();
     const {selectedSpace} = useSpace();
     const {data: socialNetworks, isLoading} = useGetSpaceSocialNetworks({idSpace: Number(selectedSpace?.id)});
-    const {data: postData, isLoading: postLoadind} = useGetPost({idPost: Number(null)});
-    const {mutateAsync, isPending} = useCreatePost();
+    const {data: postData, isLoading: postLoadind} = useGetPost({idPost: Number(idPost)});
+    const {mutateAsync: createPostMutate, isPending: createPostLoading} = useCreatePost();
+    const {mutateAsync: updatePostMutate, isPending: updatePostLoading} = useEditPost({idPost: Number(idPost)});
 
     const [userCanPost, setUserCanPost] = useState(selectedSpace?.role !== 'VISUALIZADOR');
 
@@ -58,11 +60,19 @@ export default function SchedulePostForm() {
             formData.append('files', file);
         });
 
-        mutateAsync(formData).then(() => {
-            form.reset();
-            form.setValue('files', []);
-            form.setValue('socialNetworks', []);
-        });
+        if(idPost) {
+            updatePostMutate(formData).then(() => {
+                form.reset();
+                form.setValue('files', []);
+                form.setValue('socialNetworks', []);
+            });
+        } else {
+            createPostMutate(formData).then(() => {
+                form.reset();
+                form.setValue('files', []);
+                form.setValue('socialNetworks', []);
+            });
+        }
     };
 
     useEffect(() => {
@@ -136,7 +146,7 @@ export default function SchedulePostForm() {
                 </div>
                 <div className="flex justify-end gap-4 mt-4">
                     <Button
-                        disabled={isPending || !userCanPost}
+                        disabled={(isLoading || createPostLoading || updatePostLoading) || !userCanPost}
                         type="submit">
                         Agendar
                     </Button>
