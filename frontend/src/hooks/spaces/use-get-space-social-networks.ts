@@ -13,6 +13,7 @@ export default function useGetSpaceSocialNetworks({idSpace}: UseGetSpaceSocialNe
     const getSpaceSocialMedias = useGet<SocialNetwork[]>({
         url: `/spaces/${idSpace}/social-networks`,
         queryKey: ['getSpaceSocialNetworks', idSpace],
+        enabled: !!token && !!idSpace,
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
         }),
