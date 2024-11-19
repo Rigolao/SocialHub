@@ -9,9 +9,8 @@ import br.socialhub.api.dtos.space.SpaceUpdateDTO;
 import br.socialhub.api.dtos.user.MemberResponseDTO;
 import br.socialhub.api.enums.RoleType;
 import br.socialhub.api.exceptions.ResourceNotFoundException;
-import br.socialhub.api.models.Space;
-import br.socialhub.api.models.Usuario;
-import br.socialhub.api.models.UsuarioSpace;
+import br.socialhub.api.models.*;
+import br.socialhub.api.repositories.AccountRepository;
 import br.socialhub.api.repositories.PostRepository;
 import br.socialhub.api.repositories.SpaceRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +28,7 @@ import static br.socialhub.api.utils.Constantes.*;
 public class SpaceService {
     private final SpaceRepository spaceRepository;
     private final PostRepository postRepository;
+    private final AccountRepository accountRepository;
 
     public Space createSpace(final SpaceCreateDTO spaceCreateDTO) {
 
@@ -71,6 +71,12 @@ public class SpaceService {
                 .map(UsuarioSpace::getUser)
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
+    }
+
+    public void associateAccountWithSpace(final Space space, final SocialNetwork socialNetwork, final String token){
+        final Conta conta = new Conta(space,socialNetwork,token);
+
+        accountRepository.save(conta);
     }
 
     public List<SocialMediaResponseDTO> getSocialNetworksForSpace(Long id) {

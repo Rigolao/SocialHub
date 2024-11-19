@@ -1,5 +1,6 @@
 package br.socialhub.api.models;
 
+import br.socialhub.api.enums.PostStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,8 +26,15 @@ public class Postagem {
     @JoinColumn(name = "IDUSUARIOSPACE")
     private UsuarioSpace usuarioSpace;
 
+    @Column(name = "TITULO", nullable = false)
+    private String titulo;
+
     @Column(name = "DESCRICAO", nullable = false)
     private String descricao;
+
+    @Column(name = "STATUS")
+    @Enumerated(EnumType.STRING)
+    private PostStatus status;
 
     @Column(name = "DATAAGENDAMENTO", nullable = false)
     private LocalDateTime dataAgendamento;
@@ -34,6 +42,6 @@ public class Postagem {
     @OneToMany(mappedBy = "postagem", fetch = FetchType.LAZY)
     private List<ContaPostagem> contaPostagens;
 
-    @OneToMany(mappedBy = "postagem", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "postagem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Anexo> anexos;
 }

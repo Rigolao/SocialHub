@@ -1,6 +1,7 @@
 package br.socialhub.api.repositories;
 
 import br.socialhub.api.dtos.post.PostQueryDTO;
+import br.socialhub.api.enums.PostStatus;
 import br.socialhub.api.models.ContaPostagem;
 import br.socialhub.api.models.Postagem;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +21,18 @@ public interface PostRepository extends JpaRepository<Postagem, Long> {
             "AND p.dataAgendamento >= :startOfMonth " +
             "AND p.dataAgendamento < :endOfMonth")
     List<PostQueryDTO> findAllBySpaceIdAndMonthAndYear(@Param("spaceId") Long spaceId,
-                                                        @Param("startOfMonth") LocalDateTime startOfMonth,
-                                                        @Param("endOfMonth") LocalDateTime endOfMonth);
+                                                       @Param("startOfMonth") LocalDateTime startOfMonth,
+                                                       @Param("endOfMonth") LocalDateTime endOfMonth);
+
+
+    @Query("""
+                SELECT p
+                FROM Postagem p
+                WHERE p.status = br.socialhub.api.enums.PostStatus.AGENDADA AND p.dataAgendamento BETWEEN :start AND :end
+            """)
+    List<Postagem> findByStatusNotAgendadaOrAgendadaBetween(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
 }

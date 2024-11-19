@@ -51,7 +51,7 @@ public class UserSpaceService {
         userSpaceRepository.delete(userSpace);
     }
 
-    private UsuarioSpace findByUserAndSpace(final Usuario user, final Space space) {
+    public UsuarioSpace findByUserAndSpace(final Usuario user, final Space space) {
         return userSpaceRepository.findByUserAndSpace(user, space)
                 .orElseThrow(UserAlreadyAssignedToSpaceException::new);
     }
@@ -81,7 +81,18 @@ public class UserSpaceService {
         var space = spaceRepository.findById(idSpace).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_SPACE));
         var cargo = cargoRepository.findByDescription(RoleType.CREATOR);
 
-
         return userIsCreatorInSpace(user, space, cargo);
+    }
+
+    public boolean userIsCreatorOrEditorInSpace(final String email, final Long idSpace) {
+        var user = usuarioRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
+        var space = spaceRepository.findById(idSpace).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_SPACE));
+        var roleCreator = cargoRepository.findByDescription(RoleType.CREATOR);
+        var roleEditor = cargoRepository.findByDescription(RoleType.EDITOR);
+
+        var userSpace = userSpaceRepository.findByUserAndSpaceAndRoleIn(user,space, List.of(roleCreator, roleEditor));
+
+        return userSpace.isPresent();
+
     }
 }

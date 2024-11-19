@@ -1,0 +1,1 @@
+ALTER TABLE `socialhub`.`postagem` ADD TITULO VARCHAR(50);

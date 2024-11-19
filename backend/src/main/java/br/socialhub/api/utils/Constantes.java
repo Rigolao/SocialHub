@@ -51,6 +51,8 @@ public interface Constantes {
     String WHITESPACE = " ";
     String UTF_8 = "UTF-8";
     String DATE_FORMAT_DD_MM_YYYY = "dd/MM/yyyy";
+
+    String DATE_FORMAT_DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy HH:mm:ss";
     int ONE_DAY  = 1;
 
     /**

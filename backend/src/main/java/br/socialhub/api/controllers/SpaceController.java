@@ -2,12 +2,14 @@ package br.socialhub.api.controllers;
 
 import br.socialhub.api.dtos.RoleAssigmentDTO;
 import br.socialhub.api.dtos.SocialAccountDTO;
+import br.socialhub.api.dtos.post.PostCreateDTO;
 import br.socialhub.api.dtos.post.PostDTO;
 import br.socialhub.api.dtos.social_media.SocialMediaResponseDTO;
 import br.socialhub.api.dtos.space.SpaceCreateDTO;
 import br.socialhub.api.dtos.space.SpaceResponseDTO;
 import br.socialhub.api.dtos.space.SpaceUpdateDTO;
 import br.socialhub.api.dtos.user.InviteUserDTO;
+import br.socialhub.api.exceptions.ResourceNotFoundException;
 import br.socialhub.api.services.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 import static br.socialhub.api.utils.Constantes.AUTHORIZATION;
@@ -34,6 +38,8 @@ public class SpaceController {
     private final TokenService tokenService;
     private final EmailService emailService;
     private final SocialNetworkService socialNetworkService;
+    private final PostService postService;
+
 
     @Transactional
     @PostMapping
@@ -92,7 +98,7 @@ public class SpaceController {
     public ResponseEntity<Void> assignRoleToUser(@PathVariable final Long spaceId,
                                                  @PathVariable final Long userId,
                                                  @RequestHeader(AUTHORIZATION) final String token,
-                                                 @RequestBody @Valid final RoleAssigmentDTO roleAssigmentDTO){
+                                                 @RequestBody @Valid final RoleAssigmentDTO roleAssigmentDTO) {
         var user = userService.findById(userId);
         var space = spaceService.findById(spaceId);
         var role = roleService.findById(roleAssigmentDTO.idRole());
@@ -106,11 +112,11 @@ public class SpaceController {
     @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
     public ResponseEntity<Void> delete(@PathVariable final Long spaceId,
                                        @PathVariable final Long userId,
-                                       @RequestHeader(AUTHORIZATION) final String token){
+                                       @RequestHeader(AUTHORIZATION) final String token) {
         var user = userService.findById(userId);
         var space = spaceService.findById(spaceId);
 
-        userSpaceService.removeUserFromSpace(user,space);
+        userSpaceService.removeUserFromSpace(user, space);
 
         return ResponseEntity.ok().build();
     }
@@ -121,7 +127,7 @@ public class SpaceController {
     public ResponseEntity<Void> associateSocialAccount(@PathVariable final Long spaceId,
                                                        @PathVariable final Long socialNetworkId,
                                                        @RequestBody @Valid final SocialAccountDTO socialAccountDTO,
-                                                       @RequestHeader(AUTHORIZATION) final String token){
+                                                       @RequestHeader(AUTHORIZATION) final String token) {
         var space = spaceService.findById(spaceId);
         var socialNetwork = socialNetworkService.findById(socialNetworkId);
 
@@ -133,7 +139,7 @@ public class SpaceController {
     @GetMapping("{spaceId}/social-networks")
     @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
     public ResponseEntity<List<SocialMediaResponseDTO>> getSocialNetworksForSpace(@PathVariable final Long spaceId,
-                                                                                  @RequestHeader(AUTHORIZATION) final String token){
+                                                                                  @RequestHeader(AUTHORIZATION) final String token) {
 
         return ResponseEntity.ok(spaceService.getSocialNetworksForSpace(spaceId));
     }
@@ -142,12 +148,53 @@ public class SpaceController {
     @GetMapping("{spaceId}/posts")
     public ResponseEntity<List<PostDTO>> getSpacePosts(@PathVariable final Long spaceId,
                                                        @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") int year,
-                                                       @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getMonthValue()}") int month){
+                                                       @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getMonthValue()}") int month) {
         List<PostDTO> posts = spaceService.getSpacePosts(spaceId, year, month);
 
         return ResponseEntity.ok(posts);
     }
 
 
+    @PostMapping("{spaceId}/social-network/{idSocialNetwork}")
+    @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#tokeJwt), #spaceId)")
+    public ResponseEntity<Void> associateAccountWithSpace(@PathVariable final Long spaceId,
+                                                          @PathVariable final Long idSocialNetwork,
+                                                          @RequestHeader(AUTHORIZATION) final String tokeJwt,
+                                                          @RequestBody String token) {
+        var space = spaceService.findById(spaceId);
+        var socialNetwork = socialNetworkService.findById(idSocialNetwork);
 
+        spaceService.associateAccountWithSpace(space, socialNetwork, token);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Transactional
+    @PostMapping("{spaceId}/posts")
+    @PreAuthorize("@userSpaceService.userIsCreatorOrEditorInSpace(@jwtService.extractSubject(#token), #spaceId)")
+    public ResponseEntity<Void> createPosts(@PathVariable final Long spaceId,
+                                            @ModelAttribute PostCreateDTO post,
+                                            @RequestHeader(AUTHORIZATION) final String token) throws IOException {
+
+        var email = jwtService.extractSubject(token);
+        var user = userService.findByEmail(email);
+        var space = spaceService.findById(spaceId);
+        var userSpace = userSpaceService.findByUserAndSpace(user, space);
+
+        var postagem = postService.createPost(userSpace, post);
+
+        for (Long idSocialNetwork : post.idSocialNetworks()) {
+            var account = space.getAccounts().stream()
+                    .filter(conta -> conta.getSocialNetwork().getId().equals(idSocialNetwork))
+                    .findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException("A rede social selecionada não esta vínculada ao space."));
+
+
+            postService.criarVinculoContaPostagem(postagem, account);
+        }
+
+        return ResponseEntity.ok().build();
+    }
 }
+
+

@@ -19,6 +19,7 @@ public class Anexo {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "IDPOSTAGEM")
     private Postagem postagem;
 
     @Column(name = "ARQUIVO", nullable = false)
