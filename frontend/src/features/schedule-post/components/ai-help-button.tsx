@@ -23,11 +23,11 @@ const aiHelpFormSchema = z.object({
     topic: z.string().min(6, 'O tópico deve ter no mínimo 6 caracteres'),
 })
 
-export default function AIHelpButton({ setDescription }: AIHelpButtonProps) {
+export default function AIHelpButton({setDescription}: AIHelpButtonProps) {
 
     const [open, setOpen] = useState(false);
 
-    const { mutateAsync, data: insights, isPending, reset } = useInsight();
+    const {mutateAsync, data: insights, isPending, reset} = useInsight();
 
     const form = useForm<z.infer<typeof aiHelpFormSchema>>({
         resolver: zodResolver(aiHelpFormSchema),
@@ -62,26 +62,28 @@ export default function AIHelpButton({ setDescription }: AIHelpButtonProps) {
         <Dialog open={open}
                 onOpenChange={() => {
                     onClose()
-                    setOpen(!open)}
-        }>
+                    setOpen(!open)
+                }
+                }>
             <DialogTrigger asChild>
                 <Button
-                    className="
-            bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500
-            text-white
-            shadow-lg
-            shadow-[0_4px_20px_rgba(0,0,0,0.3)]
-            hover:shadow-[0_4px_20px_rgba(0,0,0,0.5)]
-            hover:shadow-rainbow
-            transition-all
-            duration-300">
-                    🤖 Ajuda IA
+                    className=" bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500
+                    flex gap-2
+                                text-white
+                                shadow-lg
+                                shadow-[0_4px_20px_rgba(0,0,0,0.3)]
+                                hover:shadow-[0_4px_20px_rgba(0,0,0,0.5)]
+                                hover:shadow-rainbow
+                                transition-all
+                                duration-300">
+                    <span>🤖</span>
+                    Social IA
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        Ajuda IA
+                        Social IA
                     </DialogTitle>
                     <DialogDescription>
                         {insights
@@ -96,15 +98,17 @@ export default function AIHelpButton({ setDescription }: AIHelpButtonProps) {
                 {insights
                     ? (
                         <div className="flex gap-2">
-                            {extractTexts(insights).map((text, index) => (
-                                <div
-                                    key={index}
-                                    onClick={() => selectDescription(text)}
-                                    className="w-1/2 p-2 bg-secondary text-secondary-foreground rounded-lg border border-secondary hover:bg-secondary/80 hover:cursor-pointer break-words whitespace-normal"
-                                >
-                                    {text}
-                                </div>
-                            ))}
+                            {extractTexts(insights).length !== 0 ? extractTexts(insights).map((text, index) => (
+                                    <div
+                                        key={index}
+                                        onClick={() => selectDescription(text)}
+                                        className="hover:-translate-y-2 hover:shadow-xl hover:bg-accent-foreground/10 hover:scale-105 transition-all ease-in w-1/2 p-2 bg-secondary text-secondary-foreground rounded-lg border border-secondary hover:cursor-pointer break-words whitespace-normal">
+                                        {text}
+                                    </div>
+                                ))
+                                : <>
+                                    {insights}
+                                </>}
                         </div>
                     )
                     : (<Form {...form}>
