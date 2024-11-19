@@ -15,6 +15,7 @@ import {useEffect, useState} from "react";
 import useCreatePost from "@/hooks/posts/use-create-post.ts";
 import useGetPost from "@/hooks/posts/use-get-post.ts";
 import useEditPost from "@/hooks/posts/use-edit-post.ts";
+import AIHelpButton from "@/features/schedule-post/components/ai-help-button.tsx";
 
 const schedulePostFormSchema = z.object({
     title: z.string().min(6, 'O título deve ter no mínimo 6 caracteres'),
@@ -144,7 +145,8 @@ export default function SchedulePostForm() {
                             <FormMessage>{form.formState.errors.files.message}</FormMessage>}
                     </div>
                 </div>
-                <div className="flex justify-end gap-4 mt-4">
+                <div className="flex justify-end gap-2">
+                    <AIHelpButton setDescription={(description) => form.setValue('description', description)} />
                     <Button
                         disabled={(isLoading || createPostLoading || updatePostLoading) || !userCanPost}
                         type="submit">

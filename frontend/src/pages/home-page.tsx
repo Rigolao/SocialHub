@@ -1,5 +1,4 @@
 import PageTitle from "@/components/custom/page-title.tsx";
-import {FacebookCard} from "@/features/facebook/components/facebook-card.tsx";
 import BlueskyCard from "@/features/bluesky/components/bluesky-card.tsx";
 
 export function HomePage() {
@@ -9,7 +8,7 @@ export function HomePage() {
             <PageTitle title={'Início'}/>
 
             <div className={"grid grid-cols-auto-fill-72 gap-4 my-6"}>
-                <FacebookCard/>
+                {/*<FacebookCard/>*/}
                 <BlueskyCard />
                 {/*<ConnectSocialMediaCard label={"Instagram"} icon={Instagram} ribbonColor={'instagram'}/>*/}
                 {/*<ConnectSocialMediaCard label={"Twitter"} icon={Twitter} ribbonColor={'twitter'}/>*/}
