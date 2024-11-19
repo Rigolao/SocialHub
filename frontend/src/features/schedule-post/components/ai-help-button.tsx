@@ -65,8 +65,17 @@ export default function AIHelpButton({ setDescription }: AIHelpButtonProps) {
                     setOpen(!open)}
         }>
             <DialogTrigger asChild>
-                <Button>
-                    Ajuda IA
+                <Button
+                    className="
+            bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500
+            text-white
+            shadow-lg
+            shadow-[0_4px_20px_rgba(0,0,0,0.3)]
+            hover:shadow-[0_4px_20px_rgba(0,0,0,0.5)]
+            hover:shadow-rainbow
+            transition-all
+            duration-300">
+                    🤖 Ajuda IA
                 </Button>
             </DialogTrigger>
             <DialogContent>
