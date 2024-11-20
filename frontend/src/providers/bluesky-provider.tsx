@@ -59,7 +59,7 @@ export const BlueskyProvider = ({children}: { children: React.ReactNode }) => {
             // Atualize os valores no estado antes de chamar o hook
             setIdSpace(idSpace);
             setIdBlueSky(idBlueSky);
-            let token: string;
+            let token;
 
             // Lógica de login do Bluesky
             if (!agent.hasSession) {
@@ -67,17 +67,22 @@ export const BlueskyProvider = ({children}: { children: React.ReactNode }) => {
                     identifier: identifier,
                     password: password,
                 });
-                token = JSON.stringify(res);
+                token = res as unknown as BlueskyUserResponse;
                 setResponse(res as unknown as BlueskyUserResponse);
             } else {
-                token = JSON.stringify(agent.session);
+                token = agent.session as unknown as BlueskyUserResponse;
                 setResponse(agent.session as unknown as BlueskyUserResponse);
             }
 
-            console.log(token)
-
             if (idSpace && idBlueSky) {
-                await connectSocialNetwork(token)
+
+                const object = {
+                    did: token.data.did,
+                    accessJwt: token.data.accessJwt,
+                    refreshJwt: token.data.refreshJwt
+                }
+
+                await connectSocialNetwork(JSON.stringify(object))
                     .then(() => {
                         toast.success("Conexão com Bluesky realizada com sucesso!");
                     })
