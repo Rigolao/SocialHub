@@ -31,7 +31,7 @@ export default function CustomFileUploader({
         accept: { "image/*": [".jpg", ".jpeg", ".png"] },
         multiple,
         maxFiles: multiple ? 4 : 1,
-        maxSize: 1 * 1024 * 1024, // Limite de 1 MB
+        maxSize: 2 * 1024 * 1024, // Limite de 2 MB
     };
 
     // Normaliza os arquivos para serem sempre um array (mesmo que contenha um único arquivo)
