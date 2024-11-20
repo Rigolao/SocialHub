@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -121,20 +120,20 @@ public class SpaceController {
         return ResponseEntity.ok().build();
     }
 
-    @Transactional
-    @PostMapping("{spaceId}/social-networks/{socialNetworkId}")
-    @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
-    public ResponseEntity<Void> associateSocialAccount(@PathVariable final Long spaceId,
-                                                       @PathVariable final Long socialNetworkId,
-                                                       @RequestBody @Valid final SocialAccountDTO socialAccountDTO,
-                                                       @RequestHeader(AUTHORIZATION) final String token) {
-        var space = spaceService.findById(spaceId);
-        var socialNetwork = socialNetworkService.findById(socialNetworkId);
-
-        socialNetworkService.associateSocialAccount(space, socialNetwork, socialAccountDTO);
-
-        return ResponseEntity.ok().build();
-    }
+//    @Transactional
+//    @PostMapping("{spaceId}/social-networks/{socialNetworkId}")
+//    @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
+//    public ResponseEntity<Void> associateSocialAccount(@PathVariable final Long spaceId,
+//                                                       @PathVariable final Long socialNetworkId,
+//                                                       @RequestBody @Valid final SocialAccountDTO socialAccountDTO,
+//                                                       @RequestHeader(AUTHORIZATION) final String token) {
+//        var space = spaceService.findById(spaceId);
+//        var socialNetwork = socialNetworkService.findById(socialNetworkId);
+//
+//        socialNetworkService.associateSocialAccount(space, socialNetwork, socialAccountDTO);
+//
+//        return ResponseEntity.ok().build();
+//    }
 
     @GetMapping("{spaceId}/social-networks")
     @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
@@ -155,7 +154,7 @@ public class SpaceController {
     }
 
 
-    @PostMapping("{spaceId}/social-network/{idSocialNetwork}")
+    @PostMapping("{spaceId}/social-networks/{idSocialNetwork}")
     @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#tokeJwt), #spaceId)")
     public ResponseEntity<Void> associateAccountWithSpace(@PathVariable final Long spaceId,
                                                           @PathVariable final Long idSocialNetwork,

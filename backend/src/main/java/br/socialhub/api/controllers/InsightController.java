@@ -15,7 +15,7 @@ public class InsightController {
     private final InsightService insightService;
 
     @PostMapping
-    public Mono<String> teste(@RequestBody String topic){
+    public Mono<String> insight(@RequestBody String topic){
         return insightService.createInsight(topic).map(response -> response.candidates().get(0).content().parts().get(0).text());
     }
 

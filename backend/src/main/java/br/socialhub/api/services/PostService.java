@@ -92,24 +92,19 @@ public class PostService {
         }
 
         for (Postagem postagem : postagens) {
-            for (ContaPostagem contaPostagem : postagem.getContaPostagens()) {
-                String token = contaPostagem.getConta().getToken();
-                String refreshJwt = Util.getValueByKey(token, "refreshJwt");
+            try {
+                boolean isSuccess = blueSkyService.createPost(postagem);
 
-                try {
-                    boolean isSuccess = blueSkyService.createPost(postagem, refreshJwt);
-
-                    if (isSuccess) {
-                        postagem.setStatus(PostStatus.POSTADA);
-                        log.info("Postagem {} marcada como POSTADA.", postagem.getId());
-                    } else {
-                        postagem.setStatus(PostStatus.ERRO);
-                        log.warn("Postagem {} marcada como ERRO.", postagem.getId());
-                    }
-                } catch (Exception e) {
+                if (isSuccess) {
+                    postagem.setStatus(PostStatus.POSTADA);
+                    log.info("Postagem {} marcada como POSTADA.", postagem.getId());
+                } else {
                     postagem.setStatus(PostStatus.ERRO);
-                    log.error("Erro ao processar postagem {}: {}", postagem.getId(), e.getMessage());
+                    log.warn("Postagem {} marcada como ERRO.", postagem.getId());
                 }
+            } catch (Exception e) {
+                postagem.setStatus(PostStatus.ERRO);
+                log.error("Erro ao processar postagem {}: {}", postagem.getId(), e.getMessage());
             }
         }
 

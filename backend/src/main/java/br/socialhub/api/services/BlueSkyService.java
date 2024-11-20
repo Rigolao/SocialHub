@@ -7,6 +7,7 @@ import br.socialhub.api.models.Conta;
 import br.socialhub.api.models.ContaPostagem;
 import br.socialhub.api.models.Postagem;
 import br.socialhub.api.repositories.AccountRepository;
+import br.socialhub.api.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -130,23 +131,23 @@ public class BlueSkyService {
                 .orElseThrow(() -> new ResourceNotFoundException("Não tem vinculo com bluesky"));
     }
 
-    public boolean createPost(Postagem postagem, String refreshToken) {
+    public boolean createPost(Postagem postagem) {
         Conta account = getAccountBlueSky(postagem);
-        SessionInfoDTO session = refreshToken(refreshToken, account);
+        SessionInfoDTO session = refreshToken(account);
 
         String accessJwt = session.accessJwt();
         String did = session.did();
 
         String url = LINK_BLUESKY + "/com.atproto.repo.createRecord";
 
-        if(postagem.getAnexos().isEmpty()){
-            return createPost(postagem.getDescricao(),did,accessJwt);
+        if (postagem.getAnexos().isEmpty()) {
+            return createPost(postagem.getDescricao(), did, accessJwt);
         }
 
         return createPost(postagem, url, accessJwt, did);
     }
 
-    public boolean createPost(Postagem postagem, String url, String accessJwt, String did){
+    public boolean createPost(Postagem postagem, String url, String accessJwt, String did) {
         try {
             // Upload de mídia
             List<BlobResponseDTO> blobResponses = uploadMediaToBluesky(postagem.getAnexos(), accessJwt);
@@ -245,13 +246,15 @@ public class BlueSkyService {
     }
 
 
-    public SessionInfoDTO refreshToken(String accessJwt, Conta account) {
+    public SessionInfoDTO refreshToken(Conta account) {
         try {
+            String token = account.getToken();
+            String refreshToken = Util.getValueByKey(token, "refreshToken");
             String url = LINK_BLUESKY + "/com.atproto.server.refreshSession";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBearerAuth(accessJwt);
+            headers.setBearerAuth(refreshToken);
 
             // Realizando a requisição POST sem corpo
             HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -280,6 +283,40 @@ public class BlueSkyService {
             log.error("Erro ao enviar requisição de criação de postagem: {}", e.getMessage());
             throw new RuntimeException();
         }
+    }
+
+    public InformationProfileDTO getProfile(Conta account) {
+        SessionInfoDTO session = refreshToken(account);
+
+        String did = session.did();
+        String accessJwt = session.accessJwt();
+
+        final String endpointUrl = LINK_BLUESKY + "/app.bsky.actor.getProfile?actor=" + did;
+
+        // Configura os cabeçalhos da requisição
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(accessJwt);
+
+        // Monta a entidade da requisição
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<InformationProfileDTO> response = restTemplate.exchange(
+                    endpointUrl,
+                    HttpMethod.GET,
+                    entity,
+                    InformationProfileDTO.class
+            );
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();
+            }
+        } catch (Exception e) {
+            e.getMessage();
+            throw new ResourceNotFoundException("Erro inesperado ao buscar o perfil no Bluesky");
+        }
+        return null;
     }
 
 }
