@@ -249,12 +249,13 @@ public class BlueSkyService {
     public SessionInfoDTO refreshToken(Conta account) {
         try {
             String token = account.getToken();
-            String refreshToken = Util.getValueByKey(token, "refreshToken");
+            String refreshJwt = Util.getValueByKey(token, "refreshJwt");
+
             String url = LINK_BLUESKY + "/com.atproto.server.refreshSession";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBearerAuth(refreshToken);
+            headers.setBearerAuth(refreshJwt);
 
             // Realizando a requisição POST sem corpo
             HttpEntity<String> entity = new HttpEntity<>(headers);
