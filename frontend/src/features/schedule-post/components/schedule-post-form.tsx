@@ -32,7 +32,7 @@ export default function SchedulePostForm() {
     const {selectedSpace} = useSpace();
     const {data: socialNetworks, isLoading} = useGetSpaceSocialNetworks({idSpace: Number(selectedSpace?.id)});
     const {data: postData, isLoading: postLoadind} = useGetPost({idPost: Number(idPost)});
-    const {mutateAsync: createPostMutate, isPending: createPostLoading} = useCreatePost();
+    const {mutateAsync: createPostMutate, isPending: createPostLoading} = useCreatePost({idSpace: Number(selectedSpace?.id)});
     const {mutateAsync: updatePostMutate, isPending: updatePostLoading} = useEditPost({idPost: Number(idPost)});
 
     const [userCanPost, setUserCanPost] = useState(selectedSpace?.role !== 'VISUALIZADOR');
@@ -51,11 +51,17 @@ export default function SchedulePostForm() {
     const onSubmit = (data: z.infer<typeof schedulePostFormSchema>) => {
         const formData = new FormData();
 
+        const formattedDate = data.date.toISOString().slice(0, 19);
+
         formData.append('title', data.title);
         formData.append('description', data.description);
-        formData.append('date', data.date.toISOString());
+        formData.append('scheduledDate', formattedDate);
         data.socialNetworks.forEach(socialNetwork => {
-            formData.append('socialNetworks', socialNetwork);
+            socialNetworks?.forEach(net => {
+                if(socialNetwork.toLowerCase() === net.name.toLowerCase()) {
+                    formData.append('idSocialNetworks', net.id.toString());
+                }
+            });
         });
         data.files?.forEach(file => {
             formData.append('files', file);

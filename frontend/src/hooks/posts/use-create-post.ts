@@ -3,12 +3,16 @@ import {usePost} from "@/hooks/use-post.ts";
 import queryClient from "@/lib/query-client";
 import {CreatePostResponse} from "@/types/post";
 
-export default function useCreatePost() {
+interface UseCreatePostProps {
+    idSpace: number;
+}
+
+export default function useCreatePost({idSpace}: UseCreatePostProps) {
 
     const { token } = useAuth();
 
     const createPost = usePost<FormData, CreatePostResponse>({
-        url: '/posts',
+        url: `/spaces/${idSpace}/posts`,
         queryKey: ['createPost'],
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['posts'] });
