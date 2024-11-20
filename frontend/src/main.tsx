@@ -9,25 +9,22 @@ import {FacebookProvider, initFacebookSdk} from "@/providers/facebook-provider.t
 import queryClient from "@/lib/query-client";
 import {BrowserRouter} from "react-router-dom";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
-import {BlueskyProvider} from "@/providers/bluesky-provider.tsx";
 
 initFacebookSdk().then(() => {
-        ReactDOM.createRoot(document.getElementById('root')!).render(
-            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-                <QueryClientProvider client={queryClient}>
-                    <AlertDialogProvider>
-                        <FacebookProvider>
-                            <BlueskyProvider>
-                                <Toaster richColors closeButton icons={{
-                                    loading: <LoadingSpinner/>
-                                }}/>
-                                <BrowserRouter>
-                                    <App/>
-                                </BrowserRouter>
-                            </BlueskyProvider>
-                        </FacebookProvider>
-                    </AlertDialogProvider>
-                </QueryClientProvider>
-            </ThemeProvider>
-        );
+    ReactDOM.createRoot(document.getElementById('root')!).render(
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <QueryClientProvider client={queryClient}>
+                <AlertDialogProvider>
+                    <FacebookProvider>
+                        <Toaster richColors closeButton icons={{
+                            loading: <LoadingSpinner/>
+                        }}/>
+                        <BrowserRouter>
+                            <App/>
+                        </BrowserRouter>
+                    </FacebookProvider>
+                </AlertDialogProvider>
+            </QueryClientProvider>
+        </ThemeProvider>
+    );
 });

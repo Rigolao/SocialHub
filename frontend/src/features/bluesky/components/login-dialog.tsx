@@ -6,6 +6,8 @@ import {Form} from "@/components/ui/form.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import GenericFormField from "@/components/custom/generic-form-field.tsx";
 import {useBluesky} from "@/providers/bluesky-provider.tsx";
+import {useSpace} from "@/hooks/spaces/use-space.ts";
+import useGetSocialNetworks from "@/hooks/social-networks/use-get-social-networks.ts";
 
 interface LoginDialogProps {
     open: boolean,
@@ -20,6 +22,9 @@ const blueskyLoginFormSchema = z.object({
 export default function LoginDialog({ open, onClose }: LoginDialogProps) {
 
     const {isLoading, blueskyLogin} = useBluesky();
+    const {selectedSpace} = useSpace();
+
+    const { data: socialNetworks } = useGetSocialNetworks();
 
     const form = useForm<z.infer<typeof blueskyLoginFormSchema>>({
         resolver: zodResolver(blueskyLoginFormSchema),
@@ -31,7 +36,12 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
     });
 
     const onSubmit = async (values: z.infer<typeof blueskyLoginFormSchema>) => {
-        await blueskyLogin(values.identifier, values.password).then(_ => {
+        const bluesky = socialNetworks?.find(
+            (socialNetwork) => socialNetwork.name.toLowerCase() === "bluesky"
+        );
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        await blueskyLogin(values.identifier, values.password, selectedSpace?.id, bluesky?.id).then(_ => {
             onClose();
             form.reset();
         })

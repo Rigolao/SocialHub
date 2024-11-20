@@ -16,7 +16,6 @@ export function SpaceProvider({children}: {children: React.ReactNode}) {
 
     useEffect(() => {
         if (token === null) {
-            console.log('Token is null, clearing selected space');
             setSelectedSpace(null);
         }
     }, [token]);
