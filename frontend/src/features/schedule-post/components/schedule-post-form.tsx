@@ -153,10 +153,18 @@ export default function SchedulePostForm() {
                 </div>
                 <div className="flex justify-end gap-2">
                     <AIHelpButton setDescription={(description) => form.setValue('description', description)} />
+                    {idPost && (
+                        <Button
+                            onClick={() => form.reset()}
+                            disabled={isLoading || !userCanPost || form.getValues('date') < new Date()}
+                            variant='destructive'>
+                            Cancelar postagem
+                        </Button>
+                    )}
                     <Button
                         disabled={(isLoading || createPostLoading || updatePostLoading) || !userCanPost}
                         type="submit">
-                        Agendar
+                        {idPost ? 'Alterar' : 'Agendar'}
                     </Button>
                 </div>
             </form>
