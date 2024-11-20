@@ -14,6 +14,7 @@ import AcceptedInvitePage from "@/pages/accepted-invite-page.tsx";
 import SpacesPage from "@/pages/spaces-page.tsx";
 import ManageSpacePage from "@/pages/manage-space-page.tsx";
 import ChangePhotoPage from "@/pages/change-photo-page.tsx";
+import PublicProfilePage from "@/pages/public-profile-page.tsx";
 
 export default function ProjectRoutes() {
 
@@ -25,6 +26,7 @@ export default function ProjectRoutes() {
             <Route path='/registrar' element={<RegisterPage/>} errorElement={<NotFoundPage/>}/>,
             <Route path='/esqueci-minha-senha' element={<PublicChangePasswordPage />} errorElement={<NotFoundPage/>}/>,
             <Route path='/convite-aceito' element={<AcceptedInvitePage />} errorElement={<NotFoundPage/>}/>,
+            <Route path='/perfil-publico/:email' element={<PublicProfilePage />} errorElement={<NotFoundPage/>}/>,
             <Route path='/' element={<Root/>} errorElement={<NotFoundPage/>}>
                 <Route index element={<HomePage/>}/>
                 <Route path='/spaces' element={<SpacesPage/>}/>
