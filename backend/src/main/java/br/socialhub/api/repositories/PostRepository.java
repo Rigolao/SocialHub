@@ -1,8 +1,6 @@
 package br.socialhub.api.repositories;
 
 import br.socialhub.api.dtos.post.PostQueryDTO;
-import br.socialhub.api.enums.PostStatus;
-import br.socialhub.api.models.ContaPostagem;
 import br.socialhub.api.models.Postagem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Postagem, Long> {
-    @Query("SELECT NEW br.socialhub.api.dtos.post.PostQueryDTO(p.id, p.descricao, sn.id, sn.nome) " +
+    @Query("SELECT NEW br.socialhub.api.dtos.post.PostQueryDTO(p.id, p.descricao, sn.id, sn.nome, p.dataAgendamento) " +
             "FROM Postagem p " +
             "JOIN p.contaPostagens cp " +
             "JOIN cp.conta c " +

@@ -1,4 +1,6 @@
 package br.socialhub.api.dtos.post;
 
-public record PostQueryDTO(Long id, String descricao, Long idRedeSocial, String nomeRedeSocial) {
+import java.time.LocalDateTime;
+
+public record PostQueryDTO(Long id, String descricao, Long idRedeSocial, String nomeRedeSocial, LocalDateTime dataAgendamento) {
 }
