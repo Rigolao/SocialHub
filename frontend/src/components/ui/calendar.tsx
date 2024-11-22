@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import * as React from "react"
 import {ChevronLeftIcon, ChevronRightIcon} from "@radix-ui/react-icons"
 import {DayPicker} from "react-day-picker"

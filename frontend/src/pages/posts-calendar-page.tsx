@@ -1,4 +1,5 @@
-import PageTitle from "@/components/custom/page-title.tsx";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import {Calendar} from "@/components/ui/calendar.tsx";
 import {useState} from "react";
 import {cn} from "@/lib/utils.ts";

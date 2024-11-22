@@ -1,12 +1,11 @@
 import Logo from "@/components/custom/logo.tsx";
 import {Avatar} from "@/components/ui/avatar.tsx";
 import {BlueskyIcon} from "@/components/custom/bluesky-icon.tsx";
-import {useParams} from "react-router-dom";
 
 
 export default function PublicProfilePage() {
 
-    const {email} = useParams();
+    // const {email} = useParams();
 
     return (
         <>

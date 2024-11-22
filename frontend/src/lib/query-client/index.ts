@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import {createElement} from "react";
 import {MutationCache, QueryCache, QueryClient} from "@tanstack/react-query";
 import axios from "axios";

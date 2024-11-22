@@ -1,0 +1,1 @@
+INSERT INTO redesocial (IDREDESOCIAL, NOME) values (4, "BlueSky");

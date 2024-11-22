@@ -10,12 +10,12 @@ export default function PortifolioPage() {
     const {token} = useAuth();
     const {data: user, isLoading} = useGetUser();
 
-    const calculateAge = (birthday: string) => {
-        const birthDate = new Date(birthday);
-        const ageDifMs = Date.now() - birthDate.getTime();
-        const ageDate = new Date(ageDifMs);
-        return Math.abs(ageDate.getUTCFullYear() - 1970);
-    }
+    // const calculateAge = (birthday: string) => {
+    //     const birthDate = new Date(birthday);
+    //     const ageDifMs = Date.now() - birthDate.getTime();
+    //     const ageDate = new Date(ageDifMs);
+    //     return Math.abs(ageDate.getUTCFullYear() - 1970);
+    // }
 
     return (
         <div className="grow mt-8 mx-6">

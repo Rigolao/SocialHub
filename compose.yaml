@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  mysql:
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=socialhub'
+      - 'MYSQL_ROOT_PASSWORD=admin'
+    networks:
+      - backend_network
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    depends_on:
+      - mysql
+    networks:
+      - backend_network
+    environment:
+      - 'DB_HOST=mysql'
+      - 'DB_PORT=3306'
+      - 'DB_NAME=socialhub'
+      - 'DB_USER=root'
+      - 'DB_PASSWORD=admin'
+    entrypoint: [ "dockerize", "-wait", "tcp://mysql:3306", "-timeout", "120s", "java", "-jar", "app.jar" ]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '5173:80'
+    depends_on:
+      - backend
+    networks:
+        - backend_network
+    stdin_open: true
+    tty: true
+    environment:
+      - REACT_APP_API_URL=http://backend:8080  # Apontando para o nome do serviço Docker
+
+networks:
+  backend_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
