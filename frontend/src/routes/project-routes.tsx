@@ -32,6 +32,7 @@ export default function ProjectRoutes() {
                 <Route path='/spaces' element={<SpacesPage/>}/>
                 <Route path='/postagens' element={<PostsCalendarPage/>}/>
                 <Route path='/agendar-postagem' element={<SchedulePostPage/>}/>
+                <Route path='/agendar-postagem/:idPost' element={<SchedulePostPage/>}/>
                 <Route path='/portifolio' element={<PortifolioPage/>}/>
                 <Route path='/alterar-senha' element={<ChangePasswordPage/>}/>
                 <Route path='/alterar-foto' element={<ChangePhotoPage/>}/>

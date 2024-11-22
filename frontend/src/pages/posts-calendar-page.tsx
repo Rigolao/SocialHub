@@ -25,7 +25,7 @@ export default function PostsCalendarPage() {
 
     const handleDayClick = (selectedDay: Date, modifiers: any) => {
         if (modifiers.posts) {
-            setSelectedPostDay(posts?.filter((post) => isSameDay(post.date, selectedDay)));
+            setSelectedPostDay(posts?.filter((post) => isSameDay(post.scheduledDate, selectedDay)));
             setDate(selectedDay);
             setDialogOpen(true);
         }
@@ -57,7 +57,7 @@ export default function PostsCalendarPage() {
 
                 <Calendar
                     modifiers={{
-                        posts: (day) => posts ? posts.some((post) => isSameDay(post.date, day)) : false,
+                        posts: (day) => posts ? posts.some((post) => isSameDay(post.scheduledDate, day)) : false,
                     }}
                     modifiersClassNames={{
                         posts: "bg-blue-200 text-blue-800 font-semibold rounded-full",
