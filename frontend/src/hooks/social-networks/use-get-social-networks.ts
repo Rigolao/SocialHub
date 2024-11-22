@@ -11,7 +11,8 @@ export default function useGetSocialNetworks() {
         enabled: !!token,
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
-        })
+        }),
+        hideToast: true
     });
 
     return getSocialNetworks;

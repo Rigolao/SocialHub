@@ -21,12 +21,18 @@ export default function PostDialog({postDay, open, setOpen}: PostDialogProps) {
 
     const navigate = useNavigate();
 
+    const convertStringDateToStringDatePtBr = (dateString: string) => {
+        const date = new Date(dateString);
+
+        return date.toLocaleDateString("pt-BR");
+    }
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        {postDay && postDay.length > 0 && postDay[0].date && postDay[0].date.toLocaleDateString()}
+                        {postDay && postDay.length > 0 && postDay[0].scheduledDate && convertStringDateToStringDatePtBr(postDay[0].scheduledDate)}
                     </DialogTitle>
                     <DialogDescription>
                         Posts agendados:
@@ -42,7 +48,7 @@ export default function PostDialog({postDay, open, setOpen}: PostDialogProps) {
                                     <BlueskyIcon key={socialMedia.id} />
                                 ))}
                             </div>
-                            <Button type="button" variant="default" onClick={() => navigate(`agendar-postagem/${post.id}`)}>
+                            <Button type="button" variant="default" onClick={() => navigate(`/agendar-postagem/${post.id}`)}>
                                 Visualizar
                             </Button>
                         </div>
