@@ -103,7 +103,7 @@ public class SpaceService {
                                     List<SocialMediaResponseDTO> redesSociais = postList.stream()
                                             .map(postList1 -> new SocialMediaResponseDTO(postList1.idRedeSocial(), postList1.nomeRedeSocial()))
                                             .collect(Collectors.toList());
-                                    return new PostDTO(first.id(), first.descricao(), first.dataAgendamento(), redesSociais);
+                                    return new PostDTO(first.id(), first.descricao(), first.dataAgendamento(), first.status(), redesSociais);
                                 }
                         )
                 ))
