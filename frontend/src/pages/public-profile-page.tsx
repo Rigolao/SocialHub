@@ -6,7 +6,7 @@ import {useParams} from "react-router-dom";
 
 export default function PublicProfilePage() {
 
-    const {email} = useParams();
+    const {idUser} = useParams();
 
     return (
         <>

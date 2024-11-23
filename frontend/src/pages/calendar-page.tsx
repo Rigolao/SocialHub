@@ -1,4 +1,3 @@
-import PageTitle from "@/components/custom/page-title.tsx";
 import {Calendar} from "@/components/ui/calendar.tsx";
 import {useState} from "react";
 import {cn} from "@/lib/utils.ts";
@@ -11,7 +10,7 @@ import {SimplePost} from "@/types/post";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
 import {Separator} from "@/components/ui/separator.tsx";
 
-export default function PostsCalendarPage() {
+export default function CalendarPage() {
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [selectedPostDay, setSelectedPostDay] = useState<SimplePost[] | undefined>();
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
