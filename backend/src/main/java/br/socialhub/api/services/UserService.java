@@ -106,6 +106,10 @@ public class UserService {
         _validateEmailUnique(userDTO.email());
     }
 
+    private void _validationUpdateUser(final UserUpdateDTO userDTO){
+        _validateMinimumAge(userDTO.birthDate());
+    }
+
     public void resetPassword(final Usuario user, final ResetPasswordDTO resetPasswordDTO) {
         _validateConfirmPassword(resetPasswordDTO.newPassword(), resetPasswordDTO.confirmPassword());
         user.setPassword(passwordEncoder.encode(resetPasswordDTO.newPassword()));
@@ -113,7 +117,7 @@ public class UserService {
     }
 
     public UserResponseDTO updateUser(final Long id, UserUpdateDTO userUpdateDTO) {
-        _validateMinimumAge(userUpdateDTO.birthDate());
+        _validationUpdateUser(userUpdateDTO);
 
         var user = findById(id);
 
