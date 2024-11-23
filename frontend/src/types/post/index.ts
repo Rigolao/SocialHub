@@ -3,7 +3,7 @@ import {SocialNetwork} from "@/types/social-media";
 export type SimplePost = {
     id: number;
     title: string;
-    scheduledDate: Date;
+    scheduledDate: string;
     socialNetwork: SocialNetwork[];
 }
 
