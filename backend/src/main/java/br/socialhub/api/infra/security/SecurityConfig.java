@@ -45,7 +45,7 @@ public class SecurityConfig {
                             .requestMatchers(ENDPOINT_AUTHENTICATE, ENDPOINT_PASSWORD+"/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/users/*/photo").permitAll()
                             .requestMatchers("/invitations").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/anexos/*").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/anexos/view/*").permitAll()
                             .requestMatchers("/swagger-ui/*", "/v3/api-docs/**").permitAll()
                             .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
