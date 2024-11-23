@@ -9,6 +9,7 @@ import br.socialhub.api.enums.PostStatus;
 import br.socialhub.api.exceptions.PostDateSchedulingException;
 import br.socialhub.api.exceptions.ResourceNotFoundException;
 import br.socialhub.api.models.*;
+import br.socialhub.api.repositories.AnexoRepository;
 import br.socialhub.api.repositories.ContaPostagemRepository;
 import br.socialhub.api.repositories.PostRepository;
 import br.socialhub.api.repositories.SocialNetworkRepository;
@@ -38,6 +39,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final ContaPostagemRepository contaPostagemRepository;
     private final BlueSkyService blueSkyService;
+    private final AnexoRepository anexoRepository;
 
     @Transactional
     public PostResponseDTO createPost(PostCreateDTO post, UsuarioSpace userSpace, List<Conta> accounts) throws IOException {
@@ -97,7 +99,7 @@ public class PostService {
         postagem.setDescricao(post.description());
         postagem.setDataAgendamento(post.scheduledDate());
         postagem.setStatus(PostStatus.AGENDADA);
-        postagem.setAnexos(_processAttachments(postagem, post.files()));
+        _processAttachments(postagem, post.files());
         return postagem;
     }
 
@@ -107,12 +109,13 @@ public class PostService {
         postagem.setDataAgendamento(post.scheduledDate());
         postagem.setStatus(PostStatus.AGENDADA);
         postagem.setUsuarioSpace(userSpace);
-        postagem.setAnexos(_processAttachments(postagem, post.files()));
+
+        _updateAttachments(postagem, post);
     }
 
-    private List<Anexo> _processAttachments(Postagem postagem, List<MultipartFile> files) throws IOException {
+    private void _processAttachments(Postagem postagem, List<MultipartFile> files) throws IOException {
         if (files == null || files.isEmpty()) {
-            return null;
+            return;
         }
 
         List<Anexo> anexos = new ArrayList<>();
@@ -124,7 +127,21 @@ public class PostService {
             anexo.setPostagem(postagem);
             anexos.add(anexo);
         }
-        return anexos;
+
+        postagem.setAnexos(anexos);
+    }
+
+    private void _updateAttachments(Postagem postagem, PostUpdateDTO postDTO) throws IOException {
+        List<Long> existingIds = postDTO.existingAttachmentIds();
+
+        List<Anexo> anexosAtuais = postagem.getAnexos();
+        List<Anexo> anexosParaRemover = anexosAtuais.stream()
+                .filter(anexo -> !existingIds.contains(anexo.getId()))
+                .toList();
+
+        anexoRepository.deleteAll(anexosParaRemover);
+
+        _processAttachments(postagem, postDTO.files());
     }
 
     @Transactional
