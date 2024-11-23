@@ -135,13 +135,14 @@ public class PostService {
         List<Long> existingIds = postDTO.existingAttachmentIds();
 
         List<Anexo> anexosAtuais = postagem.getAnexos();
-        List<Anexo> anexosParaRemover = anexosAtuais.stream()
-                .filter(anexo -> !existingIds.contains(anexo.getId()))
-                .toList();
+        if (existingIds != null) {
+            List<Anexo> anexosParaRemover = anexosAtuais.stream()
+                    .filter(anexo -> !existingIds.contains(anexo.getId()))
+                    .toList();
+            anexoRepository.deleteAll(anexosParaRemover);
 
-        anexoRepository.deleteAll(anexosParaRemover);
-
-        postagem.getAnexos().removeAll(anexosParaRemover);
+            postagem.getAnexos().removeAll(anexosParaRemover);
+        }
 
         _processAttachments(postagem, postDTO.files());
     }
