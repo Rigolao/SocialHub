@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record PostDTO (Long id, String title, LocalDateTime scheduledDate, PostStatus status, List<SocialMediaResponseDTO> socialNetwork){
+public record PostDTO (Long id, String title, LocalDateTime scheduledDate, PostStatus status, List<SocialMediaResponseDTO> socialNetworks){
     public PostDTO (Postagem postagem){
         this(
                 postagem.getId(),
