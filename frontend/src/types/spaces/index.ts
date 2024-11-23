@@ -1,10 +1,12 @@
 import {User} from "@/types/user";
+import {SocialNetwork} from "@/types/social-media";
 
 export type Space = {
     id: number;
     name: string;
     role: string;
     members: User[];
+    connectedAccounts: SocialNetwork[];
 }
 
 export type Member = {
