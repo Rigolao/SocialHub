@@ -12,6 +12,7 @@ public interface Constantes {
     String ENDPOINT_RESET = "reset";
     String ENDPOINT_SPACE = "spaces";
     String ENDPOINT_ANEXOS = "anexos";
+    String ENDPOINT_PORTFOLIO = "portfolios";
     String ENDPOINT_SOCIAL_MEDIA="social-medias";
 
     String ENDPOINT_ROLE = "roles";
@@ -65,7 +66,7 @@ public interface Constantes {
     String LINK_INVITE_ACCEPT_FRONT_END = LINK_FRONT_END+"/convite-aceito";
     String LINK_RESET = LINK_FRONT_END+"/esqueci-minha-senha?token=%s";
     String LINK_URL_PHOTO = "http://localhost:8080/"+ENDPOINT_USERS+"/%s/photo";
-    String LINK_URL_ANEXOS = "http://localhost:8080/"+ENDPOINT_ANEXOS+"/%s";
+    String LINK_URL_ANEXOS = "http://localhost:8080/view/"+ENDPOINT_ANEXOS+"/%s";
     String LINK_INVITE_USER = "http://localhost:8080/invitations?token=%s";
     String LINK_BLUESKY = "https://bsky.social/xrpc";
 

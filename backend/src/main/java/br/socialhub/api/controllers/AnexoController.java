@@ -20,18 +20,33 @@ public class AnexoController {
 
     private final AnexoService anexoService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<byte[]> getAnexo(@PathVariable Long id) {
-        try {
-            var arquivo = anexoService.getAnexo(id);
+        @GetMapping("view/{id}")
+        public ResponseEntity<byte[]> getAnexo(@PathVariable Long id) {
+            try {
+                var arquivo = anexoService.getAnexo(id);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, arquivo.getMimeType());
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"arquivo_" + arquivo.getNomeArquivo() + "\"");
+                HttpHeaders headers = new HttpHeaders();
+                headers.add(HttpHeaders.CONTENT_TYPE, arquivo.getMimeType());
+                headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"arquivo_" + arquivo.getNomeArquivo() + "\"");
 
-            return new ResponseEntity<>(arquivo.getArquivo(), headers, HttpStatus.OK);
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(arquivo.getArquivo(), headers, HttpStatus.OK);
+            } catch (ResponseStatusException e) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         }
-    }
+
+        @GetMapping("download/{id}")
+        public ResponseEntity<byte[]> downloadAnexo(@PathVariable Long id) {
+            try {
+                var arquivo = anexoService.getAnexo(id);
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.add(HttpHeaders.CONTENT_TYPE, arquivo.getMimeType());
+                headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"arquivo_" + arquivo.getNomeArquivo() + "\"");
+
+                return new ResponseEntity<>(arquivo.getArquivo(), headers, HttpStatus.OK);
+            } catch (ResponseStatusException e) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        }
 }
