@@ -24,6 +24,8 @@ import static br.socialhub.api.utils.Constantes.*;
 @RequestMapping(ENDPOINT_USERS)
 public class UserController {
 
+    private static final boolean DEFAULT_SPACE = true;
+
     private final UserService userService;
     private final EmailService emailService;
     private final SpaceService spaceService;
@@ -56,7 +58,7 @@ public class UserController {
         var space = spaceService.createSpaceDefault();
         var role = roleService.roleCreator();
 
-        userSpaceService.assignRoleToUserInSpace(user, space, role);
+        userSpaceService.assignRoleToUserInSpace(user, space, role, DEFAULT_SPACE);
 
         var response = userService.convertUserForUserResponseDTO(user);
 

@@ -3,6 +3,7 @@ package br.socialhub.api.services;
 import br.socialhub.api.dtos.reset_password.ResetPasswordDTO;
 import br.socialhub.api.dtos.space.SpaceBasicResponseDTO;
 import br.socialhub.api.dtos.user.*;
+import br.socialhub.api.enums.ActiveInactive;
 import br.socialhub.api.enums.DocumentType;
 import br.socialhub.api.exceptions.*;
 import br.socialhub.api.models.FotoUsuario;
@@ -50,11 +51,13 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
     }
 
-    private List<SpaceBasicResponseDTO> getSpaces(final Usuario usuario){
+    private List<SpaceBasicResponseDTO> getSpaces(final Usuario usuario) {
         return usuario.getUsuarioSpaces().stream()
+                .filter(usuarioSpace -> usuarioSpace.getSpace().getStatus() == ActiveInactive.ACTIVE)
                 .map(SpaceBasicResponseDTO::new)
                 .collect(Collectors.toList());
     }
+
 
     private Optional<Usuario> findByIdOptional(final Long id) {
         return usuarioRepository.findById(id);

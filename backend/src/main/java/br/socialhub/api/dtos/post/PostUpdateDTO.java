@@ -18,7 +18,7 @@ public record PostUpdateDTO(
                             LocalDateTime scheduledDate,
                             @NotBlank(message = "A descrição é obrigatória.")
                             String description,
-                            List<Long> existingAttachmentIds,
+                            List<Long> attachmentIdsToRemove,
                             List<MultipartFile> files,
                             @NotNull(message = "Ao menos uma rede social é obrigatória.")
                             @Size(min = 1, message = "Ao menos uma rede social deve ser fornecida.")
