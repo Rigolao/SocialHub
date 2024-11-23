@@ -1,2 +1,2 @@
-ALTER TABLE `usuario_space`
+ALTER TABLE `space`
     ADD COLUMN `STATUS` VARCHAR(20);
