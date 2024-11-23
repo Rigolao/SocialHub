@@ -141,6 +141,8 @@ public class PostService {
 
         anexoRepository.deleteAll(anexosParaRemover);
 
+        postagem.getAnexos().removeAll(anexosParaRemover);
+
         _processAttachments(postagem, postDTO.files());
     }
 
