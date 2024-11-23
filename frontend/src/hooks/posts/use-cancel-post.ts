@@ -1,21 +1,22 @@
-import {usePatch} from "@/hooks/use-patch.ts";
+import {useDelete} from "@/hooks/use-delete.ts";
+import {MessageResponse} from "@/types";
 import {useAuth} from "@/hooks/auth/use-auth.ts";
-import {EditPostResponse} from "@/types/post";
 import {useNavigate} from "react-router-dom";
 
-interface UseEditPostProps {
+interface UseCancelPostProps {
     idPost: number | null;
     idSpace: number | null;
 }
 
-export default function useEditPost({ idPost, idSpace }: UseEditPostProps) {
+
+export default function useCancelPost({ idPost, idSpace }: UseCancelPostProps) {
 
     const {token} = useAuth();
     const navigate = useNavigate();
 
-    const editPost = usePatch<FormData, EditPostResponse>({
+    const cancelPost = useDelete<MessageResponse>({
         url: `/spaces/${idSpace}/posts/${idPost}`,
-        queryKey: ['edit-post', idPost, idSpace],
+        queryKey: ['cancel-post', idPost, idSpace],
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
         }),
@@ -24,5 +25,6 @@ export default function useEditPost({ idPost, idSpace }: UseEditPostProps) {
         }
     });
 
-    return editPost;
+    return cancelPost;
+
 }

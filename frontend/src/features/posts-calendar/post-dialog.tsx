@@ -44,7 +44,7 @@ export default function PostDialog({postDay, open, setOpen}: PostDialogProps) {
                              className='flex justify-between items-center gap-2'>
                             {post.title}
                             <div className='flex-1 flex justify-evenly'>
-                                {post.socialNetwork.map(socialMedia => (
+                                {post.socialNetworks.map(socialMedia => (
                                     <BlueskyIcon key={socialMedia.id} />
                                 ))}
                             </div>

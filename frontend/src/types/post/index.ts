@@ -4,14 +4,23 @@ export type SimplePost = {
     id: number;
     title: string;
     scheduledDate: string;
-    socialNetwork: SocialNetwork[];
+    status: string;
+    socialNetworks: SocialNetwork[];
 }
 
 export type Post = {
     title: string;
     description: string;
     scheduledDate: Date;
-    socialNetworks: string[];
+    status: string;
+    socialNetworks: SocialNetwork[];
+    attachments: [
+        {
+            id: number;
+            nameFile: string;
+            url: string;
+        }
+    ];
 }
 
 export type CreatePostResponse = {
@@ -19,5 +28,20 @@ export type CreatePostResponse = {
     title: string;
     description: string;
     scheduledDate: Date;
-    socialNetworks: string[];
+    socialNetworks: SocialNetwork[];
+}
+
+export type EditPostResponse = {
+    id: number;
+    title: string;
+    description: string;
+    scheduledDate: Date;
+    socialNetworks: SocialNetwork[];
+    attachments: [
+        {
+            id: number;
+            nameFile: string;
+            url: string;
+        }
+    ];
 }

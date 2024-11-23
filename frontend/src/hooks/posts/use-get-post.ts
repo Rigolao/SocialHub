@@ -4,15 +4,16 @@ import {Post} from "@/types/post";
 
 interface UseGetPostProps {
     idPost: number | null;
+    idSpace: number | null;
 }
 
-export default function useGetPost({idPost}: UseGetPostProps) {
+export default function useGetPost({idPost, idSpace}: UseGetPostProps) {
 
     const {token} = useAuth();
 
     const getPost = useGet<Post>({
-        url: `/posts/${idPost}`,
-        queryKey: ['get-post', idPost],
+        url: `/spaces/${idSpace}/posts/${idPost}`,
+        queryKey: ['get-post', idPost, idSpace],
         retry: 3,
         enabled: !!token && !!idPost,
         getHeaders: () => ({

@@ -16,6 +16,9 @@ import useCreatePost from "@/hooks/posts/use-create-post.ts";
 import useGetPost from "@/hooks/posts/use-get-post.ts";
 import useEditPost from "@/hooks/posts/use-edit-post.ts";
 import AIHelpButton from "@/features/schedule-post/components/ai-help-button.tsx";
+import useCancelPost from "@/hooks/posts/use-cancel-post.ts";
+import {useAlertDialog} from "@/providers/alert-dialog-provider.tsx";
+import {toast} from "sonner";
 
 const schedulePostFormSchema = z.object({
     title: z.string().min(6, 'O título deve ter no mínimo 6 caracteres'),
@@ -28,12 +31,14 @@ const schedulePostFormSchema = z.object({
 
 export default function SchedulePostForm() {
 
+    const { showDialog } = useAlertDialog();
     const {idPost} = useParams();
     const {selectedSpace} = useSpace();
     const {data: socialNetworks, isLoading} = useGetSpaceSocialNetworks({idSpace: Number(selectedSpace?.id)});
-    const {data: postData, isLoading: postLoadind} = useGetPost({idPost: Number(idPost)});
+    const {data: postData, isLoading: postLoadind} = useGetPost({idPost: Number(idPost), idSpace: Number(selectedSpace?.id)});
     const {mutateAsync: createPostMutate, isPending: createPostLoading} = useCreatePost({idSpace: Number(selectedSpace?.id)});
-    const {mutateAsync: updatePostMutate, isPending: updatePostLoading} = useEditPost({idPost: Number(idPost)});
+    const {mutateAsync: updatePostMutate, isPending: updatePostLoading} = useEditPost({idPost: Number(idPost), idSpace: Number(selectedSpace?.id)});
+    const {mutateAsync: cancelPostMutate, isPending: cancelPostLoading} = useCancelPost({idPost: Number(idPost), idSpace: Number(selectedSpace?.id)});
 
     const [userCanPost, setUserCanPost] = useState(selectedSpace?.role !== 'VISUALIZADOR');
 
@@ -68,6 +73,16 @@ export default function SchedulePostForm() {
         });
 
         if(idPost) {
+            postData?.attachments?.forEach(attachment => {
+                console.log(attachment);
+                const find = form.getValues('files')?.find(file => file.name === attachment.nameFile);
+                console.log(find);
+                if(!find) {
+                    console.log('add')
+                    formData.append('existingAttachmentIds', attachment.id);
+                }
+            });
+
             updatePostMutate(formData).then(() => {
                 form.reset();
                 form.setValue('files', []);
@@ -82,12 +97,52 @@ export default function SchedulePostForm() {
         }
     };
 
+    const cancelPost = (e) => {
+        e.preventDefault();
+        showDialog({
+            title: 'Cancelar postagem',
+            description: 'Tem certeza que deseja cancelar a postagem?',
+            onConfirm: () => {
+                cancelPostMutate().then(() => {
+                    form.reset();
+                    form.setValue('files', []);
+                    form.setValue('socialNetworks', []);
+                });
+            }
+        });
+
+    }
+
     useEffect(() => {
-        if(idPost) {
-            console.log('fetch post data');
-            // fetch post data
-        }
-    }, [idPost]);
+        const loadAttachmentsAsFiles = async () => {
+            if (idPost && postData) {
+                form.setValue('title', postData.title);
+                form.setValue('description', postData.description);
+                form.setValue('date', new Date(postData.scheduledDate));
+                form.setValue('socialNetworks', postData.socialNetworks?.map(socialNetwork => socialNetwork.name));
+
+                const fileList: File[] = [];
+
+                // Converte attachments para objetos File
+                for (const attachment of postData.attachments || []) {
+                    try {
+                        const response = await fetch(attachment.url);
+                        const blob = await response.blob();
+                        const file = new File([blob], attachment.nameFile, { type: blob.type });
+                        fileList.push(file);
+                    } catch (error) {
+                        console.error(`Erro ao carregar o arquivo: ${attachment.nameFile}`, error);
+                        toast.error('Erro ao carregar os arquivos da postagem');
+                    }
+                }
+
+                form.setValue('files', fileList);
+            }
+        };
+
+        loadAttachmentsAsFiles();
+    }, [idPost, postData]);
+
 
     useEffect(() => {
         setUserCanPost(selectedSpace?.role !== 'VISUALIZADOR');
@@ -155,8 +210,8 @@ export default function SchedulePostForm() {
                     <AIHelpButton setDescription={(description) => form.setValue('description', description)} />
                     {idPost && (
                         <Button
-                            onClick={() => form.reset()}
-                            disabled={isLoading || !userCanPost || form.getValues('date') < new Date()}
+                            onClick={cancelPost}
+                            disabled={isLoading || !userCanPost || form.getValues('date') < new Date() || postData?.status !== 'AGENDADA'}
                             variant='destructive'>
                             Cancelar postagem
                         </Button>
