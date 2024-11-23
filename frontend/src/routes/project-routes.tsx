@@ -15,6 +15,7 @@ import SpacesPage from "@/pages/spaces-page.tsx";
 import ManageSpacePage from "@/pages/manage-space-page.tsx";
 import ChangePhotoPage from "@/pages/change-photo-page.tsx";
 import PublicProfilePage from "@/pages/public-profile-page.tsx";
+import {DashboardPage} from "@/pages/dashboard-page.tsx";
 
 export default function ProjectRoutes() {
 
@@ -37,6 +38,7 @@ export default function ProjectRoutes() {
                 <Route path='/alterar-senha' element={<ChangePasswordPage/>}/>
                 <Route path='/alterar-foto' element={<ChangePhotoPage/>}/>
                 <Route path='/perfil' element={<ProfilePage/>}/>
+                <Route path='/dashboard' element={<DashboardPage/>}/>
                 <Route path='/gerenciar-space/:idSpace' element={<ManageSpacePage/>}/>
             </Route>
         </Routes>
