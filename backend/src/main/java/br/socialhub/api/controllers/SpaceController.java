@@ -1,7 +1,6 @@
 package br.socialhub.api.controllers;
 
 import br.socialhub.api.dtos.RoleAssigmentDTO;
-import br.socialhub.api.dtos.SocialAccountDTO;
 import br.socialhub.api.dtos.post.PostCreateDTO;
 import br.socialhub.api.dtos.post.PostDTO;
 import br.socialhub.api.dtos.social_media.SocialMediaResponseDTO;
@@ -120,21 +119,6 @@ public class SpaceController {
         return ResponseEntity.ok().build();
     }
 
-//    @Transactional
-//    @PostMapping("{spaceId}/social-networks/{socialNetworkId}")
-//    @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
-//    public ResponseEntity<Void> associateSocialAccount(@PathVariable final Long spaceId,
-//                                                       @PathVariable final Long socialNetworkId,
-//                                                       @RequestBody @Valid final SocialAccountDTO socialAccountDTO,
-//                                                       @RequestHeader(AUTHORIZATION) final String token) {
-//        var space = spaceService.findById(spaceId);
-//        var socialNetwork = socialNetworkService.findById(socialNetworkId);
-//
-//        socialNetworkService.associateSocialAccount(space, socialNetwork, socialAccountDTO);
-//
-//        return ResponseEntity.ok().build();
-//    }
-
     @GetMapping("{spaceId}/social-networks")
     @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
     public ResponseEntity<List<SocialMediaResponseDTO>> getSocialNetworksForSpace(@PathVariable final Long spaceId,
@@ -194,6 +178,7 @@ public class SpaceController {
 
         return ResponseEntity.ok().build();
     }
+
 }
 
 
