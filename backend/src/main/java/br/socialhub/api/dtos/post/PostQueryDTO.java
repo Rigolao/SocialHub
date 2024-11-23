@@ -4,5 +4,5 @@ import br.socialhub.api.enums.PostStatus;
 
 import java.time.LocalDateTime;
 
-public record PostQueryDTO(Long id, String descricao, Long idRedeSocial, String nomeRedeSocial, LocalDateTime dataAgendamento, PostStatus status) {
+public record PostQueryDTO(Long id, String title, Long idRedeSocial, String nomeRedeSocial, LocalDateTime dataAgendamento, PostStatus status) {
 }

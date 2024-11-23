@@ -7,7 +7,6 @@ import br.socialhub.api.enums.DocumentType;
 import br.socialhub.api.exceptions.*;
 import br.socialhub.api.models.FotoUsuario;
 import br.socialhub.api.models.Usuario;
-import br.socialhub.api.repositories.TokenAuditoriaRepository;
 import br.socialhub.api.repositories.UsuarioRepository;
 import br.socialhub.api.utils.CpfCnpjValidator;
 import br.socialhub.api.utils.PhotoUtil;
@@ -32,13 +31,11 @@ import static br.socialhub.api.utils.Constantes.*;
 public class UserService {
 
     private final UsuarioRepository usuarioRepository;
-    private final TokenAuditoriaRepository tokenAuditoriaRepository;
     private final PasswordEncoder passwordEncoder;
     private final PhotoUtil photoUtil;
 
     private static final String MIDIA_TYPE_SVG = "image/svg+xml";
     private static final int MINIMUM_AGE = 12;
-    private static final long TOKEN_DURATION_IN_DAY = 1;
 
 
     public Usuario createUser(final UserCreateDTO userDTO) {

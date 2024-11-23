@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Postagem, Long> {
-    @Query("SELECT NEW br.socialhub.api.dtos.post.PostQueryDTO(p.id, p.descricao, sn.id, sn.nome, p.dataAgendamento, p.status) " +
+    @Query("SELECT NEW br.socialhub.api.dtos.post.PostQueryDTO(p.id, p.titulo, sn.id, sn.nome, p.dataAgendamento, p.status) " +
             "FROM Postagem p " +
             "JOIN p.contaPostagens cp " +
             "JOIN cp.conta c " +

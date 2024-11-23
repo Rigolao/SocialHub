@@ -93,4 +93,10 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         ErroDTO erro = new ErroDTO(e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(erro);
     }
+
+    @ExceptionHandler(PostDateSchedulingException.class)
+    public ResponseEntity<ErroDTO> handlePostDateSchedulingException(PostDateSchedulingException e){
+        ErroDTO erro = new ErroDTO(e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(erro);
+    }
 }

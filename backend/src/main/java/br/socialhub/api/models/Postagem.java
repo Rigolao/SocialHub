@@ -39,7 +39,7 @@ public class Postagem {
     @Column(name = "DATAAGENDAMENTO", nullable = false)
     private LocalDateTime dataAgendamento;
 
-    @OneToMany(mappedBy = "postagem", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "postagem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ContaPostagem> contaPostagens;
 
     @OneToMany(mappedBy = "postagem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

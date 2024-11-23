@@ -3,16 +3,18 @@ package br.socialhub.api.controllers;
 import br.socialhub.api.dtos.RoleAssigmentDTO;
 import br.socialhub.api.dtos.post.PostCreateDTO;
 import br.socialhub.api.dtos.post.PostDTO;
+import br.socialhub.api.dtos.post.PostResponseDTO;
+import br.socialhub.api.dtos.post.PostUpdateDTO;
 import br.socialhub.api.dtos.social_media.SocialMediaResponseDTO;
 import br.socialhub.api.dtos.space.SpaceCreateDTO;
 import br.socialhub.api.dtos.space.SpaceResponseDTO;
 import br.socialhub.api.dtos.space.SpaceUpdateDTO;
 import br.socialhub.api.dtos.user.InviteUserDTO;
-import br.socialhub.api.exceptions.ResourceNotFoundException;
 import br.socialhub.api.services.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -129,7 +131,9 @@ public class SpaceController {
 
 
     @GetMapping("{spaceId}/posts")
+    @PreAuthorize("@userSpaceService.userIsCreatorOrEditorInSpace(@jwtService.extractSubject(#token), #spaceId)")
     public ResponseEntity<List<PostDTO>> getSpacePosts(@PathVariable final Long spaceId,
+                                                       @RequestHeader(AUTHORIZATION) final String token,
                                                        @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") int year,
                                                        @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getMonthValue()}") int month) {
         List<PostDTO> posts = spaceService.getSpacePosts(spaceId, year, month);
@@ -152,33 +156,59 @@ public class SpaceController {
         return ResponseEntity.ok().build();
     }
 
-    @Transactional
+
+    @GetMapping("{spaceId}/posts/{postId}")
+    @PreAuthorize("@userSpaceService.userIsCreatorOrEditorInSpace(@jwtService.extractSubject(#token), #spaceId)")
+    public ResponseEntity<PostResponseDTO> getPosts(@PathVariable final Long spaceId,
+                                                  @PathVariable final Long postId,
+                                                  @RequestHeader(AUTHORIZATION) final String token) {
+        return ResponseEntity.ok(postService.getPostById(postId));
+    }
+
     @PostMapping("{spaceId}/posts")
     @PreAuthorize("@userSpaceService.userIsCreatorOrEditorInSpace(@jwtService.extractSubject(#token), #spaceId)")
-    public ResponseEntity<Void> createPosts(@PathVariable final Long spaceId,
-                                            @ModelAttribute PostCreateDTO post,
-                                            @RequestHeader(AUTHORIZATION) final String token) throws IOException {
+    public ResponseEntity<PostResponseDTO> createPosts(@PathVariable final Long spaceId,
+                                                       @ModelAttribute PostCreateDTO post,
+                                                       @RequestHeader(AUTHORIZATION) final String token) throws IOException {
+
+        var email = jwtService.extractSubject(token);
+        var user = userService.findByEmail(email);
+        var space = spaceService.findById(spaceId);
+        var userSpace = userSpaceService.findByUserAndSpace(user, space);
+        var accounts = space.getAccounts();
+
+
+        return ResponseEntity.ok(postService.createPost(post, userSpace, accounts));
+    }
+
+    @Transactional
+    @PatchMapping("{spaceId}/posts/{postId}")
+    @PreAuthorize("@userSpaceService.userIsCreatorOrEditorInSpace(@jwtService.extractSubject(#token), #spaceId)")
+    public ResponseEntity<PostResponseDTO> updatePost(@PathVariable final Long spaceId,
+                                                      @PathVariable final Long postId,
+                                                      @ModelAttribute PostUpdateDTO post,
+                                                      @RequestHeader(AUTHORIZATION) final String token) throws IOException {
 
         var email = jwtService.extractSubject(token);
         var user = userService.findByEmail(email);
         var space = spaceService.findById(spaceId);
         var userSpace = userSpaceService.findByUserAndSpace(user, space);
 
-        var postagem = postService.createPost(userSpace, post);
+        var accounts = space.getAccounts();
 
-        for (Long idSocialNetwork : post.idSocialNetworks()) {
-            var account = space.getAccounts().stream()
-                    .filter(conta -> conta.getSocialNetwork().getId().equals(idSocialNetwork))
-                    .findFirst()
-                    .orElseThrow(() -> new ResourceNotFoundException("A rede social selecionada não esta vínculada ao space."));
-
-
-            postService.criarVinculoContaPostagem(postagem, account);
-        }
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(postService.updatePost(postId, post, userSpace, accounts));
     }
 
+    @Transactional
+    @DeleteMapping("{spaceId}/posts/{postId}")
+    @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
+    public ResponseEntity<Void> deletePost(@PathVariable final Long spaceId,
+                                           @PathVariable final Long postId,
+                                           @RequestHeader(AUTHORIZATION) final String token) {
+
+        postService.deletePost(postId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
 
 
