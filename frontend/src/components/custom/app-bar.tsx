@@ -2,7 +2,7 @@ import {Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger}
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
 import {MenuIcon, OrbitIcon} from "lucide-react";
 import {ProfileConfig} from "@/components/custom/profile-config.tsx";
-import {CalendarIcon, ExitIcon, HomeIcon, PersonIcon, PlusIcon} from "@radix-ui/react-icons";
+import {CalendarIcon, DashboardIcon, ExitIcon, HomeIcon, PersonIcon, PlusIcon} from "@radix-ui/react-icons";
 import {AppBarItem} from "@/components/custom/app-bar-item.tsx";
 import {Separator} from "@/components/ui/separator.tsx";
 import CustomButton from "@/components/custom/custom-button.tsx";
@@ -70,6 +70,7 @@ export function AppBar() {
                     <AppBarItem label={"Postagens"} icon={CalendarIcon} route={'/postagens'}/>
                     <AppBarItem label={"Agendar postagem"} icon={PlusIcon} route={'/agendar-postagem'}/>
                     <AppBarItem label={"Portfólio"} icon={PersonIcon} route={'/portifolio'}/>
+                    <AppBarItem label={"Dashboard"} icon={DashboardIcon} route={'/dashboard'}/>
                     <SheetFooter className="md:hidden flex flex-row justify-between mt-auto">
                         <ModeToggle/>
 
