@@ -132,15 +132,17 @@ public class PostService {
     }
 
     private void _updateAttachments(Postagem postagem, PostUpdateDTO postDTO) throws IOException {
-        List<Long> existingIds = postDTO.existingAttachmentIds();
+        List<Long> idsParaRemover = postDTO.attachmentIdsToRemove(); // IDs que devem ser removidos
 
         List<Anexo> anexosAtuais = postagem.getAnexos();
-        if (existingIds != null) {
-            List<Anexo> anexosParaRemover = anexosAtuais.stream()
-                    .filter(anexo -> !existingIds.contains(anexo.getId()))
-                    .toList();
-            anexoRepository.deleteAll(anexosParaRemover);
 
+        if (idsParaRemover != null && !idsParaRemover.isEmpty()) {
+            // Filtra os anexos que estão na lista de IDs para remover
+            List<Anexo> anexosParaRemover = anexosAtuais.stream()
+                    .filter(anexo -> idsParaRemover.contains(anexo.getId()))  // Verifica se o ID do anexo está na lista de IDs a remover
+                    .toList();
+
+            // Remove os anexos identificados
             postagem.getAnexos().removeAll(anexosParaRemover);
         }
 

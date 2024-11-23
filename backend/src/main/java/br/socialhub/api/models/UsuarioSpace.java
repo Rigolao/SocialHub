@@ -27,6 +27,9 @@ public class UsuarioSpace {
     @JoinColumn(name = "IDSPACE")
     private Space space;
 
+    @Column(name = "IS_DEFAULT", nullable = false)
+    private boolean isDefault;
+
     @ManyToOne
     @JoinColumn(name = "IDCARGO")
     private Cargo role;
@@ -42,5 +45,14 @@ public class UsuarioSpace {
         this.user = user;
         this.role = role;
         this.dateCreation = LocalDateTime.now();
+        this.isDefault = true;
+    }
+
+    public UsuarioSpace(Usuario user, Space space, Cargo role, boolean isDefault){
+        this.space = space;
+        this.user = user;
+        this.role = role;
+        this.dateCreation = LocalDateTime.now();
+        this.isDefault = isDefault;
     }
 }

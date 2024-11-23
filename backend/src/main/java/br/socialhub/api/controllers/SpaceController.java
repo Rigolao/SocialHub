@@ -209,6 +209,19 @@ public class SpaceController {
         postService.deletePost(postId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+
+    @Transactional
+    @DeleteMapping("{spaceId}")
+    @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
+    public ResponseEntity<Void> deleteSpace(@PathVariable final Long spaceId,
+                                           @RequestHeader(AUTHORIZATION) final String token) {
+        var email = jwtService.extractSubject(token);
+        var user = userService.findByEmail(email);
+
+        spaceService.deleteSpace(spaceId, user);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
 
 

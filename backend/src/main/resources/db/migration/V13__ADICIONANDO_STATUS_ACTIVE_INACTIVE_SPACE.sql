@@ -1,0 +1,2 @@
+ALTER TABLE `usuario_space`
+    ADD COLUMN `STATUS` VARCHAR(20);

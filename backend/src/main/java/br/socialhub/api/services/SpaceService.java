@@ -7,18 +7,22 @@ import br.socialhub.api.dtos.space.SpaceCreateDTO;
 import br.socialhub.api.dtos.space.SpaceResponseDTO;
 import br.socialhub.api.dtos.space.SpaceUpdateDTO;
 import br.socialhub.api.dtos.user.MemberResponseDTO;
+import br.socialhub.api.enums.ActiveInactive;
 import br.socialhub.api.enums.RoleType;
+import br.socialhub.api.exceptions.DefaultSpaceDeletionException;
 import br.socialhub.api.exceptions.ResourceNotFoundException;
 import br.socialhub.api.models.*;
 import br.socialhub.api.repositories.AccountRepository;
 import br.socialhub.api.repositories.PostRepository;
 import br.socialhub.api.repositories.SpaceRepository;
+import br.socialhub.api.repositories.UserSpaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static br.socialhub.api.utils.Constantes.*;
@@ -29,6 +33,7 @@ public class SpaceService {
     private final SpaceRepository spaceRepository;
     private final PostRepository postRepository;
     private final AccountRepository accountRepository;
+    private final UserSpaceRepository userSpaceRepository;
 
     public Space createSpace(final SpaceCreateDTO spaceCreateDTO) {
 
@@ -111,4 +116,26 @@ public class SpaceService {
                 .stream()
                 .toList();
     }
+
+    public void deleteSpace(Long id, Usuario user) {
+        Space space = findById(id);
+
+        _validateDeleteSpace(space, user);
+        space.setStatus(ActiveInactive.INACTIVE);
+
+        spaceRepository.save(space);
+    }
+
+    private void _validateDeleteSpace(Space space, Usuario user) {
+        Optional<UsuarioSpace> userSpaceOptional = userSpaceRepository.findByUserAndSpace(user, space);
+
+        if(userSpaceOptional.isPresent()){
+            UsuarioSpace userSpace = userSpaceOptional.get();
+
+            if(userSpace.isDefault()){
+                throw new DefaultSpaceDeletionException("Não é permitido deletar o espaço que é o default do usuário.");
+            }
+        }
+    }
+
 }

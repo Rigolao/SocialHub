@@ -1,5 +1,6 @@
 package br.socialhub.api.models;
 
+import br.socialhub.api.enums.ActiveInactive;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,10 @@ public class Space {
     @Column(name = "NOME", length = 50, nullable = false)
     private String name;
 
+    @Column(name = "STATUS", length = 50, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ActiveInactive status;
+
     @Column(name = "DTCRIACAO")
     private LocalDateTime dateCreation;
 
@@ -32,6 +37,7 @@ public class Space {
 
     public Space (String name){
         this.name = name;
+        this.status = ActiveInactive.ACTIVE;
         this.dateCreation = LocalDateTime.now();
     }
 }
