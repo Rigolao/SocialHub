@@ -53,7 +53,7 @@ public class SpaceController {
         var user = userService.findByEmail(email);
         var role = roleService.roleCreator();
 
-        userSpaceService.assignRoleToUserInSpace(user, space, role);
+        userSpaceService.assignRoleToUserInSpace(user, space, role, false);
 
         var response = spaceService.createResponse(space);
 

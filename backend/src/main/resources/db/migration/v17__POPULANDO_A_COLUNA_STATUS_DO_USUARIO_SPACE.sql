@@ -1,0 +1,1 @@
+UPDATE usuario_space  us set status='ACTIVE' where STATUS is null;
