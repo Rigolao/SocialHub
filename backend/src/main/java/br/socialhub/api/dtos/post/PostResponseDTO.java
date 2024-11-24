@@ -8,7 +8,9 @@ import br.socialhub.api.models.ContaPostagem;
 import br.socialhub.api.models.Postagem;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public record PostResponseDTO(Long id, String title, String description, LocalDateTime scheduledDate, PostStatus status, List<SocialMediaResponseDTO> socialNetworks, List<AnexoDTO> attachments) {
@@ -24,7 +26,9 @@ public record PostResponseDTO(Long id, String title, String description, LocalDa
                         .map(Conta::getSocialNetwork)
                         .map(SocialMediaResponseDTO::new)
                         .collect(Collectors.toList()),
-                postagem.getAnexos().stream()
+                Optional.ofNullable(postagem.getAnexos())
+                        .orElse(Collections.emptyList())
+                        .stream()
                         .map(AnexoDTO::new)
                         .collect(Collectors.toList())
         );
