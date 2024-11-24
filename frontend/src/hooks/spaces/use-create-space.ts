@@ -12,6 +12,7 @@ export default function useCreateSpace() {
         queryKey: ['createSpace'],
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['spaces'] });
+            queryClient.invalidateQueries({ queryKey: ['user'] });
         },
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
