@@ -17,13 +17,34 @@ import useGetUser from "@/hooks/user/use-get-user.ts";
 import NewSpaceButton from "@/features/spaces/components/new-space-button.tsx";
 import {useNavigate} from "react-router-dom";
 import {useSpace} from "@/hooks/spaces/use-space.ts";
+import useDeleteSpace from "@/hooks/spaces/use-delete-space.ts";
+import {useEffect, useRef} from "react";
+import {useAlertDialog} from "@/providers/alert-dialog-provider.tsx";
 
 export default function SpacesPage() {
 
     const {selectedSpace, setSelectedSpace} = useSpace();
     const {data: user, isLoading} = useGetUser();
+    const spaceIdRef = useRef<number>();
+    const {mutateAsync} = useDeleteSpace({idSpace: spaceIdRef.current as number});
+    const { showDialog } = useAlertDialog();
+
+    useEffect(() => {
+        console.log(spaceIdRef)
+    }, [spaceIdRef])
 
     const navigate = useNavigate();
+
+    const onDelete = (idSpace: number) => {
+        console.log(idSpace)
+        spaceIdRef.current = idSpace;
+
+        showDialog({
+            title: 'Excluir space',
+            description: 'Tem certeza de quer remover este space?',
+            onConfirm: () => mutateAsync({message: "Space removido."})
+        });
+    }
 
     const columns: ColumnDef<Space>[] = [
         {
@@ -94,6 +115,7 @@ export default function SpacesPage() {
                                 Gerenciar
                             </DropdownMenuItem>
                             <DropdownMenuItem
+                                onClick={() => onDelete(space.id)}
                                 disabled={space.role !== 'CREATOR'}>
                                 Deletar
                             </DropdownMenuItem>
