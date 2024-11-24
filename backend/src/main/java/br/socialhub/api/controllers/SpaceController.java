@@ -235,8 +235,10 @@ public class SpaceController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("teste/{spaceId}")
-    public ResponseEntity<PageDataDTO> page(@PathVariable final Long spaceId) {
+    @GetMapping("{spaceId}/dashboard")
+    @PreAuthorize("@userSpaceService.userIsCreatorOrEditorInSpace(@jwtService.extractSubject(#token), #spaceId)")
+    public ResponseEntity<PageDataDTO> page(@PathVariable final Long spaceId,
+                                            @RequestHeader(AUTHORIZATION) final String token) {
         return ResponseEntity.ok(postService.getPageDataForSpace(spaceId));
     }
 }
