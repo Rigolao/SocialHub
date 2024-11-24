@@ -1,21 +1,14 @@
 import PageTitle from "@/components/custom/page-title.tsx";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
 import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
-import useGetUser from "@/hooks/user/use-get-user.ts";
 import {useAuth} from "@/hooks/auth/use-auth.ts";
 import {BlueskyIcon} from "@/components/custom/bluesky-icon.tsx";
+import useGetUserPortifolio from "@/hooks/user/use-get-user-portifolio.ts";
 
 export default function PortifolioPage() {
 
-    const {token} = useAuth();
-    const {data: user, isLoading} = useGetUser();
-
-    const calculateAge = (birthday: string) => {
-        const birthDate = new Date(birthday);
-        const ageDifMs = Date.now() - birthDate.getTime();
-        const ageDate = new Date(ageDifMs);
-        return Math.abs(ageDate.getUTCFullYear() - 1970);
-    }
+    const {token, id} = useAuth();
+    const {data, isLoading} = useGetUserPortifolio({userId: id});
 
     return (
         <div className="grow mt-8 mx-6">
@@ -32,32 +25,41 @@ export default function PortifolioPage() {
                 <div className='flex grow'>
                     <div className="flex flex-col items-center gap-2">
                         <Avatar className='h-64 w-64'>
-                            {!user?.url_photo || isLoading ? (
+                            {!data?.url_photo || isLoading ? (
                                 <AvatarFallback>
                                     <LoadingSpinner/>
                                 </AvatarFallback>
                             ) : (
-                                <AvatarImage src={`${user.url_photo}?token=${token}&id=${user.id}`}/>
+                                <AvatarImage src={`${data.url_photo}?token=${token}&id=${id}`}/>
                             )}
                         </Avatar>
                         <div
-                            className="font-semibold tetx-lg">{!user || isLoading ? 'Carregando...' : user.name}</div>
+                            className="font-semibold tetx-lg">{!data || isLoading ? 'Carregando...' : data.name}</div>
                     </div>
                 </div>
+                <div className="flex w-full items-center justify-center gap-4 my-6 flex-wrap">
+                    {!data || isLoading ? (<div>
+                        <LoadingSpinner className='h-10 w-10'/>
+                    </div>) : (
+                        data.socialNetworks.map((network, index) => (
+                            <div
+                                key={index}
+                                className='flex items-center bg-background shadow rounded justify-center gap-4 p-6 border-2'
+                            >
+                                {network.networkName.toLowerCase() === 'bluesky' && <BlueskyIcon className='w-10 h-10'/>}
+                                <div className='flex flex-col'>
+                                    <span className='bold'>{network.networkName}</span>
+                                    <span className='italic'>{network.socialNetworkName}</span>
+                                </div>
+                                <div className='italic'>
+                                    {network.followCount} Seguidores
+                                </div>
+                            </div>
+                        ))
+                    )}
 
-                <div className="flex w-full items-center justify-center gap-4 my-6">
-                    <div className='flex items-center bg-background shadow rounded justify-center gap-4 p-6 border-2 '>
-                        <BlueskyIcon className='w-10 h-10'/>
-                        <div className='flex flex-col'>
-                            <span className='bold'>BlueSky</span>
-                            <span className='italic'>@Rigolão</span>
-                        </div>
-                        <div className='italic'>
-                            514 Seguidores
-                        </div>
-                    </div>
+
                 </div>
-
             </div>
         </div>
     );
