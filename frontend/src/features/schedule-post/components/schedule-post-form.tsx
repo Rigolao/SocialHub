@@ -74,12 +74,9 @@ export default function SchedulePostForm() {
 
         if(idPost) {
             postData?.attachments?.forEach(attachment => {
-                console.log(attachment);
                 const find = form.getValues('files')?.find(file => file.name === attachment.nameFile);
-                console.log(find);
                 if(!find) {
-                    console.log('add')
-                    formData.append('existingAttachmentIds', attachment.id);
+                    formData.append('attachmentIdsToRemove', attachment.id);
                 }
             });
 
