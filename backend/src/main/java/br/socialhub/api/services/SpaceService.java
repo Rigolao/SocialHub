@@ -1,5 +1,6 @@
 package br.socialhub.api.services;
 
+import br.socialhub.api.dtos.account.AccountRequestDTO;
 import br.socialhub.api.dtos.post.PostDTO;
 import br.socialhub.api.dtos.post.PostQueryDTO;
 import br.socialhub.api.dtos.social_media.SocialMediaResponseDTO;
@@ -16,6 +17,8 @@ import br.socialhub.api.repositories.AccountRepository;
 import br.socialhub.api.repositories.PostRepository;
 import br.socialhub.api.repositories.SpaceRepository;
 import br.socialhub.api.repositories.UserSpaceRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -78,10 +81,20 @@ public class SpaceService {
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_USER));
     }
 
-    public void associateAccountWithSpace(final Space space, final SocialNetwork socialNetwork, final String token){
-        final Conta conta = new Conta(space,socialNetwork,token);
+    public void associateAccountWithSpace(final Space space, final SocialNetwork socialNetwork, final AccountRequestDTO accountRequestDTO){
+        _validateJson(accountRequestDTO.token());
+
+        final Conta conta = new Conta(space,socialNetwork,accountRequestDTO.token());
 
         accountRepository.save(conta);
+    }
+
+    private void _validateJson(String token) {
+        try {
+            new ObjectMapper().readTree(token);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("Token inválido. Deve ser um JSON válido.", e);
+        }
     }
 
     public List<SocialMediaResponseDTO> getSocialNetworksForSpace(Long id) {

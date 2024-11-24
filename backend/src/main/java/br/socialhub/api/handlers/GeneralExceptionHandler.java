@@ -104,4 +104,10 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         ErroDTO erro = new ErroDTO(e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(erro);
     }
+
+    @ExceptionHandler(InvalidJsonException.class)
+    public ResponseEntity<ErroDTO> handleDefaultSpaceDeletionException(InvalidJsonException e){
+        ErroDTO erro = new ErroDTO(e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(erro);
+    }
 }

@@ -1,6 +1,8 @@
 package br.socialhub.api.controllers;
 
 import br.socialhub.api.dtos.RoleAssigmentDTO;
+import br.socialhub.api.dtos.account.AccountRequestDTO;
+import br.socialhub.api.dtos.dashboard.PageDataDTO;
 import br.socialhub.api.dtos.post.PostCreateDTO;
 import br.socialhub.api.dtos.post.PostDTO;
 import br.socialhub.api.dtos.post.PostResponseDTO;
@@ -129,7 +131,6 @@ public class SpaceController {
         return ResponseEntity.ok(spaceService.getSocialNetworksForSpace(spaceId));
     }
 
-
     @GetMapping("{spaceId}/posts")
     @PreAuthorize("@userSpaceService.userIsCreatorOrEditorInSpace(@jwtService.extractSubject(#token), #spaceId)")
     public ResponseEntity<List<PostDTO>> getSpacePosts(@PathVariable final Long spaceId,
@@ -141,13 +142,12 @@ public class SpaceController {
         return ResponseEntity.ok(posts);
     }
 
-
     @PostMapping("{spaceId}/social-networks/{idSocialNetwork}")
     @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#tokeJwt), #spaceId)")
     public ResponseEntity<Void> associateAccountWithSpace(@PathVariable final Long spaceId,
                                                           @PathVariable final Long idSocialNetwork,
                                                           @RequestHeader(AUTHORIZATION) final String tokeJwt,
-                                                          @RequestBody String token) {
+                                                          @RequestBody AccountRequestDTO token) {
         var space = spaceService.findById(spaceId);
         var socialNetwork = socialNetworkService.findById(idSocialNetwork);
 
@@ -223,7 +223,6 @@ public class SpaceController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-
     @Transactional
     @DeleteMapping("{spaceId}")
     @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#token), #spaceId)")
@@ -234,6 +233,11 @@ public class SpaceController {
 
         spaceService.deleteSpace(spaceId, user);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("teste/{spaceId}")
+    public ResponseEntity<PageDataDTO> page(@PathVariable final Long spaceId) {
+        return ResponseEntity.ok(postService.getPageDataForSpace(spaceId));
     }
 }
 

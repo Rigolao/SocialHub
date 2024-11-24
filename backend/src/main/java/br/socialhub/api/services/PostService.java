@@ -1,5 +1,7 @@
 package br.socialhub.api.services;
 
+import br.socialhub.api.dtos.dashboard.PageDataDTO;
+import br.socialhub.api.dtos.dashboard.PostsByWeekDTO;
 import br.socialhub.api.dtos.post.PostCreateDTO;
 import br.socialhub.api.dtos.post.PostDTO;
 import br.socialhub.api.dtos.post.PostResponseDTO;
@@ -23,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -228,4 +231,33 @@ public class PostService {
         Postagem postagem = findById(id);
         return new PostResponseDTO(postagem);
     }
+
+    public PageDataDTO getPageDataForSpace(Long spaceId) {
+        int postsMonth = postRepository.countPostsForSpaceInMonth(spaceId, LocalDate.now());
+        int postsWeek = postRepository.countPostsForSpaceInWeek(spaceId, LocalDate.now());
+
+        List<PostsByWeekDTO> postsByWeek = postRepository.getPostsByWeekForSpace(spaceId).stream()
+                .map(weekData -> {
+                    LocalDate startWeek = getStartOfWeek(weekData.week());
+                    LocalDate endWeek = startWeek.plusDays(6);
+                    return new PostsByWeekDTO(formatWeekRange(startWeek, endWeek), weekData.posts());
+                })
+                .collect(Collectors.toList());
+
+        return new PageDataDTO(postsMonth, postsWeek, postsByWeek);
+    }
+
+    private LocalDate getStartOfWeek(int weekNumber) {
+        LocalDate firstDayOfYear = LocalDate.now().withDayOfYear(1);
+        return firstDayOfYear
+                .with(java.time.temporal.WeekFields.ISO.weekOfYear(), weekNumber)
+                .with(java.time.temporal.WeekFields.ISO.dayOfWeek(), 1);
+    }
+
+    private String formatWeekRange(LocalDate start, LocalDate end) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM");
+        return start.format(formatter) + " - " + end.format(formatter);
+    }
+
+
 }
