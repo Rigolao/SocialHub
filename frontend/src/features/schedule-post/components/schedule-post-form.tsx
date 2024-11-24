@@ -56,7 +56,8 @@ export default function SchedulePostForm() {
     const onSubmit = (data: z.infer<typeof schedulePostFormSchema>) => {
         const formData = new FormData();
 
-        const formattedDate = data.date.toISOString().slice(0, 19);
+        const localDate = new Date(data.date.getTime() - data.date.getTimezoneOffset() * 60000);
+        const formattedDate = localDate.toISOString().slice(0, 19);
 
         formData.append('title', data.title);
         formData.append('description', data.description);
