@@ -43,3 +43,18 @@ export type AddUserToSpaceRequest = {
 export type ChangeUserRoleRequest = {
     idRole: number;
 }
+
+export type ConnectSocialNetworkRequest = {
+    token: string;
+}
+
+export type SpaceDashboard = {
+    postsMonth: number;
+    postsWeek: number;
+    postsByWeek: [
+        {
+            week: string;
+            posts: number;
+        }
+    ]
+}
