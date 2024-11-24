@@ -39,9 +39,17 @@ public class Conta {
     @OneToMany(mappedBy = "conta", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ContaPostagem> contaPostagem;
 
+
+   @PrePersist
+   public void prePersist(){
+       if(this.status == null){
+           this.status = ActiveInactive.ACTIVE;
+       }
+   }
     public Conta(Space space, SocialNetwork socialNetwork, String token){
         this.socialNetwork = socialNetwork;
         this.space = space;
         this.token = token;
+        this.status = ActiveInactive.ACTIVE;
     }
 }
