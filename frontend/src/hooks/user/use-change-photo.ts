@@ -1,6 +1,7 @@
 import {useAuth} from "@/hooks/auth/use-auth.ts";
 import {usePost} from "@/hooks/use-post.ts";
 import {MessageResponse} from "@/types";
+import queryClient from "@/lib/query-client";
 
 export default function useChangePhoto() {
 
@@ -12,6 +13,9 @@ export default function useChangePhoto() {
         getHeaders: () => ({
             Authorization: `Bearer ${token}`
         }),
+        onSuccess() {
+            queryClient.invalidateQueries({queryKey: ['user']});
+        }
     });
 
     return changePhoto;
