@@ -156,6 +156,19 @@ public class SpaceController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("{spaceId}/social-networks/{idSocialNetwork}")
+    @PreAuthorize("@userSpaceService.userIsCreatorInSpace(@jwtService.extractSubject(#tokeJwt), #spaceId)")
+    public ResponseEntity<Void> dissociateAccountFromSpace(@PathVariable final Long spaceId,
+                                                          @PathVariable final Long idSocialNetwork,
+                                                          @RequestHeader(AUTHORIZATION) final String tokeJwt) {
+        var space = spaceService.findById(spaceId);
+        var socialNetwork = socialNetworkService.findById(idSocialNetwork);
+
+        spaceService.dissociateAccountFromSpace(space, socialNetwork);
+
+        return ResponseEntity.ok().build();
+    }
+
 
     @GetMapping("{spaceId}/posts/{postId}")
     @PreAuthorize("@userSpaceService.userIsCreatorOrEditorInSpace(@jwtService.extractSubject(#token), #spaceId)")

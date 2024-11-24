@@ -42,6 +42,6 @@ public class Postagem {
     @OneToMany(mappedBy = "postagem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ContaPostagem> contaPostagens;
 
-    @OneToMany(mappedBy = "postagem", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "postagem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Anexo> anexos;
 }

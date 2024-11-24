@@ -31,7 +31,7 @@ public class Conta {
     @JoinColumn(name = "IDREDESOCIAL", referencedColumnName = "IDREDESOCIAL", nullable = false)
     private SocialNetwork socialNetwork;
 
-    @OneToMany(mappedBy = "conta", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "conta", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ContaPostagem> contaPostagem;
 
     public Conta(Space space, SocialNetwork socialNetwork, String token){

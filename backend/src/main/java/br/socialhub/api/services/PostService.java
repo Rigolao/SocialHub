@@ -143,6 +143,7 @@ public class PostService {
                     .toList();
 
             // Remove os anexos identificados
+            anexoRepository.deleteAll(anexosParaRemover);
             postagem.getAnexos().removeAll(anexosParaRemover);
         }
 

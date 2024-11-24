@@ -138,4 +138,9 @@ public class SpaceService {
         }
     }
 
+    public void dissociateAccountFromSpace(Space space, SocialNetwork socialNetwork) {
+        Conta conta = accountRepository.findBySpaceAndSocialNetwork(space, socialNetwork);
+
+        accountRepository.delete(conta);
+    }
 }
