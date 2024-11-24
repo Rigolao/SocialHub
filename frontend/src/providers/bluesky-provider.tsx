@@ -3,13 +3,14 @@ import {createContext, useContext, useState} from "react";
 import {AtpAgent} from "@atproto/api";
 import {toast} from "sonner";
 import useConnectSocialNetworkToSpace from "@/hooks/spaces/use-connect-social-network-to-space.ts";
+import useDisconnectSocialNetworkFromSpace from "@/hooks/spaces/use-disconnect-social-network-from-space.ts";
 
 type BlueskyProviderState = {
     blueskyResponse: BlueskyUserResponse | undefined;
     isLoading: boolean;
     blueskyConnected: () => boolean;
     blueskyLogin: (identifier: string, password: string, idSpace: number | undefined, idBlueSky: number | undefined) => Promise<void>;
-    blueskyLogout: () => Promise<void>;
+    blueskyLogout: (idSpace: number | undefined, idBlueSky: number | undefined) => Promise<void>;
 };
 
 const initialState: BlueskyProviderState = {
@@ -38,6 +39,7 @@ export const BlueskyProvider = ({children}: { children: React.ReactNode }) => {
 
     // Chama o hook com os valores dos estados
     const { mutateAsync: connectSocialNetwork } = useConnectSocialNetworkToSpace(idSpace!, idBlueSky!);
+    const { mutateAsync: disconnectSocialNetwork } = useDisconnectSocialNetworkFromSpace(idSpace!, idBlueSky!);
 
     const blueskyConnected = () => {
         return !!(response && response.data.active);
@@ -77,12 +79,10 @@ export const BlueskyProvider = ({children}: { children: React.ReactNode }) => {
             if (idSpace && idBlueSky) {
 
                 const object = {
-                    did: token.data.did,
-                    accessJwt: token.data.accessJwt,
-                    refreshJwt: token.data.refreshJwt
+                    token: token.data.refreshJwt
                 }
 
-                await connectSocialNetwork(JSON.stringify(object))
+                await connectSocialNetwork(object)
                     .then(() => {
                         toast.success("Conexão com Bluesky realizada com sucesso!");
                     })
@@ -90,8 +90,6 @@ export const BlueskyProvider = ({children}: { children: React.ReactNode }) => {
                         _showError({ err });
                         setResponse(undefined);
                     });
-            } else {
-                setResponse(undefined);
             }
         } catch (err) {
             console.log(err);
@@ -102,7 +100,9 @@ export const BlueskyProvider = ({children}: { children: React.ReactNode }) => {
         }
     };
 
-    const blueskyLogout = async () => {
+    const blueskyLogout = async (idSpace: number, idBlueSky: number) => {
+        setIdSpace(idSpace);
+        setIdBlueSky(idBlueSky);
         setLoading(true);
         if (agent.hasSession) {
             await agent
@@ -114,6 +114,8 @@ export const BlueskyProvider = ({children}: { children: React.ReactNode }) => {
             setResponse(undefined);
             setLoading(false);
         }
+
+        await disconnectSocialNetwork({message: ''}).then(() => {}).catch((err) => _showError({ err }));
     };
 
     const value = {

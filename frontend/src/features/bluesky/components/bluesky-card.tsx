@@ -4,6 +4,7 @@ import {useBluesky} from "@/providers/bluesky-provider.tsx";
 import LoginDialog from "@/features/bluesky/components/login-dialog.tsx";
 import {useEffect, useState} from "react";
 import {useSpace} from "@/hooks/spaces/use-space.ts";
+import useGetSocialNetworks from "@/hooks/social-networks/use-get-social-networks.ts";
 
 export default function BlueskyCard() {
 
@@ -11,6 +12,8 @@ export default function BlueskyCard() {
     const {selectedSpace} = useSpace()
     const [open, setOpen] = useState<boolean>(false);
     const [connected, setConnected] = useState<boolean>(false);
+
+    const { data: socialNetworks } = useGetSocialNetworks();
 
     const openDialog = () => {
         setOpen(true)
@@ -21,13 +24,19 @@ export default function BlueskyCard() {
     }
 
     const _logout = async () => {
-        await blueskyLogout();
+        const bluesky = socialNetworks?.find(
+            (socialNetwork) => socialNetwork.name.toLowerCase() === "bluesky"
+        );
+
+        await blueskyLogout(selectedSpace?.id, bluesky?.id);
     }
 
     useEffect(() => {
         if (selectedSpace?.connectedAccounts) {
+            console.log(!!selectedSpace?.connectedAccounts.find((account) => account.name.toLowerCase() === 'bluesky'))
             setConnected(!!selectedSpace?.connectedAccounts.find((account) => account.name.toLowerCase() === 'bluesky'));
         } else if (blueskyResponse) {
+            console.log(blueskyResponse)
             setConnected(true);
         }
     }, [selectedSpace, blueskyResponse]);

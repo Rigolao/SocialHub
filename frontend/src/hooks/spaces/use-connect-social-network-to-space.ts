@@ -1,13 +1,14 @@
 import {usePost} from "@/hooks/use-post";
 import {MessageResponse} from "@/types";
 import {useAuth} from "@/hooks/auth/use-auth.ts";
+import {ConnectSocialNetworkRequest} from "@/types/spaces";
 
 export default function useConnectSocialNetworkToSpace(idSpace: number, idSocialNetwork: number) {
     const {token} = useAuth();
 
     const url = `/spaces/${idSpace}/social-networks/${idSocialNetwork}`;
 
-    return usePost<string, MessageResponse>({
+    return usePost<ConnectSocialNetworkRequest, MessageResponse>({
         url,
         queryKey: ["connectSocialNetworkToSpace", idSpace, idSocialNetwork],
         getHeaders: () => ({
