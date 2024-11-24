@@ -23,16 +23,12 @@ export function ConnectSocialMediaCard({ label, data, isLoading, icon: Icon, rib
 
     const [userCanInteract, setUserCanInteract] = useState<boolean>(selectedSpace?.role === 'CREATOR');
 
-    const randomNumber = () => {
-        return (Math.random() * 500).toFixed();
-    }
-
     useEffect(() => {
         setUserCanInteract(selectedSpace?.role === 'CREATOR');
     }, [selectedSpace]);
 
     return (
-        <Card className="flex flex-col w-full min-w-72 min-h-52 md:min-h-48 items-center text-center justify-center gap-4">
+        <Card className={cn("flex flex-col w-full min-w-72 min-h-52 md:min-h-48 items-center text-center gap-4", data ? 'justify-between' : 'justify-center')}>
             <CardTitle className={cn("flex w-full flex-col items-center gap-2", data ? 'p-0' : 'px-4')}>
                 {data ? (
                     <div className={cn('flex items-center w-full gap-4 rounded-t p-3', ribbonColor)}>
@@ -48,7 +44,7 @@ export function ConnectSocialMediaCard({ label, data, isLoading, icon: Icon, rib
                                         <InfoIcon className="h-5 w-5"/>
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        Informações sobre a conexão
+                                        Conecte-se com sua conta do {label} para ter acesso a funcionalidades exclusivas.
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
@@ -60,35 +56,18 @@ export function ConnectSocialMediaCard({ label, data, isLoading, icon: Icon, rib
             </CardTitle>
             <CardContent className="flex w-full flex-col items-center gap-2">
                 {data ? (
-                    <div className='flex w-full flex-col self-start gap-3'>
-                        <div className='flex w-full justify-between'>
-                            <div className='flex flex-col'>
-                                <span className='text-xl self-start'>Seguidores</span>
-                                <span className='font-bold text-2xl self-start'>{randomNumber()}</span>
-                            </div>
-                            <div className='flex flex-col'>
-                                <span className='text-xl self-start'>Postagens</span>
-                                <span className='font-bold text-2xl self-start'>{randomNumber()}</span>
-                            </div>
+                        <div className='flex flex-col gap-2'>
+                            <span className={'italic'}>Agora você consegue criar publicações para a conta conectada no {label}</span>
+                            <Button
+                                className='flex gap-2 w-min self-center'
+                                variant="outline"
+                                disabled={isLoading || !userCanInteract}
+                                onClick={disconnectSocialMedia}>
+                                <>
+                                    {isLoading && <LoadingSpinner />} Desconectar
+                                </>
+                            </Button>
                         </div>
-                        <div className='flex w-full justify-between'>
-                            <div className='flex flex-col'>
-                                <span className='text-xl self-start'>Curtidas</span>
-                                <span className='font-bold text-2xl self-start'>{randomNumber()}</span>
-                            </div>
-                            <div className='self-end'>
-                                <Button
-                                    className='flex gap-2'
-                                    variant="outline"
-                                    disabled={isLoading || !userCanInteract}
-                                    onClick={disconnectSocialMedia}>
-                                    <>
-                                        {isLoading && <LoadingSpinner />} Desconectar
-                                    </>
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
                 ) : (
                     <>
                         <Button
