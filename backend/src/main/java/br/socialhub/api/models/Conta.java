@@ -1,5 +1,6 @@
 package br.socialhub.api.models;
 
+import br.socialhub.api.enums.ActiveInactive;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +27,10 @@ public class Conta {
 
     @Column(name = "TOKEN")
     private String token;
+
+    @Column(name = "STATUS", length = 50, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ActiveInactive status;
 
     @OneToOne
     @JoinColumn(name = "IDREDESOCIAL", referencedColumnName = "IDREDESOCIAL", nullable = false)
