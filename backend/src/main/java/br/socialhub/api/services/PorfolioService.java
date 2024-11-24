@@ -27,14 +27,14 @@ public class PorfolioService {
                  .flatMap(List::stream)
                  .toList();
 
-         if (accounts.isEmpty()){
-             throw new RuntimeException();
-         }
-
         return new PortfolioResponseDTO(user.getName(), user.getId(), _preencherInformation(accounts));
     }
 
     private List<SocialInformationDTO>  _preencherInformation(List<Conta> accounts) {
+        if(accounts.isEmpty()){
+            return new ArrayList<>();
+        }
+
         List<SocialInformationDTO> socialInformationDTOS = new ArrayList<>();
         for (Conta account : accounts) {
             InformationProfileDTO information = blueSkyService.getProfile(account);
