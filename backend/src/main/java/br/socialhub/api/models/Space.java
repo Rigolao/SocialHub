@@ -35,6 +35,12 @@ public class Space {
     @OneToMany(mappedBy = "space", fetch = FetchType.LAZY)
     private List<UsuarioSpace> userSpaces;
 
+    @PrePersist
+    public void prePersist(){
+        if(this.status == null){
+            this.status = ActiveInactive.ACTIVE;
+        }
+    }
     public Space (String name){
         this.name = name;
         this.status = ActiveInactive.ACTIVE;
