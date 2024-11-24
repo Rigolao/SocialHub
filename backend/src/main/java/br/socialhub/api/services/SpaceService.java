@@ -139,7 +139,7 @@ public class SpaceService {
     }
 
     public void dissociateAccountFromSpace(Space space, SocialNetwork socialNetwork) {
-        Conta conta = accountRepository.findBySpaceAndSocialNetwork(space, socialNetwork);
+        Conta conta = accountRepository.findBySpaceAndSocialNetworkAndStatus(space, socialNetwork, ActiveInactive.ACTIVE);
 
         conta.setStatus(ActiveInactive.INACTIVE);
 
