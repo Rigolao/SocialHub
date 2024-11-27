@@ -1,18 +1,17 @@
 import { User } from "@/types/user";
-import { useEffect, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover.tsx";
-import { Button } from "@/components/ui/button.tsx";
+import { useEffect, useMemo, useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command.tsx";
-import { cn } from "@/lib/utils.ts";
-import useSearchUser from "@/hooks/user/use-search-user.ts";
-import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
-import {useAuth} from "@/hooks/auth/use-auth.ts";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
+import useSearchUser from "@/hooks/user/use-search-user";
+import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/hooks/auth/use-auth";
 import { FieldValues, UseControllerProps } from "react-hook-form";
-import LoadingSpinner from "@/components/ui/loding-spinner.tsx";
+import LoadingSpinner from "@/components/ui/loding-spinner";
 
-//TODO - Arrumar busca, a lista esta correta, mas a renderização só ocorre quando fecha e abre o popover
 interface UserSelectorProps<T extends FieldValues> extends UseControllerProps<T> {
     users?: User[];
     label?: string;
@@ -24,37 +23,33 @@ export default function UserSelector<T extends FieldValues>({
                                                                 label,
                                                                 control,
                                                                 name,
-                                                                excludedUsers = []
+                                                                excludedUsers = [],
                                                             }: UserSelectorProps<T>) {
-    const [open, setOpen] = useState<boolean>(false);
-    const [inputValue, setInputValue] = useState<string>("");
-    const [displayUsers, setDisplayUsers] = useState<User[]>([]);
-    const [debouncedInputValue, setDebouncedInputValue] = useState<string>(inputValue);
-    const [isDebouncing, setIsDebouncing] = useState<boolean>(false);
-
     const { token } = useAuth();
 
-    // Debounce para o inputValue
+    // Estados para controle
+    const [open, setOpen] = useState<boolean>(false);
+    const [inputValue, setInputValue] = useState<string>("");
+    const [debouncedInputValue, setDebouncedInputValue] = useState<string>("");
+
+    // Debounce para entrada do usuário
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedInputValue(inputValue);
-            setIsDebouncing(false);
         }, 300);
-        setIsDebouncing(true);
-        return () => {
-            clearTimeout(handler);
-        };
+        return () => clearTimeout(handler);
     }, [inputValue]);
 
-    // Hook para buscar os usuários filtrados com debounce aplicado
-    const { data: filteredUsers, isLoading } = useSearchUser({ filter: debouncedInputValue });
+    // Busca de usuários (API) e filtragem
+    const { data: filteredUsers, isFetching } = useSearchUser({ filter: debouncedInputValue });
 
-    // Atualiza displayUsers sempre que filteredUsers ou outros parâmetros mudarem
-    useEffect(() => {
+    const displayUsers = useMemo(() => {
         const baseUsers = users ?? filteredUsers ?? [];
-        const filtered = baseUsers.filter(user => !excludedUsers.some(excluded => excluded.id === user.id));
-        setDisplayUsers(filtered);
+        return baseUsers.filter(user => !excludedUsers.some(excluded => excluded.id === user.id));
     }, [users, filteredUsers, excludedUsers]);
+
+    // Encontra usuário pelo ID
+    const findUserById = (id: string) => displayUsers.find(user => user.id.toString() === id);
 
     return (
         <FormField
@@ -72,55 +67,63 @@ export default function UserSelector<T extends FieldValues>({
                                 aria-expanded={open}
                             >
                                 {field.value
-                                    ? displayUsers?.find((user) => user.id.toString() === field.value)?.email
+                                    ? findUserById(field.value)?.email ?? "Usuário não encontrado"
                                     : "Selecione o usuário"}
                                 <CaretSortIcon className="h-4 w-4 opacity-50" />
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-[463px] p-0">
-                            <Command>
+                            <Command shouldFilter={false}>
                                 <CommandInput
-                                    onValueChange={setInputValue}
-                                    placeholder="Selecione o usuário"
+                                    value={inputValue}
+                                    onValueChange={(value) => {
+                                        console.log("Input Value Changed:", value);
+                                        setInputValue(value);
+                                    }}
+                                    placeholder="Pesquisar usuário"
                                     className="h-9"
                                     disabled={!!users}
                                 />
                                 <CommandList>
-                                    {(isLoading || isDebouncing) ? (
-                                        <CommandEmpty className='flex h-16 items-center justify-center'>
+                                    {isFetching && debouncedInputValue && (
+                                        <CommandEmpty className="flex h-16 items-center justify-center">
                                             <LoadingSpinner />
                                         </CommandEmpty>
-                                    ) : displayUsers.length === 0 ? (
-                                        <CommandEmpty>Usuário não encontrado</CommandEmpty>
-                                    ) : (
+                                    )}
+                                    {!isFetching && displayUsers.length === 0 && (
+                                        <CommandEmpty>Nenhum usuário encontrado</CommandEmpty>
+                                    )}
+                                    {!isFetching && displayUsers.length > 0 && (
                                         <CommandGroup>
-                                            {displayUsers.map((user) => (
+                                            {displayUsers.map(user => (
                                                 <CommandItem
                                                     key={user.id}
                                                     value={user.id.toString()}
                                                     onSelect={(currentValue) => {
-                                                        if (currentValue === field.value) {
-                                                            field.onChange('');
-                                                        } else {
-                                                            const selectedUser = displayUsers.find(u => u.id.toString() === currentValue);
-                                                            field.onChange(selectedUser ? selectedUser.id.toString() : '');
-                                                        }
-                                                        setOpen(false); // Fechar o popover após a seleção
+                                                        field.onChange(
+                                                            field.value === currentValue ? "" : currentValue
+                                                        );
+                                                        setOpen(false); // Fechar após seleção
                                                     }}
                                                 >
                                                     <Avatar>
-                                                        {!user?.url_photo ? (
-                                                            <AvatarFallback><LoadingSpinner /></AvatarFallback>
-                                                        ) : (
+                                                        {user.url_photo ? (
                                                             <AvatarImage
-                                                                src={`${user.url_photo}?token=${token}&id=${user.id}`} />
+                                                                src={`${user.url_photo}?token=${token}&id=${user.id}`}
+                                                            />
+                                                        ) : (
+                                                            <AvatarFallback>
+                                                                <LoadingSpinner />
+                                                            </AvatarFallback>
                                                         )}
                                                     </Avatar>
                                                     {user.email}
                                                     <CheckIcon
                                                         className={cn(
                                                             "ml-auto h-4 w-4",
-                                                            field.value === user.id.toString() ? "opacity-100" : "opacity-0"
+                                                            field.value === user.id.toString()
+                                                                ? "opacity-100"
+                                                                : "opacity-0"
                                                         )}
                                                     />
                                                 </CommandItem>
