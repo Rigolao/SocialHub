@@ -1,5 +1,5 @@
 import {Calendar} from "@/components/ui/calendar.tsx";
-import {useState} from "react";
+import {MouseEvent, useState} from "react";
 import {cn} from "@/lib/utils.ts";
 import {ptBR} from "date-fns/locale";
 import {isSameDay} from "date-fns";
@@ -23,12 +23,14 @@ export default function CalendarPage() {
     });
 
     const handleDayClick = (selectedDay: Date, modifiers: any) => {
+        setDate(selectedDay);
+
         if (modifiers.posts) {
             setSelectedPostDay(posts?.filter((post) => isSameDay(post.scheduledDate, selectedDay)));
-            setDate(selectedDay);
             setDialogOpen(true);
         }
     };
+
 
     const handleMonthChange = (month: Date) => {
         const newDate = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -66,7 +68,6 @@ export default function CalendarPage() {
                     locale={ptBR}
                     mode="single"
                     selected={date}
-                    onSelect={setDate}
                     className="flex grow"
                     classNames={{
                         months:
