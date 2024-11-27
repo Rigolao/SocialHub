@@ -104,28 +104,29 @@ export default function UserSelector<T extends FieldValues>({
                                                             field.value === currentValue ? "" : currentValue
                                                         );
                                                         setOpen(false); // Fechar após seleção
-                                                    }}
-                                                >
-                                                    <Avatar>
-                                                        {user.url_photo ? (
-                                                            <AvatarImage
-                                                                src={`${user.url_photo}?token=${token}&id=${user.id}`}
-                                                            />
-                                                        ) : (
-                                                            <AvatarFallback>
-                                                                <LoadingSpinner />
-                                                            </AvatarFallback>
-                                                        )}
-                                                    </Avatar>
-                                                    {user.email}
-                                                    <CheckIcon
-                                                        className={cn(
-                                                            "ml-auto h-4 w-4",
-                                                            field.value === user.id.toString()
-                                                                ? "opacity-100"
-                                                                : "opacity-0"
-                                                        )}
-                                                    />
+                                                    }}>
+                                                    <div className='flex w-full gap-2 items-center justify-between'>
+                                                        <Avatar>
+                                                            {user.url_photo ? (
+                                                                <AvatarImage
+                                                                    src={`${user.url_photo}?token=${token}&id=${user.id}`}
+                                                                />
+                                                            ) : (
+                                                                <AvatarFallback>
+                                                                    <LoadingSpinner />
+                                                                </AvatarFallback>
+                                                            )}
+                                                        </Avatar>
+                                                        {user.email}
+                                                        <CheckIcon
+                                                            className={cn(
+                                                                "ml-auto h-4 w-4",
+                                                                field.value === user.id.toString()
+                                                                    ? "opacity-100"
+                                                                    : "opacity-0"
+                                                            )}
+                                                        />
+                                                    </div>
                                                 </CommandItem>
                                             ))}
                                         </CommandGroup>
