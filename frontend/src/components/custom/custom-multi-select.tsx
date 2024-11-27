@@ -12,13 +12,15 @@ interface CustomMultiSelectProps<T extends FieldValues> extends UseControllerPro
     label?: string;
     placeholder?: string;
     className?: string;
+    disabled?: boolean;
 }
 
-export default function CustomMultiSelect<T extends FieldValues>({options, control, name, label, placeholder, className}
+export default function CustomMultiSelect<T extends FieldValues>({options, control, name, label, placeholder, className, disabled}
                                                                      : CustomMultiSelectProps<T>) {
 
     return (
         <FormField
+            disabled={disabled}
             control={control}
             name={name}
             render={({ field }) => {
@@ -30,7 +32,7 @@ export default function CustomMultiSelect<T extends FieldValues>({options, contr
                                 values={field.value}
                                 onValuesChange={field.onChange}>
                                 <MultiSelectorTrigger>
-                                    <MultiSelectorInput placeholder={placeholder} />
+                                    <MultiSelectorInput disabled={disabled} placeholder={placeholder} />
                                 </MultiSelectorTrigger>
                                 <MultiSelectorContent>
                                     <MultiSelectorList>

@@ -55,7 +55,7 @@ export default function CustomFileUploader({
             dropzoneOptions={dropzone}
         >
             <FileInput>
-                <div className={cn("flex items-center justify-center h-32 w-full border border-dashed bg-background rounded-md", error && 'border-destructive')}>
+                <div className={cn("flex items-center justify-center h-32 w-full border-dashed border-2 bg-background rounded-md", error && 'border-destructive')}>
                     <p className="text-gray-400">Arraste os arquivos para aqui</p>
                 </div>
             </FileInput>

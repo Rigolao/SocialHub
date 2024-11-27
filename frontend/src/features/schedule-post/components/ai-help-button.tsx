@@ -16,6 +16,7 @@ import GenericFormField from "@/components/custom/generic-form-field.tsx";
 import useInsight from "@/hooks/insight/use-insight.ts";
 
 interface AIHelpButtonProps {
+    disabled?: boolean;
     setDescription: (description: string) => void;
 }
 
@@ -23,7 +24,7 @@ const aiHelpFormSchema = z.object({
     topic: z.string().min(6, 'O tópico deve ter no mínimo 6 caracteres'),
 })
 
-export default function AIHelpButton({setDescription}: AIHelpButtonProps) {
+export default function AIHelpButton({setDescription, disabled = false}: AIHelpButtonProps) {
 
     const [open, setOpen] = useState(false);
 
@@ -67,6 +68,7 @@ export default function AIHelpButton({setDescription}: AIHelpButtonProps) {
                 }>
             <DialogTrigger asChild>
                 <Button
+                    disabled={disabled}
                     className=" bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500
                     flex gap-2
                                 text-white

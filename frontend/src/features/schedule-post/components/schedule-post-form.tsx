@@ -146,6 +146,10 @@ export default function SchedulePostForm() {
         setUserCanPost(selectedSpace?.role !== 'VISUALIZADOR');
     }, [selectedSpace]);
 
+    useEffect(() => {
+        console.log(postData)
+    }, [postData]);
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -153,6 +157,7 @@ export default function SchedulePostForm() {
                     <div className="flex flex-col md:flex-row gap-4">
                         <GenericFormField
                             control={form.control}
+                            disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA') || form.getValues('date') < new Date()}
                             label='Título'
                             name='title'
                             type='text'
@@ -162,6 +167,7 @@ export default function SchedulePostForm() {
 
                         <DatePicker
                             label='Data de postagem'
+                            disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA') || form.getValues('date') < new Date()}
                             name='date'
                             placeholder='Selecione a data'
                             includeTime
@@ -172,6 +178,7 @@ export default function SchedulePostForm() {
                     <div className="flex flex-col md:flex-row gap-1 md:gap-4">
                         <GenericFormField
                             control={form.control}
+                            disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA') || form.getValues('date') < new Date()}
                             label='Descrição'
                             name='description'
                             type='textarea'
@@ -185,6 +192,7 @@ export default function SchedulePostForm() {
                             </div>
                             : <CustomMultiSelect
                                 control={form.control}
+                                disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA') || form.getValues('date') < new Date()}
                                 label='Redes Sociais'
                                 name='socialNetworks'
                                 placeholder='Selecione as redes sociais'
@@ -205,7 +213,9 @@ export default function SchedulePostForm() {
                     </div>
                 </div>
                 <div className="flex justify-end gap-2">
-                    <AIHelpButton setDescription={(description) => form.setValue('description', description)} />
+                    <AIHelpButton
+                        disabled={isLoading || !userCanPost || (idPost ? postData?.status !== 'AGENDADA' : false)}
+                        setDescription={(description) => form.setValue('description', description)} />
                     {idPost && (
                         <Button
                             onClick={cancelPost}
@@ -215,7 +225,7 @@ export default function SchedulePostForm() {
                         </Button>
                     )}
                     <Button
-                        disabled={(isLoading || createPostLoading || updatePostLoading) || !userCanPost}
+                        disabled={(isLoading || createPostLoading || updatePostLoading) || !userCanPost || (idPost && postData?.status !== 'AGENDADA')}
                         type="submit">
                         {idPost ? 'Alterar' : 'Agendar'}
                     </Button>
