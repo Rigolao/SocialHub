@@ -31,14 +31,26 @@ const schedulePostFormSchema = z.object({
 
 export default function SchedulePostForm() {
 
-    const { showDialog } = useAlertDialog();
+    const {showDialog} = useAlertDialog();
     const {idPost} = useParams();
     const {selectedSpace} = useSpace();
     const {data: socialNetworks, isLoading} = useGetSpaceSocialNetworks({idSpace: Number(selectedSpace?.id)});
-    const {data: postData, isLoading: postLoadind} = useGetPost({idPost: Number(idPost), idSpace: Number(selectedSpace?.id)});
-    const {mutateAsync: createPostMutate, isPending: createPostLoading} = useCreatePost({idSpace: Number(selectedSpace?.id)});
-    const {mutateAsync: updatePostMutate, isPending: updatePostLoading} = useEditPost({idPost: Number(idPost), idSpace: Number(selectedSpace?.id)});
-    const {mutateAsync: cancelPostMutate, isPending: cancelPostLoading} = useCancelPost({idPost: Number(idPost), idSpace: Number(selectedSpace?.id)});
+    const {data: postData, isLoading: postLoadind} = useGetPost({
+        idPost: Number(idPost),
+        idSpace: Number(selectedSpace?.id)
+    });
+    const {
+        mutateAsync: createPostMutate,
+        isPending: createPostLoading
+    } = useCreatePost({idSpace: Number(selectedSpace?.id)});
+    const {mutateAsync: updatePostMutate, isPending: updatePostLoading} = useEditPost({
+        idPost: Number(idPost),
+        idSpace: Number(selectedSpace?.id)
+    });
+    const {mutateAsync: cancelPostMutate, isPending: cancelPostLoading} = useCancelPost({
+        idPost: Number(idPost),
+        idSpace: Number(selectedSpace?.id)
+    });
 
     const [userCanPost, setUserCanPost] = useState(selectedSpace?.role !== 'VISUALIZADOR');
 
@@ -53,47 +65,51 @@ export default function SchedulePostForm() {
         }
     });
 
-    const onSubmit = (data: z.infer<typeof schedulePostFormSchema>) => {
+    const onSubmit = async (data: z.infer<typeof schedulePostFormSchema>) => {
         const formData = new FormData();
-
         const localDate = new Date(data.date.getTime() - data.date.getTimezoneOffset() * 60000);
         const formattedDate = localDate.toISOString().slice(0, 19);
 
         formData.append('title', data.title);
         formData.append('description', data.description);
         formData.append('scheduledDate', formattedDate);
+
         data.socialNetworks.forEach(socialNetwork => {
             socialNetworks?.forEach(net => {
-                if(socialNetwork.toLowerCase() === net.name.toLowerCase()) {
+                if (socialNetwork.toLowerCase() === net.name.toLowerCase()) {
                     formData.append('idSocialNetworks', net.id.toString());
                 }
             });
         });
-        data.files?.forEach(file => {
+
+        const newFiles = data.files?.filter(file => !postData?.attachments?.some(attachment => attachment.nameFile === file.name)) || [];
+        newFiles.forEach(file => {
             formData.append('files', file);
         });
 
-        if(idPost) {
-            postData?.attachments?.forEach(attachment => {
-                const find = form.getValues('files')?.find(file => file.name === attachment.nameFile);
-                if(!find) {
-                    formData.append('attachmentIdsToRemove', attachment.id);
-                }
-            });
+        const attachmentsToRemove = postData?.attachments?.filter(attachment =>
+            !data.files?.some(file => file.name === attachment.nameFile)
+        ) || [];
 
-            updatePostMutate(formData).then(() => {
-                form.reset();
-                form.setValue('files', []);
-                form.setValue('socialNetworks', []);
-            });
-        } else {
-            createPostMutate(formData).then(() => {
-                form.reset();
-                form.setValue('files', []);
-                form.setValue('socialNetworks', []);
-            });
+        attachmentsToRemove.forEach(attachment => {
+            formData.append('attachmentIdsToRemove', attachment.id);
+        });
+
+        try {
+            if (idPost) {
+                await updatePostMutate(formData);
+            } else {
+                await createPostMutate(formData);
+            }
+            form.reset();
+            form.setValue('files', []);
+            form.setValue('socialNetworks', []);
+        } catch (error) {
+            console.error('Erro ao salvar postagem:', error);
+            toast.error('Erro ao salvar a postagem');
         }
     };
+
 
     const cancelPost = (e) => {
         e.preventDefault();
@@ -119,22 +135,22 @@ export default function SchedulePostForm() {
                 form.setValue('date', new Date(postData.scheduledDate));
                 form.setValue('socialNetworks', postData.socialNetworks?.map(socialNetwork => socialNetwork.name));
 
-                const fileList: File[] = [];
+                const existingFiles: File[] = [];
+                const existingAttachments = postData.attachments || [];
 
-                // Converte attachments para objetos File
-                for (const attachment of postData.attachments || []) {
+                for (const attachment of existingAttachments) {
                     try {
                         const response = await fetch(attachment.url);
                         const blob = await response.blob();
-                        const file = new File([blob], attachment.nameFile, { type: blob.type });
-                        fileList.push(file);
+                        const file = new File([blob], attachment.nameFile, {type: blob.type});
+                        existingFiles.push(file);
                     } catch (error) {
                         console.error(`Erro ao carregar o arquivo: ${attachment.nameFile}`, error);
                         toast.error('Erro ao carregar os arquivos da postagem');
                     }
                 }
 
-                form.setValue('files', fileList);
+                form.setValue('files', existingFiles);
             }
         };
 
@@ -145,10 +161,6 @@ export default function SchedulePostForm() {
     useEffect(() => {
         setUserCanPost(selectedSpace?.role !== 'VISUALIZADOR');
     }, [selectedSpace]);
-
-    useEffect(() => {
-        console.log(postData)
-    }, [postData]);
 
     return (
         <Form {...form}>
@@ -214,8 +226,8 @@ export default function SchedulePostForm() {
                 </div>
                 <div className="flex justify-end gap-2">
                     <AIHelpButton
-                        disabled={isLoading || !userCanPost || (idPost ? postData?.status !== 'AGENDADA' : false)}
-                        setDescription={(description) => form.setValue('description', description)} />
+                        disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA')}
+                        setDescription={(description) => form.setValue('description', description)}/>
                     {idPost && (
                         <Button
                             onClick={cancelPost}
