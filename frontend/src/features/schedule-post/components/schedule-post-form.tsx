@@ -59,7 +59,7 @@ export default function SchedulePostForm() {
         defaultValues: {
             title: '',
             description: '',
-            date: undefined,
+            date: new Date(),
             files: [],
             socialNetworks: []
         }
@@ -69,6 +69,11 @@ export default function SchedulePostForm() {
         const formData = new FormData();
         const localDate = new Date(data.date.getTime() - data.date.getTimezoneOffset() * 60000);
         const formattedDate = localDate.toISOString().slice(0, 19);
+
+        console.log(isLoading)
+        console.log(!userCanPost)
+        console.log(idPost && postData?.status !== 'AGENDADA')
+        console.log(form.getValues('date') < new Date())
 
         formData.append('title', data.title);
         formData.append('description', data.description);
@@ -169,7 +174,7 @@ export default function SchedulePostForm() {
                     <div className="flex flex-col md:flex-row gap-4">
                         <GenericFormField
                             control={form.control}
-                            disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA') || form.getValues('date') < new Date()}
+                            disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA')}
                             label='Título'
                             name='title'
                             type='text'
@@ -179,7 +184,7 @@ export default function SchedulePostForm() {
 
                         <DatePicker
                             label='Data de postagem'
-                            disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA') || form.getValues('date') < new Date()}
+                            disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA')}
                             name='date'
                             placeholder='Selecione a data'
                             includeTime
@@ -190,7 +195,7 @@ export default function SchedulePostForm() {
                     <div className="flex flex-col md:flex-row gap-1 md:gap-4">
                         <GenericFormField
                             control={form.control}
-                            disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA') || form.getValues('date') < new Date()}
+                            disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA')}
                             label='Descrição'
                             name='description'
                             type='textarea'
@@ -204,7 +209,7 @@ export default function SchedulePostForm() {
                             </div>
                             : <CustomMultiSelect
                                 control={form.control}
-                                disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA') || form.getValues('date') < new Date()}
+                                disabled={isLoading || !userCanPost || (idPost && postData?.status !== 'AGENDADA')}
                                 label='Redes Sociais'
                                 name='socialNetworks'
                                 placeholder='Selecione as redes sociais'
@@ -231,7 +236,7 @@ export default function SchedulePostForm() {
                     {idPost && (
                         <Button
                             onClick={cancelPost}
-                            disabled={isLoading || !userCanPost || form.getValues('date') < new Date() || postData?.status !== 'AGENDADA'}
+                            disabled={isLoading || !userCanPost || postData?.status !== 'AGENDADA'}
                             variant='destructive'>
                             Cancelar postagem
                         </Button>
