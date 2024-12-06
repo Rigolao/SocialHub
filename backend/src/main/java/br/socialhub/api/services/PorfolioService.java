@@ -3,6 +3,7 @@ package br.socialhub.api.services;
 import br.socialhub.api.dtos.blue_sky.InformationProfileDTO;
 import br.socialhub.api.dtos.portfolio.PortfolioResponseDTO;
 import br.socialhub.api.dtos.social_media.SocialInformationDTO;
+import br.socialhub.api.enums.ActiveInactive;
 import br.socialhub.api.models.Conta;
 import br.socialhub.api.models.Space;
 import br.socialhub.api.models.Usuario;
@@ -25,12 +26,13 @@ public class PorfolioService {
                  .map(UsuarioSpace::getSpace)
                  .map(Space::getAccounts)
                  .flatMap(List::stream)
+                 .filter(account -> account.getStatus() == ActiveInactive.ACTIVE)
                  .toList();
 
         return new PortfolioResponseDTO(user.getName(), user.getId(), _preencherInformation(accounts));
     }
 
-    private List<SocialInformationDTO>  _preencherInformation(List<Conta> accounts) {
+    private List<SocialInformationDTO> _preencherInformation(List<Conta> accounts) {
         if(accounts.isEmpty()){
             return new ArrayList<>();
         }

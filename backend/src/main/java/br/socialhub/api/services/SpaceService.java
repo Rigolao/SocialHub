@@ -82,19 +82,9 @@ public class SpaceService {
     }
 
     public void associateAccountWithSpace(final Space space, final SocialNetwork socialNetwork, final AccountRequestDTO accountRequestDTO){
-        _validateJson(accountRequestDTO.token());
-
-        final Conta conta = new Conta(space,socialNetwork,accountRequestDTO.token());
+        final Conta conta = new Conta(space,socialNetwork,accountRequestDTO.toString());
 
         accountRepository.save(conta);
-    }
-
-    private void _validateJson(String token) {
-        try {
-            new ObjectMapper().readTree(token);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Token inválido. Deve ser um JSON válido.", e);
-        }
     }
 
     public List<SocialMediaResponseDTO> getSocialNetworksForSpace(Long id) {

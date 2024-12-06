@@ -87,14 +87,6 @@ public class PostService {
         }
     }
 
-    private void _validateScheduleDate() {
-        LocalDateTime now = LocalDateTime.now();
-
-        if (now.isBefore(now.plusMinutes(MINIMUM_SCHEDULE_MINUTES))) {
-            throw new PostDateSchedulingException(SCHEDULE_DATE_ERROR);
-        }
-    }
-
     private Postagem createNewPost(UsuarioSpace userSpace, PostCreateDTO post) throws IOException {
         Postagem postagem = new Postagem();
         postagem.setUsuarioSpace(userSpace);
