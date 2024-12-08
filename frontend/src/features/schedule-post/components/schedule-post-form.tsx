@@ -22,7 +22,7 @@ import {toast} from "sonner";
 
 const schedulePostFormSchema = z.object({
     title: z.string().min(6, 'O título deve ter no mínimo 6 caracteres'),
-    description: z.string().min(6, 'A descrição deve ter no mínimo 6 caracteres'),
+    description: z.string().min(6, 'A descrição deve ter no mínimo 6 caracteres').max(300, 'A descrição deve ter no máximo 300 caracteres'),
     date: z.date({message: 'Selecione uma data válida'}),
     files: z.array(z.instanceof(File)).nullable(),
     socialNetworks: z.array(z.string()).min(1, 'Selecione ao menos uma rede social')
