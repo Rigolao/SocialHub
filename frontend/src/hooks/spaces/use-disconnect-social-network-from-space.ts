@@ -13,6 +13,7 @@ export default function useDisconnectSocialNetworkFromSpace(idSpace: number, idS
         queryKey: ['disconnectSocialNetworkToSpace', idSpace, idSocialNetwork],
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["connectSocialNetworkToSpace", idSpace, idSocialNetwork]});
+            queryClient.invalidateQueries({queryKey: ['user']});
         },
         getHeaders: () => ({
             Authorization: `Bearer ${token}`

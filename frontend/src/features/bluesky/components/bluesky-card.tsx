@@ -28,18 +28,20 @@ export default function BlueskyCard() {
             (socialNetwork) => socialNetwork.name.toLowerCase() === "bluesky"
         );
 
-        await blueskyLogout(selectedSpace?.id, bluesky?.id);
+        await blueskyLogout(selectedSpace?.id, bluesky?.id).then(() => setConnected(false));
     }
 
     useEffect(() => {
-        if (selectedSpace?.connectedAccounts) {
-            console.log(!!selectedSpace?.connectedAccounts.find((account) => account.name.toLowerCase() === 'bluesky'))
-            setConnected(!!selectedSpace?.connectedAccounts.find((account) => account.name.toLowerCase() === 'bluesky'));
-        } else if (blueskyResponse) {
-            console.log(blueskyResponse)
+        if (blueskyResponse) {
             setConnected(true);
         }
-    }, [selectedSpace, blueskyResponse]);
+    }, [blueskyResponse]);
+
+    useEffect(() => {
+        if (selectedSpace?.connectedAccounts) {
+            setConnected(!!selectedSpace?.connectedAccounts.find((account) => account.name.toLowerCase() === 'bluesky'));
+        }
+    }, [selectedSpace]);
 
     return (
         <>
