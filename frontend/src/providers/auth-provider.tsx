@@ -50,8 +50,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setSelectedSpace(null);
             queryClient.clear(); // Limpa todas as queries do cache
 
-            console.log('Deslogado com sucesso');
-
             navigate('/login');
         } catch (error) {
             console.error('Erro ao tentar sair:', error);

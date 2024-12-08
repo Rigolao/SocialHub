@@ -29,14 +29,9 @@ export default function SpacesPage() {
     const {mutateAsync} = useDeleteSpace({idSpace: spaceIdRef.current as number});
     const { showDialog } = useAlertDialog();
 
-    useEffect(() => {
-        console.log(spaceIdRef)
-    }, [spaceIdRef])
-
     const navigate = useNavigate();
 
     const onDelete = (idSpace: number) => {
-        console.log(idSpace)
         spaceIdRef.current = idSpace;
 
         showDialog({

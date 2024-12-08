@@ -70,11 +70,6 @@ export default function SchedulePostForm() {
         const localDate = new Date(data.date.getTime() - data.date.getTimezoneOffset() * 60000);
         const formattedDate = localDate.toISOString().slice(0, 19);
 
-        console.log(isLoading)
-        console.log(!userCanPost)
-        console.log(idPost && postData?.status !== 'AGENDADA')
-        console.log(form.getValues('date') < new Date())
-
         formData.append('title', data.title);
         formData.append('description', data.description);
         formData.append('scheduledDate', formattedDate);

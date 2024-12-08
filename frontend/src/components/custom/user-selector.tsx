@@ -77,7 +77,6 @@ export default function UserSelector<T extends FieldValues>({
                                 <CommandInput
                                     value={inputValue}
                                     onValueChange={(value) => {
-                                        console.log("Input Value Changed:", value);
                                         setInputValue(value);
                                     }}
                                     placeholder="Pesquisar usuário"
