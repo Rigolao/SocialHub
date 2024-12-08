@@ -43,7 +43,7 @@ export default function PlanTab({form}: PlanTabProps) {
                     onClick={() => form.setValue('plan', freePlan)}/>
                 <PlanCard
                     name="Plano Premium"
-                    description="Plano completo com todos os recursos disponíveis. Podendo criar multiplos spaces e convidar pessoas para participar"
+                    description="Plano completo com todos os recursos disponíveis. Podendo criar multiplos spaces, convidar pessoas para participar e utilizar nossa inteligencia artificial para ajudar nos posts"
                     price="R$ 34,90"
                     selected={form.watch('plan').id === 2}
                     onClick={() => form.setValue('plan', premiumPlan)}/>
