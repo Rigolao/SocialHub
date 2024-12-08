@@ -91,6 +91,7 @@ public class SpaceService {
         Space space = findById(id);
 
         return space.getAccounts().stream()
+                .filter(conta -> conta.getStatus() == ActiveInactive.ACTIVE)
                 .map(conta -> new SocialMediaResponseDTO(conta.getSocialNetwork().getId(), conta.getSocialNetwork().getNome())).toList();
     }
 
