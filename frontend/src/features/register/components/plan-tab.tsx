@@ -44,7 +44,7 @@ export default function PlanTab({form}: PlanTabProps) {
                 <PlanCard
                     name="Plano Premium"
                     description="Plano completo com todos os recursos disponíveis. Podendo criar multiplos spaces e convidar pessoas para participar"
-                    price="R$ 19,90"
+                    price="R$ 34,90"
                     selected={form.watch('plan').id === 2}
                     onClick={() => form.setValue('plan', premiumPlan)}/>
             </motion.div>
