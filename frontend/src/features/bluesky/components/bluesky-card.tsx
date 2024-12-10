@@ -15,6 +15,10 @@ export default function BlueskyCard() {
 
     const { data: socialNetworks } = useGetSocialNetworks();
 
+    useEffect(() => {
+        console.log(selectedSpace)
+    }, [selectedSpace]);
+
     const openDialog = () => {
         setOpen(true)
     }
@@ -32,15 +36,7 @@ export default function BlueskyCard() {
     }
 
     useEffect(() => {
-        if (blueskyResponse) {
-            setConnected(true);
-        }
-    }, [blueskyResponse]);
-
-    useEffect(() => {
-        if (selectedSpace?.connectedAccounts) {
-            setConnected(!!selectedSpace?.connectedAccounts.find((account) => account.name.toLowerCase() === 'bluesky'));
-        }
+        setConnected(!!selectedSpace?.connectedAccounts.find((account) => account.name.toLowerCase() === 'bluesky'));
     }, [selectedSpace]);
 
     return (

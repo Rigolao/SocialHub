@@ -6,6 +6,7 @@ import {LoginRequest, LoginResponse} from "@/types/login";
 import {AuthProviderContext} from "@/contexts/auth-provider-context.ts";
 import {useSpace} from "@/hooks/spaces/use-space.ts";
 import queryClient from "@/lib/query-client";
+import {useBluesky} from "@/providers/bluesky-provider.tsx";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const navigate = useNavigate();
@@ -15,6 +16,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
 
     const { facebookResponse, facebookLogout } = useFacebook();
+    const { blueskyLogout, blueskyConnected } = useBluesky();
 
     const { setSelectedSpace } = useSpace();
 

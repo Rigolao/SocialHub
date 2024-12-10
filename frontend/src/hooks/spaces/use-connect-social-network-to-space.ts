@@ -2,10 +2,11 @@ import {usePost} from "@/hooks/use-post";
 import {MessageResponse} from "@/types";
 import {useAuth} from "@/hooks/auth/use-auth.ts";
 import {ConnectSocialNetworkRequest} from "@/types/spaces";
-import queryClient from "@/lib/query-client";
+import useGetUser from "@/hooks/user/use-get-user.ts";
 
 export default function useConnectSocialNetworkToSpace(idSpace: number, idSocialNetwork: number) {
     const {token} = useAuth();
+    const { refetch } = useGetUser();
 
     const url = `/spaces/${idSpace}/social-networks/${idSocialNetwork}`;
 
@@ -16,7 +17,11 @@ export default function useConnectSocialNetworkToSpace(idSpace: number, idSocial
             Authorization: `Bearer ${token}`
         }),
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['user']});
+            // console.log(data)
+            // queryClient.invalidateQueries({queryKey: ['user']});
+            refetch();
+            // console.log(data)
+
         }
     });
 }

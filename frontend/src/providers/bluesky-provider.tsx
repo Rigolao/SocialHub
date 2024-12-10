@@ -108,7 +108,10 @@ export const BlueskyProvider = ({children}: { children: React.ReactNode }) => {
             await agent
                 .logout()
                 .then(() => setResponse(undefined))
-                .catch((err) => _showError({ err }))
+                .catch((err) => {
+                    _showError({ err });
+                    setResponse(undefined);
+                })
                 .finally(() => setLoading(false));
         } else {
             setResponse(undefined);

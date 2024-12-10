@@ -24,6 +24,7 @@ public class PorfolioService {
          List<Conta> accounts = user.getUsuarioSpaces().stream()
                  .filter(UsuarioSpace::isDefault)
                  .map(UsuarioSpace::getSpace)
+                 .filter(space -> space.getStatus() == ActiveInactive.ACTIVE)
                  .map(Space::getAccounts)
                  .flatMap(List::stream)
                  .filter(account -> account.getStatus() == ActiveInactive.ACTIVE)
